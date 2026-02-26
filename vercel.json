@@ -1,0 +1,7 @@
+{
+  "redirects": [
+    { "source": "/how-to-use", "destination": "/", "permanent": false },
+    { "source": "/privacypolicy", "destination": "/privacypolicy.html", "permanent": false },
+    { "source": "/contact", "destination": "/#contact", "permanent": false }
+  ]
+}

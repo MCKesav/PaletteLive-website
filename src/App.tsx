@@ -1433,7 +1433,7 @@ export function App() {
             <a className="hover:text-white" href="#features">Features</a>
             <a className="hover:text-white" href="#showcase">Before/After</a>
             <a className="hover:text-white" href="#compare">Compare</a>
-            <a className="hover:text-white" href="/privacypolicy.html">Privacy</a>
+            <a className="hover:text-white" href="/privacypolicy">Privacy</a>
             <a className="hover:text-white" href="#faq">FAQ</a>
             <a className="hover:text-white" href="#contact">Contact</a>
           </nav>
@@ -2058,7 +2058,7 @@ export function App() {
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Resources</div>
                   <a className="block text-sm text-white/65 hover:text-white" href={docsUrl}>Documentation</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="/privacypolicy.html">Privacy Policy</a>
+                  <a className="block text-sm text-white/65 hover:text-white" href="/privacypolicy">Privacy Policy</a>
                   <a className="block text-sm text-white/65 hover:text-white" href="#faq">FAQ</a>
                   <a className="block text-sm text-white/65 hover:text-white" href="#contact">Contact</a>
                 </div>

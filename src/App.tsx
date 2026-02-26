@@ -1410,6 +1410,49 @@ export function App() {
     };
   }, []);
 
+  // Custom paint-brush cursor: switches brush based on background luminance
+  useEffect(() => {
+    // Hotspot = bristle tip. Image is 2592×3552, Chrome scales to ≈93×128.
+    // Bristle tip at ~11%, ~91% from top → hotspot (10, 116)
+    const DARK_CURSOR  = "url('/brush-dark.png') 10 116, crosshair";  // dark brush on dark bg
+    const LIGHT_CURSOR = "url('/brush-light.png') 10 116, crosshair"; // light brush on light bg
+
+    function getLuminance(el: Element | null): number {
+      while (el && el !== document.documentElement) {
+        const bg = window.getComputedStyle(el).backgroundColor;
+        if (bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") {
+          const m = bg.match(/[\d.]+/g);
+          if (m && m.length >= 3) {
+            const [r, g, b] = m.map(Number);
+            // Relative luminance (0 = black, 1 = white)
+            return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+          }
+        }
+        el = el.parentElement;
+      }
+      return 0; // default dark
+    }
+
+    let lastCursor = "";
+    function onMouseMove(e: MouseEvent) {
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const lum = getLuminance(el);
+      const next = lum > 0.45 ? LIGHT_CURSOR : DARK_CURSOR;
+      if (next !== lastCursor) {
+        document.body.style.cursor = next;
+        lastCursor = next;
+      }
+    }
+
+    // Set initial cursor
+    document.body.style.cursor = DARK_CURSOR;
+    window.addEventListener("mousemove", onMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      document.body.style.cursor = "";
+    };
+  }, []);
+
   const cwsUrl = "https://chrome.google.com/webstore";
   const docsUrl = "/how-to-use";
   const demoUrl = "#demo";

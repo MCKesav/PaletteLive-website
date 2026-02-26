@@ -1,5 +1,10 @@
 ﻿@import "tailwindcss";
 
+/* Force all elements to inherit the custom brush cursor set on body */
+*, *::before, *::after {
+  cursor: inherit !important;
+}
+
 @keyframes plScanLine {
   0%   { top: -2px; opacity: 1; }
   85%  { opacity: 1; }

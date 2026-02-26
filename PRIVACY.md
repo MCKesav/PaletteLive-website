@@ -1,4 +1,4 @@
-﻿# Privacy Policy for PaletteLive
+# Privacy Policy for PaletteLive
 
 **Effective Date:** February 15, 2026
 **Last Updated:** February 26, 2026
@@ -6,6 +6,8 @@
 ## Overview
 
 PaletteLive is a browser extension developed by **Movva Chenna Kesav** (India). It allows users to extract, edit, and export color palettes from websites. This privacy policy explains how we handle data in our extension and applies equally to all supported browser platforms: **Google Chrome**, **Microsoft Edge**, **Opera**, and **Mozilla Firefox**.
+
+> **Note:** The side panel feature (previously requiring the `sidePanel` permission) has been removed from the extension. The color editor is now accessible exclusively via the popup.
 
 ## Extension Purpose
 
@@ -79,7 +81,6 @@ All data collected by PaletteLive is stored **exclusively on your device** using
 | `activeTab` | Access the currently active tab for color extraction | Scoped to user-initiated actions only; does not grant persistent access |
 | `scripting` | Inject CSS overrides for live color-editing previews | Required to apply and remove color changes on the page in real time |
 | `storage` | Save color palettes and settings locally | All data stays on-device; no remote writes |
-| `sidePanel` | Open the color editor in the browser's side panel (Chrome/Edge/Opera) | Provides a persistent UI without replacing the page |
 | `host_permissions: <all_urls>` | Re-apply saved palettes when you revisit matching domains | Used solely to match saved domains to your local palette data; no crawling, no data collection, no browsing history access |
 | *(no screen capture permission)* | Before/After comparison overlay | The comparison is implemented via DOM/CSS rendering (`clip-path` on a cloned layer); no `tabCapture`, `desktopCapture`, or `getDisplayMedia` API is used |
 

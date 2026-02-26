@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -33,6 +33,7 @@
       header { background-color: rgba(13,27,42,0.85); border-bottom: 1px solid #1b263b; }
       footer { background-color: #0d1b2a; border-top: 1px solid #1b263b; }
       a { transition: color 0.2s; }
+      .emoji { font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Twemoji Mozilla', sans-serif; font-style: normal; line-height: 1; display: inline-block; font-variant-emoji: emoji; }
     </style>
     <script>
       (function() {
@@ -73,7 +74,7 @@
             <div class="text-xs" style="color:#778da9">Live website palette engine</div>
           </div>
         </a>
-        <a href="/" style="color:#778da9" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#778da9'" class="text-sm">â† Back to Home</a>
+        <a href="/" style="color:#778da9" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#778da9'" class="text-sm">← Back to Home</a>
       </div>
     </header>
 
@@ -85,7 +86,7 @@
       </div>
       <div class="relative z-10 mx-auto max-w-2xl">
         <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold mb-6" style="background:rgba(65,90,119,0.2);border:1px solid #415a77;color:#778da9">
-          â˜• Support Independent Development
+          <span class="emoji">☕</span> Support Independent Development
         </div>
         <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-5" style="color:#e0e1dd">
           Your support keeps<br />
@@ -93,7 +94,7 @@
           for everyone.
         </h1>
         <p class="text-lg leading-relaxed max-w-xl mx-auto" style="color:#778da9">
-          PaletteLive is built solo, nights and weekends â€” no VC funding, no subscriptions, no ads.
+          PaletteLive is built solo, nights and weekends — no VC funding, no subscriptions, no ads.
           Every cup of coffee you buy directly fuels the next feature you've been waiting for.
         </p>
       </div>
@@ -105,20 +106,20 @@
         <h2 class="text-xs font-bold tracking-widest text-center uppercase mb-8" style="color:#415a77">What your support enables</h2>
         <div class="grid sm:grid-cols-3 gap-4">
           <div class="card rounded-2xl p-5">
-            <div class="text-2xl mb-3">ðŸ›</div>
+            <div class="emoji text-4xl mb-3">🐛</div>
             <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Bug Fixes Faster</div>
-            <p class="text-xs leading-relaxed" style="color:#778da9">â‚¹50 covers a focused debugging session â€” every annoying issue you've hit gets prioritised.</p>
+            <p class="text-xs leading-relaxed" style="color:#778da9">₹50 covers a focused debugging session — every annoying issue you've hit gets prioritised.</p>
           </div>
           <div class="card rounded-2xl p-5 relative" style="border-color:#778da9">
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-xs font-bold badge-main">Most Impactful</div>
-            <div class="text-2xl mb-3">âš¡</div>
+            <div class="emoji text-4xl mb-3">⚡</div>
             <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Ship New Features</div>
-            <p class="text-xs leading-relaxed" style="color:#778da9">â‚¹100 buys a full Saturday of dev time â€” Firefox support, palette export presets, and more.</p>
+            <p class="text-xs leading-relaxed" style="color:#778da9">₹100 buys a full Saturday of dev time — Firefox support, palette export presets, and more.</p>
           </div>
           <div class="card rounded-2xl p-5">
-            <div class="text-2xl mb-3">ðŸš€</div>
+            <div class="emoji text-4xl mb-3">🚀</div>
             <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Keep the Lights On</div>
-            <p class="text-xs leading-relaxed" style="color:#778da9">â‚¹200+ covers domain & infrastructure for months â€” the extension stays free for everyone.</p>
+            <p class="text-xs leading-relaxed" style="color:#778da9">₹200+ covers domain &amp; infrastructure for months — the extension stays free for everyone.</p>
           </div>
         </div>
       </div>
@@ -132,7 +133,7 @@
           <div class="relative inline-flex items-center justify-center mb-6">
             <div class="pulse-ring absolute h-64 w-64 rounded-2xl border-2"></div>
             <div class="qr-img-wrap relative rounded-2xl overflow-hidden bg-white p-3">
-              <img src="/upi-qr.jpg" alt="UPI QR Code â€” mckesav05" class="h-52 w-52 object-contain" />
+              <img src="/upi-qr.jpg" alt="UPI QR Code — mckesav05" class="h-52 w-52 object-contain" />
             </div>
           </div>
           <div class="mb-5">
@@ -145,18 +146,18 @@
                 </svg>
               </button>
             </div>
-            <div id="copyMsg" class="text-xs mt-2 opacity-0 transition-opacity duration-300" style="color:#778da9">âœ“ Copied!</div>
+            <div id="copyMsg" class="text-xs mt-2 opacity-0 transition-opacity duration-300" style="color:#778da9">✓ Copied!</div>
           </div>
           <div class="mb-6">
             <p class="text-xs mb-3" style="color:#415a77">Suggested amounts</p>
             <div class="flex justify-center gap-2 flex-wrap">
-              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">â‚¹50</span>
-              <span class="amount-chip-active rounded-xl px-4 py-2 text-sm font-semibold">â‚¹100</span>
-              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">â‚¹200</span>
-              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">â‚¹500</span>
+              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">₹50</span>
+              <span class="amount-chip-active rounded-xl px-4 py-2 text-sm font-semibold">₹100</span>
+              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">₹200</span>
+              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">₹500</span>
             </div>
           </div>
-          <p class="text-xs" style="color:#415a77">Works with GPay, PhonePe, Paytm, BHIM & any UPI app</p>
+          <p class="text-xs" style="color:#415a77">Works with GPay, PhonePe, Paytm, BHIM &amp; any UPI app</p>
         </div>
       </div>
     </section>
@@ -195,28 +196,28 @@
         <p class="text-sm mb-8" style="color:#778da9">Your support directly accelerates these features:</p>
         <div class="space-y-3 text-left max-w-sm mx-auto">
           <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
-            <span class="text-lg">ðŸ¦Š</span>
+            <span class="emoji text-2xl">🦊</span>
             <div>
               <span class="text-sm font-semibold" style="color:#e0e1dd">Firefox &amp; Edge support</span>
               <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-progress">In progress</span>
             </div>
           </div>
           <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
-            <span class="text-lg">ðŸŽ¨</span>
+            <span class="emoji text-2xl">🎨</span>
             <div>
               <span class="text-sm font-semibold" style="color:#e0e1dd">Palette presets &amp; community sharing</span>
               <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-planned">Planned</span>
             </div>
           </div>
           <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
-            <span class="text-lg">ðŸ“±</span>
+            <span class="emoji text-2xl">📱</span>
             <div>
               <span class="text-sm font-semibold" style="color:#e0e1dd">Figma &amp; Framer token sync</span>
               <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-planned">Planned</span>
             </div>
           </div>
           <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
-            <span class="text-lg">ðŸ¤</span>
+            <span class="emoji text-2xl">🤝</span>
             <div>
               <span class="text-sm font-semibold" style="color:#e0e1dd">Team palette collaboration</span>
               <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-planned">Planned</span>
@@ -230,10 +231,10 @@
     <section class="px-5 py-16 text-center" style="border-top:1px solid #1b263b">
       <div class="mx-auto max-w-lg">
         <p class="text-2xl font-bold mb-3" style="color:#e0e1dd">Ready to fuel the next update?</p>
-        <p class="text-sm mb-8" style="color:#778da9">Even â‚¹50 makes a real difference. Thank you for believing in independent open tools.</p>
+        <p class="text-sm mb-8" style="color:#778da9">Even ₹50 makes a real difference. Thank you for believing in independent open tools.</p>
         <a href="#" onclick="document.querySelector('.qr-card').scrollIntoView({behavior:'smooth'}); return false;"
           class="cta-btn inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-sm font-bold">
-          â˜• Support Now via UPI
+          <span class="emoji">☕</span> Support Now via UPI
         </a>
         <p class="mt-5 text-xs" style="color:#415a77">No account needed. Instant. Secure.</p>
       </div>
@@ -242,10 +243,10 @@
     <!-- Footer -->
     <footer class="py-8 px-5">
       <div class="mx-auto max-w-5xl text-center text-xs" style="color:#415a77">
-        <p>Â© 2026 PaletteLive Â· Built with â™¥ by <a href="https://github.com/MCKesav" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">MCKesav</a></p>
+        <p>© 2026 PaletteLive · Built with <span class="emoji">♥</span> by <a href="https://github.com/MCKesav" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">MCKesav</a></p>
         <p class="mt-2">
-          <a href="/" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Home</a> Â·
-          <a href="/privacypolicy" class="ml-2" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Privacy</a> Â·
+          <a href="/" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Home</a> ·
+          <a href="/privacypolicy" class="ml-2" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Privacy</a> ·
           <a href="/contact" class="ml-2" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Contact</a>
         </p>
       </div>

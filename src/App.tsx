@@ -208,7 +208,7 @@ function SitePreview({ pal, heatmapOn = false, onColorClick }: { pal: PaletteDat
       <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("surface"); } : undefined}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 16px", background: pal.surface, borderBottom: `1px solid ${pal.accent}22`, cursor: clickable ? "pointer" : undefined, transition: "background 0.5s" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <img src="/images/logo.png" alt="PaletteLive Logo" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }} />
+          <img src="/logo.png" alt="PaletteLive Logo" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }} />
           <span style={{ fontSize: 12, fontWeight: 800, color: pal.accent, letterSpacing: "-0.02em", transition: "color 0.5s" }}>PaletteLive</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -786,7 +786,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
             <div className="flex items-center justify-between px-3 py-2" style={{ borderBottom: "1px solid var(--pl-border)", background: "var(--pl-bg)", position: "sticky", top: 0, zIndex: 10 }}>
               <div className="flex items-center gap-2" style={{ fontWeight: 700, fontSize: 15, color: "var(--pl-primary)" }}>
                 <div className="h-6 w-6 rounded-md bg-white p-0.5 flex items-center justify-center">
-                  <img src="/images/logo.png" alt="PaletteLive Logo" className="h-full w-full object-contain rounded-md" />
+                  <img src="/logo.png" alt="PaletteLive Logo" className="h-full w-full object-contain rounded-md" />
                 </div>
                 <a href="https://palettelive.mckesav.in" target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>PaletteLive</a>
               </div>
@@ -2083,7 +2083,7 @@ export function App() {
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <img src="/images/logo.png" alt="PaletteLive Logo" className="h-10 w-10 rounded-2xl shadow-lg" />
+                  <img src="/logo.png" alt="PaletteLive Logo" className="h-10 w-10 rounded-2xl shadow-lg" />
                   <div>
                     <div className="text-sm font-semibold">PaletteLive</div>
                     <div className="text-xs text-white/60">Professional palette tooling for live websites</div>

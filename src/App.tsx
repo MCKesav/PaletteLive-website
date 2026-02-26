@@ -1433,8 +1433,9 @@ export function App() {
             <a className="hover:text-white" href="#features">Features</a>
             <a className="hover:text-white" href="#showcase">Before/After</a>
             <a className="hover:text-white" href="#compare">Compare</a>
-            <a className="hover:text-white" href="#privacypolicy">Privacy</a>
+            <a className="hover:text-white" href="/privacypolicy.html">Privacy</a>
             <a className="hover:text-white" href="#faq">FAQ</a>
+            <a className="hover:text-white" href="#contact">Contact</a>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -1605,236 +1606,6 @@ export function App() {
               </div>
             ))}
           </div>
-          </div>
-
-        {/* Contact Info Section */}
-        <section className="bg-slate-950 text-white py-8">
-          <div className="mx-auto max-w-2xl px-5">
-            <h2 className="text-xl font-semibold mb-2">Contact & Support</h2>
-            <p className="text-sm text-white/80 mb-2">For support, questions, or bug reports, please contact us at:</p>
-            <a href="mailto:mckesavdev+support@gmail.com" className="text-sm text-blue-400 hover:underline">mckesavdev+support@gmail.com</a>
-          </div>
-        </section>
-
-        {/* Privacy Policy Section */}
-        <section id="privacypolicy" className="bg-white py-16">
-          <div className="mx-auto max-w-4xl px-5">
-            <h1 className="text-4xl font-bold text-slate-900 mb-4">Privacy Policy for PaletteLive</h1>
-            <div className="text-sm text-slate-600 mb-8">
-              <p><strong>Effective Date:</strong> February 15, 2026</p>
-              <p><strong>Last Updated:</strong> February 26, 2026</p>
-            </div>
-
-            <div className="prose prose-slate max-w-none space-y-6">
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Overview</h2>
-              <p className="text-slate-700 leading-relaxed">
-                PaletteLive is a browser extension developed by <strong>Movva Chenna Kesav</strong> (India). It allows users to extract, edit, and export color palettes from websites. This privacy policy explains how we handle data in our extension and applies equally to all supported browser platforms: <strong>Google Chrome</strong>, <strong>Microsoft Edge</strong>, <strong>Opera</strong>, and <strong>Mozilla Firefox</strong>.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Extension Purpose</h2>
-              <p className="text-slate-700 leading-relaxed">
-                PaletteLive has a <strong>single, clearly defined purpose</strong>: extracting CSS color values from webpages, allowing users to edit those colors with a live preview, and exporting the resulting palette in various formats. The extension does not include any hidden, secondary, or unrelated functionality.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Data Collection</h2>
-              
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">What Data We Collect</h3>
-              <p className="text-slate-700 leading-relaxed">
-                PaletteLive <strong>only</strong> collects data that is directly necessary for its core color-extraction function:
-              </p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li><strong>CSS color values</strong> extracted from webpages you visit (e.g., hex codes, RGB values)</li>
-                <li><strong>CSS variable names</strong> defined in website stylesheets</li>
-                <li><strong>Website domain names</strong> (used to organize saved palettes by site)</li>
-              </ul>
-              <p className="text-slate-700 leading-relaxed">
-                No other data is collected. Data collection is strictly limited to what is required for the extension to function.
-              </p>
-
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">Local Data Access</h3>
-              <p className="text-slate-700 leading-relaxed">
-                We process the following data <strong>locally on your device</strong> to provide functionality:
-              </p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li><strong>Webpage Content:</strong> To extract colors and styles from the active tab only.</li>
-                <li><strong>Clipboard:</strong> To allow you to copy/export color codes (write-only access, never read).</li>
-                <li><strong>Screen Captures:</strong> The "Before/After" comparison feature is implemented via <strong>DOM/CSS rendering</strong> (a cloned overlay layer using <code className="px-1 py-0.5 bg-slate-100 rounded text-sm">clip-path</code>). No browser capture API is used.</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">What We Do NOT Collect</h3>
-              <p className="text-slate-700 leading-relaxed">We do <strong>not</strong> collect, store, or transmit:</p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li>Personal information (name, email, address, phone number, etc.)</li>
-                <li>Browsing history or visited URLs beyond the active tab</li>
-                <li>Login credentials or passwords</li>
-                <li>Form data or user input from webpages</li>
-                <li>IP addresses or geolocation data</li>
-                <li>Device identifiers or hardware information</li>
-                <li>Search terms or search engine queries</li>
-                <li>Private browsing / incognito session data</li>
-                <li>Any data unrelated to color extraction and palette management</li>
-              </ul>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Data Storage</h2>
-              
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">Local Storage Only</h3>
-              <p className="text-slate-700 leading-relaxed">
-                All data collected by PaletteLive is stored <strong>exclusively on your device</strong> using the browser's built-in storage APIs:
-              </p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.storage.local</code> / <code className="px-1 py-0.5 bg-slate-100 rounded text-sm">browser.storage.local</code> — For saved color palettes and user settings</li>
-                <li><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.storage.session</code> / <code className="px-1 py-0.5 bg-slate-100 rounded text-sm">browser.storage.session</code> — For temporary data during active sessions</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">No External Transmission</h3>
-              <p className="text-slate-700 leading-relaxed">
-                <strong>We do not transmit any data to external servers, third parties, or remote endpoints.</strong> Your data never leaves your device:
-              </p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li>No cloud syncing</li>
-                <li>No analytics or telemetry</li>
-                <li>No third-party services or integrations</li>
-                <li>No remote code execution</li>
-                <li>No background network requests of any kind</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">Data Retention</h3>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li>Saved palettes persist until you manually delete them or uninstall the extension.</li>
-                <li>Temporary session data is automatically cleared when you close the browser.</li>
-                <li>You can clear all data at any time through the extension's settings.</li>
-              </ul>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Permissions</h2>
-              
-              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">Permissions Used and Why</h3>
-              <div className="overflow-x-auto mb-4">
-                <table className="min-w-full border-collapse border border-slate-300">
-                  <thead className="bg-slate-50">
-                    <tr>
-                      <th className="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-800">Permission</th>
-                      <th className="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-800">Purpose</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2"><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">activeTab</code></td>
-                      <td className="border border-slate-300 px-4 py-2 text-slate-700">Access the currently active tab for color extraction</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2"><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">scripting</code></td>
-                      <td className="border border-slate-300 px-4 py-2 text-slate-700">Inject CSS overrides for live color-editing previews</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2"><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">storage</code></td>
-                      <td className="border border-slate-300 px-4 py-2 text-slate-700">Save color palettes and settings locally</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2"><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">sidePanel</code></td>
-                      <td className="border border-slate-300 px-4 py-2 text-slate-700">Open the color editor in the browser's side panel</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-slate-300 px-4 py-2"><code className="px-1 py-0.5 bg-slate-100 rounded text-sm">&lt;all_urls&gt;</code></td>
-                      <td className="border border-slate-300 px-4 py-2 text-slate-700">Re-apply saved palettes when you revisit matching domains</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">How We Use Your Data</h2>
-              <p className="text-slate-700 leading-relaxed">The collected color data is used solely for:</p>
-              <ol className="list-decimal pl-6 text-slate-700 space-y-2 mb-4">
-                <li>Displaying extracted color palettes to you</li>
-                <li>Allowing you to edit and preview color changes locally within your browser</li>
-                <li>Exporting color codes in various formats (CSS, JSON, Tailwind)</li>
-                <li>Saving your favorite palettes for future reference on matching domains</li>
-              </ol>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Prohibited Practices</h2>
-              <p className="text-slate-700 leading-relaxed">PaletteLive does <strong>not</strong> engage in any of the following practices:</p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li><strong>Selling user data</strong> to any party</li>
-                <li><strong>Licensing or transferring user data</strong> to third parties</li>
-                <li><strong>Acting as a data broker</strong> or aggregating user information</li>
-                <li><strong>Intercepting search terms</strong> or monitoring search engine queries</li>
-                <li><strong>Storing private browsing / incognito session data</strong></li>
-                <li><strong>Collecting data unrelated</strong> to the core color-extraction function</li>
-                <li><strong>Transmitting data via XHR, fetch, WebSocket, or any network request</strong></li>
-                <li><strong>Loading external JavaScript files</strong> at runtime</li>
-                <li><strong>Using obfuscated or minified code</strong> beyond what is readable for review</li>
-                <li><strong>Including hidden features</strong> or undisclosed functionality</li>
-              </ul>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Code & Technical Transparency</h2>
-              <p className="text-slate-700 leading-relaxed mb-2">PaletteLive is built to be fully transparent and reviewable:</p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li><strong>No obfuscation:</strong> All extension code is human-readable</li>
-                <li><strong>No remote scripts:</strong> The extension does not load JavaScript from any external URL</li>
-                <li><strong>No external dependencies at runtime:</strong> No CDN-loaded libraries</li>
-                <li><strong>Fully auditable:</strong> Complete source code is available for review</li>
-              </ul>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Monetization Transparency</h2>
-              <p className="text-slate-700 leading-relaxed">
-                This extension is <strong>not monetized</strong> and does <strong>not</strong> display advertisements. No ads, affiliate links, or revenue is generated from user data or extension usage.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">AI / Machine Learning Disclosure</h2>
-              <p className="text-slate-700 leading-relaxed">
-                PaletteLive does <strong>not</strong> use any artificial intelligence, machine learning models, or large language models (LLMs). No user data is used for AI/ML training or sent to AI service providers. All color processing uses deterministic algorithms.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Compliance & Children's Privacy</h2>
-              <p className="text-slate-700 leading-relaxed">
-                PaletteLive is <strong>not</strong> intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13. We comply with all supported browser store developer program policies.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Security</h2>
-              <p className="text-slate-700 leading-relaxed mb-2">We implement the following security measures:</p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li>All data processing happens locally in your browser</li>
-                <li>No network requests are made by the extension</li>
-                <li>Input sanitization to prevent XSS attacks</li>
-                <li>Proper error handling for cross-origin content</li>
-                <li>Content Security Policy (CSP) compliance</li>
-              </ul>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Changes to This Policy</h2>
-              <p className="text-slate-700 leading-relaxed">
-                We may update this privacy policy from time to time. Any material changes will be posted here with an updated effective date. Users will be notified of significant changes via extension update notes.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Your Rights</h2>
-              <p className="text-slate-700 leading-relaxed mb-2">You have full control over your data:</p>
-              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-                <li><strong>View:</strong> See all saved palettes in the extension popup</li>
-                <li><strong>Export:</strong> Download your palettes in multiple formats</li>
-                <li><strong>Delete:</strong> Clear individual palettes or all data at any time</li>
-                <li><strong>Uninstall:</strong> Removing the extension deletes all associated data</li>
-              </ul>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Contact</h2>
-              <p className="text-slate-700 leading-relaxed mb-2">
-                If you have any questions about this privacy policy or our data practices, please contact us:
-              </p>
-              <p className="text-slate-700 leading-relaxed">
-                <strong>Movva Chenna Kesav</strong><br />
-                Email: <a href="mailto:movva.chenna.kesav@gmail.com" className="text-blue-600 hover:underline">movva.chenna.kesav@gmail.com</a>
-              </p>
-
-              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Summary</h2>
-              <p className="text-slate-700 leading-relaxed mb-2">PaletteLive is designed with privacy as a core principle:</p>
-              <ul className="list-none pl-0 text-slate-700 space-y-2 mb-4">
-                <li>✅ All data stays on your device — nothing is transmitted externally</li>
-                <li>✅ No personal information is collected</li>
-                <li>✅ No external servers, analytics, or third-party services</li>
-                <li>✅ No obfuscated code — fully readable and auditable</li>
-                <li>✅ No hidden features or secondary functionality</li>
-                <li>✅ Not monetized — no ads, no data sales</li>
-                <li>✅ No AI/ML — no data sent to AI providers</li>
-                <li>✅ You have full control over your data at all times</li>
-              </ul>
-            </div>
           </div>
         </section>
 
@@ -2226,6 +1997,42 @@ export function App() {
           </div>
         </section>
 
+        {/* Contact Section */}
+        <section id="contact" className="bg-gradient-to-br from-slate-900 to-slate-950 text-white py-16">
+          <div className="mx-auto max-w-3xl px-5">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-3">Get in Touch</h2>
+              <p className="text-lg text-white/70 max-w-2xl mx-auto">
+                Have questions about PaletteLive? Need assistance or want to report an issue? We're here to help.
+              </p>
+            </div>
+            
+            <div className="max-w-xl mx-auto">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+                <h3 className="text-xl font-semibold mb-3">Support & Inquiries</h3>
+                <p className="text-sm text-white/70 mb-6">
+                  For technical support, bug reports, feature requests, or general questions about PaletteLive, please don't hesitate to reach out.
+                </p>
+                <a 
+                  href="mailto:mckesavdev+support@gmail.com" 
+                  className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
+                >
+                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                  </svg>
+                  mckesavdev+support@gmail.com
+                </a>
+              </div>
+            </div>
+            
+            <div className="mt-8 text-center">
+              <p className="text-sm text-white/60">
+                Response time: Typically within 24-48 hours during business days
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Footer */}
         <footer className="bg-slate-950 text-white">
           <div className="mx-auto max-w-6xl px-5 py-10">
@@ -2251,8 +2058,9 @@ export function App() {
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Resources</div>
                   <a className="block text-sm text-white/65 hover:text-white" href={docsUrl}>Documentation</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#privacypolicy">Privacy Policy</a>
+                  <a className="block text-sm text-white/65 hover:text-white" href="/privacypolicy.html">Privacy Policy</a>
                   <a className="block text-sm text-white/65 hover:text-white" href="#faq">FAQ</a>
+                  <a className="block text-sm text-white/65 hover:text-white" href="#contact">Contact</a>
                 </div>
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Links</div>

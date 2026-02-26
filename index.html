@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PaletteLive — The Live Website Palette Engine</title>
     <meta
@@ -12,5 +13,21 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Scroll to hash after React has rendered
+      if (window.location.hash) {
+        var hash = window.location.hash;
+        var attempts = 0;
+        var interval = setInterval(function () {
+          var el = document.querySelector(hash);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+            clearInterval(interval);
+          } else if (++attempts > 20) {
+            clearInterval(interval);
+          }
+        }, 100);
+      }
+    </script>
   </body>
 </html>

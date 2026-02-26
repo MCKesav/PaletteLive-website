@@ -2,85 +2,7 @@
 
 type Theme = "dark" | "light";
 
-function Icon({ name, className }: { name: string; className?: string }) {
-  const common = `h-5 w-5 ${className ?? ""}`;
-  switch (name) {
-    case "bolt":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-        </svg>
-      );
-    case "shield":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2l8 4v6c0 5-3 9-8 10-5-1-8-5-8-10V6l8-4z" />
-        </svg>
-      );
-    case "sparkles":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2l1.5 6L20 10l-6.5 2L12 18l-1.5-6L4 10l6.5-2L12 2z" />
-          <path d="M5 3l.7 2.7L8 6.4 5.7 7.1 5 10l-.7-2.9L2 6.4l2.3-.7L5 3z" />
-        </svg>
-      );
-    case "eye":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      );
-    case "pipette":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 22l2-2" />
-          <path d="M7 17l-3 3" />
-          <path d="M14 3l7 7" />
-          <path d="M10 7l7 7" />
-          <path d="M8.5 8.5l7 7" />
-          <path d="M15 2l7 7-5 5-7-7 5-5z" />
-        </svg>
-      );
-    case "code":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M16 18l6-6-6-6" />
-          <path d="M8 6l-6 6 6 6" />
-          <path d="M14 4l-4 16" />
-        </svg>
-      );
-    case "download":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <path d="M7 10l5 5 5-5" />
-          <path d="M12 15V3" />
-        </svg>
-      );
-    case "check":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M20 6L9 17l-5-5" />
-        </svg>
-      );
-    case "x":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M18 6L6 18" />
-          <path d="M6 6l12 12" />
-        </svg>
-      );
-    case "github":
-      return (
-        <svg className={common} viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1 1.6-.7 1.9-1.2.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.2 0 4.6-2.7 5.6-5.3 5.9.4.3.8 1 .8 2.1v3.1c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" />
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
+
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
@@ -1411,7 +1333,7 @@ export function App() {
   }, []);
 
   const cwsUrl = "https://chrome.google.com/webstore";
-  const docsUrl = "#docs";
+  const docsUrl = "/how-to-use";
   const demoUrl = "#demo";
 
   return (
@@ -1433,7 +1355,7 @@ export function App() {
             <a className="hover:text-white" href="#features">Features</a>
             <a className="hover:text-white" href="#showcase">Before/After</a>
             <a className="hover:text-white" href="#compare">Compare</a>
-            <a className="hover:text-white" href="#security">Privacy</a>
+            <a className="hover:text-white" href="#privacypolicy">Privacy</a>
             <a className="hover:text-white" href="#faq">FAQ</a>
           </nav>
 
@@ -1613,6 +1535,118 @@ export function App() {
             <h2 className="text-xl font-semibold mb-2">Contact & Support</h2>
             <p className="text-sm text-white/80 mb-2">For support, questions, or bug reports, please contact us at:</p>
             <a href="mailto:mckesavdev+support@gmail.com" className="text-sm text-blue-400 hover:underline">mckesavdev+support@gmail.com</a>
+          </div>
+        </section>
+
+        {/* Privacy Policy Section */}
+        <section id="privacypolicy" className="bg-white py-16">
+          <div className="mx-auto max-w-4xl px-5">
+            <h1 className="text-4xl font-bold text-slate-900 mb-4">Privacy Policy for PaletteLive</h1>
+            <div className="text-sm text-slate-600 mb-8">
+              <p><strong>Effective Date:</strong> February 15, 2026</p>
+              <p><strong>Last Updated:</strong> February 26, 2026</p>
+            </div>
+
+            <div className="prose prose-slate max-w-none">
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Overview</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                PaletteLive is a browser extension developed by <strong>Movva Chenna Kesav</strong> (India). It allows users to extract, edit, and export color palettes from websites. This privacy policy explains how we handle data in our extension and applies equally to all supported browser platforms: <strong>Google Chrome</strong>, <strong>Microsoft Edge</strong>, <strong>Opera</strong>, and <strong>Mozilla Firefox</strong>.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Extension Purpose</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                PaletteLive has a <strong>single, clearly defined purpose</strong>: extracting CSS color values from webpages, allowing users to edit those colors with a live preview, and exporting the resulting palette in various formats. The extension does not include any hidden, secondary, or unrelated functionality.
+              </p>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Data Collection</h2>
+              
+              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">What Data We Collect</h3>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                PaletteLive <strong>only</strong> collects data that is directly necessary for its core color-extraction function:
+              </p>
+              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                <li><strong>CSS color values</strong> extracted from webpages you visit (e.g., hex codes, RGB values)</li>
+                <li><strong>CSS variable names</strong> defined in website stylesheets</li>
+                <li><strong>Website domain names</strong> (used to organize saved palettes by site)</li>
+              </ul>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                No other data is collected. Data collection is strictly limited to what is required for the extension to function.
+              </p>
+
+              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">What We Do NOT Collect</h3>
+              <p className="text-slate-700 leading-relaxed mb-4">We do <strong>not</strong> collect, store, or transmit:</p>
+              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                <li>Personal information (name, email, address, phone number, etc.)</li>
+                <li>Browsing history or visited URLs beyond the active tab</li>
+                <li>Login credentials or passwords</li>
+                <li>Form data or user input from webpages</li>
+                <li>IP addresses or geolocation data</li>
+                <li>Device identifiers or hardware information</li>
+                <li>Search terms or search engine queries</li>
+                <li>Private browsing / incognito session data</li>
+                <li>Any data unrelated to color extraction and palette management</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Data Storage</h2>
+              
+              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">Local Storage Only</h3>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                All data collected by PaletteLive is stored <strong>exclusively on your device</strong> using the browser's built-in storage APIs.
+              </p>
+
+              <h3 className="text-xl font-semibold text-slate-800 mt-6 mb-3">No External Transmission</h3>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                <strong>We do not transmit any data to external servers, third parties, or remote endpoints.</strong> Your data never leaves your device:
+              </p>
+              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                <li>No cloud syncing</li>
+                <li>No analytics or telemetry</li>
+                <li>No third-party services or integrations</li>
+                <li>No remote code execution</li>
+                <li>No background network requests of any kind</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Security</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">We implement the following security measures:</p>
+              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                <li>All data processing happens locally in your browser</li>
+                <li>No network requests are made by the extension</li>
+                <li>Input sanitization to prevent XSS attacks</li>
+                <li>Proper error handling for cross-origin content</li>
+                <li>Content Security Policy (CSP) compliance</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Your Rights</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">You have full control over your data:</p>
+              <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                <li><strong>View:</strong> See all saved palettes in the extension popup</li>
+                <li><strong>Export:</strong> Download your palettes in multiple formats</li>
+                <li><strong>Delete:</strong> Clear individual palettes or all data at any time</li>
+                <li><strong>Uninstall:</strong> Removing the extension deletes all associated data</li>
+              </ul>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Contact</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                If you have any questions about this privacy policy or our data practices, please contact us:
+              </p>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                <strong>Movva Chenna Kesav</strong><br />
+                Email: <a href="mailto:movva.chenna.kesav@gmail.com" className="text-blue-600 hover:underline">movva.chenna.kesav@gmail.com</a>
+              </p>
+
+              <h2 className="text-2xl font-semibold text-slate-900 mt-8 mb-4">Summary</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">PaletteLive is designed with privacy as a core principle:</p>
+              <ul className="list-none pl-0 text-slate-700 space-y-2 mb-4">
+                <li>✅ All data stays on your device — nothing is transmitted externally</li>
+                <li>✅ No personal information is collected</li>
+                <li>✅ No external servers, analytics, or third-party services</li>
+                <li>✅ No obfuscated code — fully readable and auditable</li>
+                <li>✅ No hidden features or secondary functionality</li>
+                <li>✅ Not monetized — no ads, no data sales</li>
+                <li>✅ No AI/ML — no data sent to AI providers</li>
+                <li>✅ You have full control over your data at all times</li>
+              </ul>
+            </div>
           </div>
         </section>
 
@@ -2029,7 +2063,7 @@ export function App() {
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Resources</div>
                   <a className="block text-sm text-white/65 hover:text-white" href={docsUrl}>Documentation</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#security">Privacy</a>
+                  <a className="block text-sm text-white/65 hover:text-white" href="#privacypolicy">Privacy Policy</a>
                   <a className="block text-sm text-white/65 hover:text-white" href="#faq">FAQ</a>
                 </div>
                 <div className="space-y-2">

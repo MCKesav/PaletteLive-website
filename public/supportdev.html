@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support the Developer — PaletteLive</title>
+    <meta name="description" content="Your support keeps PaletteLive free and growing. Help fund the next big features." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+      body { font-family: 'Inter', sans-serif; }
+      .glow { box-shadow: 0 0 40px rgba(139, 92, 246, 0.35); }
+      .tier-card:hover { transform: translateY(-4px); }
+      .tier-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+      .qr-glow { box-shadow: 0 0 60px rgba(139, 92, 246, 0.4), 0 0 20px rgba(139, 92, 246, 0.2); }
+      @keyframes pulse-ring {
+        0% { transform: scale(1); opacity: 0.6; }
+        100% { transform: scale(1.12); opacity: 0; }
+      }
+      .pulse-ring { animation: pulse-ring 2s ease-out infinite; }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-white">
+
+    <!-- Header -->
+    <header class="border-b border-white/5 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+      <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
+        <a href="/" class="flex items-center gap-3">
+          <img src="/images/logo.png" alt="PaletteLive Logo" class="h-9 w-9 rounded-xl shadow-lg" />
+          <div>
+            <div class="text-sm font-semibold tracking-tight">PaletteLive</div>
+            <div class="text-xs text-white/50">Live website palette engine</div>
+          </div>
+        </a>
+        <a href="/" class="text-sm text-white/50 hover:text-white transition-colors">← Back to Home</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden pt-20 pb-12 px-5 text-center">
+      <!-- Background glow orbs -->
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-violet-600/10 blur-3xl"></div>
+        <div class="absolute right-1/4 top-10 h-72 w-72 translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl"></div>
+      </div>
+
+      <div class="relative z-10 mx-auto max-w-2xl">
+        <div class="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-xs font-semibold text-violet-300 mb-6">
+          ☕ Support Independent Development
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-5">
+          Your support keeps<br />
+          <span class="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">PaletteLive free</span><br />
+          for everyone.
+        </h1>
+        <p class="text-lg text-white/60 leading-relaxed max-w-xl mx-auto">
+          PaletteLive is built solo, nights and weekends — no VC funding, no subscriptions, no ads.
+          Every cup of coffee you buy directly fuels the next feature you've been waiting for.
+        </p>
+      </div>
+    </section>
+
+    <!-- What Your Support Unlocks -->
+    <section class="px-5 pb-12">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="text-xs font-bold tracking-widest text-white/40 text-center uppercase mb-8">What your support enables</h2>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="tier-card rounded-2xl border border-white/8 bg-white/4 p-5">
+            <div class="text-2xl mb-3">🐛</div>
+            <div class="text-sm font-semibold mb-1">Bug Fixes Faster</div>
+            <p class="text-xs text-white/55 leading-relaxed">₹50 covers a focused debugging session — every annoying issue you've hit gets prioritised.</p>
+          </div>
+          <div class="tier-card rounded-2xl border border-violet-500/30 bg-violet-500/8 p-5 relative">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-500 px-3 py-0.5 text-xs font-bold text-white">Most Impactful</div>
+            <div class="text-2xl mb-3">⚡</div>
+            <div class="text-sm font-semibold mb-1">Ship New Features</div>
+            <p class="text-xs text-white/55 leading-relaxed">₹100 buys a full Saturday of dev time — Firefox support, palette export presets, and more.</p>
+          </div>
+          <div class="tier-card rounded-2xl border border-white/8 bg-white/4 p-5">
+            <div class="text-2xl mb-3">🚀</div>
+            <div class="text-sm font-semibold mb-1">Keep the Lights On</div>
+            <p class="text-xs text-white/55 leading-relaxed">₹200+ covers domain & infrastructure for months — the extension stays free for everyone.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QR + Payment Section -->
+    <section class="px-5 pb-16">
+      <div class="mx-auto max-w-md">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-8 text-center glow">
+          
+          <p class="text-sm font-semibold text-white/70 mb-6">Scan to pay via any UPI app</p>
+
+          <!-- QR Code with pulse effect -->
+          <div class="relative inline-flex items-center justify-center mb-6">
+            <div class="pulse-ring absolute h-64 w-64 rounded-2xl border-2 border-violet-500/50"></div>
+            <div class="qr-glow relative rounded-2xl overflow-hidden border-2 border-white/15 bg-white p-3">
+              <img
+                src="/upi-qr.jpg"
+                alt="UPI QR Code — mckesav05"
+                class="h-52 w-52 object-contain"
+              />
+            </div>
+          </div>
+
+          <div class="mb-5">
+            <div class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2">
+              <span class="text-xs text-white/50">UPI ID</span>
+              <span class="text-sm font-mono font-semibold text-white" id="upiId">mckesav05@oksbi</span>
+              <button onclick="copyUPI()" class="text-violet-400 hover:text-violet-300 transition-colors ml-1" title="Copy UPI ID">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                </svg>
+              </button>
+            </div>
+            <div id="copyMsg" class="text-xs text-emerald-400 mt-2 opacity-0 transition-opacity duration-300">✓ Copied to clipboard!</div>
+          </div>
+
+          <!-- Suggested amounts -->
+          <div class="mb-6">
+            <p class="text-xs text-white/40 mb-3">Suggested amounts</p>
+            <div class="flex justify-center gap-2 flex-wrap">
+              <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold cursor-default">₹50</span>
+              <span class="rounded-xl border border-violet-500/40 bg-violet-500/15 px-4 py-2 text-sm font-semibold text-violet-300 cursor-default">₹100</span>
+              <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold cursor-default">₹200</span>
+              <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold cursor-default">₹500</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-white/35">Works with GPay, PhonePe, Paytm, BHIM & any UPI app</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transparency Section -->
+    <section class="border-t border-white/8 px-5 py-14">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-xs font-bold tracking-widest text-white/40 uppercase mb-4">100% Transparent</h2>
+        <p class="text-white/60 text-sm leading-relaxed mb-8">
+          Every rupee is reinvested into PaletteLive. No middlemen, no platform cuts.
+          Here's exactly where your support goes:
+        </p>
+        <div class="grid sm:grid-cols-3 gap-4 text-left">
+          <div class="rounded-2xl border border-white/8 bg-white/4 p-5">
+            <div class="text-lg font-bold text-violet-400 mb-1">40%</div>
+            <div class="text-sm font-semibold mb-1">Dev Time</div>
+            <p class="text-xs text-white/50">Weekends freed up to build features instead of side gigs.</p>
+          </div>
+          <div class="rounded-2xl border border-white/8 bg-white/4 p-5">
+            <div class="text-lg font-bold text-indigo-400 mb-1">40%</div>
+            <div class="text-sm font-semibold mb-1">Infrastructure</div>
+            <p class="text-xs text-white/50">Domains, hosting, and the tools that keep the site running.</p>
+          </div>
+          <div class="rounded-2xl border border-white/8 bg-white/4 p-5">
+            <div class="text-lg font-bold text-blue-400 mb-1">20%</div>
+            <div class="text-sm font-semibold mb-1">Testing Devices</div>
+            <p class="text-xs text-white/50">Real-device testing across browsers to ensure every user has a great experience.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Roadmap Teaser -->
+    <section class="border-t border-white/8 px-5 py-14">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-xs font-bold tracking-widest text-white/40 uppercase mb-4">What's coming next</h2>
+        <p class="text-white/60 text-sm mb-8">Your support directly accelerates these features:</p>
+        <div class="space-y-3 text-left max-w-sm mx-auto">
+          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
+            <span class="text-lg">🦊</span>
+            <div>
+              <span class="text-sm font-semibold">Firefox & Edge support</span>
+              <span class="ml-2 rounded-full bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 font-medium">In progress</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
+            <span class="text-lg">🎨</span>
+            <div>
+              <span class="text-sm font-semibold">Palette presets & community sharing</span>
+              <span class="ml-2 rounded-full bg-slate-500/30 text-white/40 text-xs px-2 py-0.5 font-medium">Planned</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
+            <span class="text-lg">📱</span>
+            <div>
+              <span class="text-sm font-semibold">Figma & Framer token sync</span>
+              <span class="ml-2 rounded-full bg-slate-500/30 text-white/40 text-xs px-2 py-0.5 font-medium">Planned</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
+            <span class="text-lg">🤝</span>
+            <div>
+              <span class="text-sm font-semibold">Team palette collaboration</span>
+              <span class="ml-2 rounded-full bg-slate-500/30 text-white/40 text-xs px-2 py-0.5 font-medium">Planned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="border-t border-white/8 px-5 py-16 text-center">
+      <div class="mx-auto max-w-lg">
+        <p class="text-2xl font-bold mb-3">Ready to fuel the next update?</p>
+        <p class="text-white/55 text-sm mb-8">Even ₹50 makes a real difference. Thank you for believing in independent open tools.</p>
+        <a href="#qr" onclick="document.querySelector('.qr-glow').scrollIntoView({behavior:'smooth'}); return false;"
+          class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-sm font-bold text-white hover:from-violet-500 hover:to-indigo-500 transition-all shadow-lg shadow-violet-900/40">
+          ☕ Support Now via UPI
+        </a>
+        <p class="mt-5 text-xs text-white/30">No account needed. Instant. Secure.</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/8 py-8 px-5">
+      <div class="mx-auto max-w-5xl text-center text-xs text-white/35">
+        <p>© 2026 PaletteLive · Built with ♥ by <a href="https://github.com/MCKesav" class="hover:text-white transition-colors">MCKesav</a></p>
+        <p class="mt-2">
+          <a href="/" class="hover:text-white transition-colors">Home</a> ·
+          <a href="/privacypolicy" class="hover:text-white transition-colors ml-2">Privacy</a> ·
+          <a href="/contact" class="hover:text-white transition-colors ml-2">Contact</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function copyUPI() {
+        navigator.clipboard.writeText('mckesav05@oksbi').then(function() {
+          var msg = document.getElementById('copyMsg');
+          msg.style.opacity = '1';
+          setTimeout(function() { msg.style.opacity = '0'; }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>

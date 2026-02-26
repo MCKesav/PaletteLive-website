@@ -1436,6 +1436,7 @@ export function App() {
             <a className="hover:text-white" href="/privacypolicy">Privacy</a>
             <a className="hover:text-white" href="#faq">FAQ</a>
             <a className="hover:text-white" href="#contact">Contact</a>
+            <a className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500 transition-colors" href="/supportdev">☕ Support</a>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -2061,6 +2062,7 @@ export function App() {
                   <a className="block text-sm text-white/65 hover:text-white" href="/privacypolicy">Privacy Policy</a>
                   <a className="block text-sm text-white/65 hover:text-white" href="#faq">FAQ</a>
                   <a className="block text-sm text-white/65 hover:text-white" href="#contact">Contact</a>
+                  <a className="block text-sm font-semibold text-violet-400 hover:text-violet-300" href="/supportdev">☕ Support Dev</a>
                 </div>
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Links</div>

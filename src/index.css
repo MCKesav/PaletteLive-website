@@ -1,0 +1,7 @@
+﻿@import "tailwindcss";
+
+@keyframes plScanLine {
+  0%   { top: -2px; opacity: 1; }
+  85%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}

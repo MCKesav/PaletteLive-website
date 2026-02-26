@@ -638,11 +638,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
           >
             {/* Panel header */}
             <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: selectedSwatch !== null ? "1px solid var(--pl-border)" : "none", background: "var(--pl-surface)" }}>
-              <div className="h-5 w-5 rounded-md bg-gradient-to-br from-violet-500 to-indigo-500 p-0.5 flex-shrink-0">
-                <div className="flex h-full w-full items-center justify-center">
-                  <Icon name="sparkles" className="h-2.5 w-2.5 text-white" />
-                </div>
-              </div>
+              <img src="/logo.png" alt="PaletteLive Logo" className="h-5 w-5 rounded-md flex-shrink-0" />
               <span style={{ fontWeight: 600, fontSize: 14, color: "var(--pl-primary)", flex: 1 }}>PaletteLive Editor</span>
               {selectedSwatch === null && (
                 <span style={{ fontSize: 11, color: "var(--pl-fg-muted)", fontStyle: "italic" }}>← click a color swatch</span>
@@ -1463,9 +1459,7 @@ export function App() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
           <a href="#" className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 shadow-lg shadow-indigo-500/20">
-              <Icon name="sparkles" className="h-5 w-5" />
-            </div>
+            <img src="/logo.png" alt="PaletteLive Logo" className="h-10 w-10 rounded-2xl shadow-lg shadow-indigo-500/20" />
             <div>
               <div className="text-sm font-semibold tracking-tight">PaletteLive</div>
               <div className="text-xs text-white/60">Live website palette engine</div>

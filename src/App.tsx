@@ -1412,10 +1412,10 @@ export function App() {
 
   // Custom paint-brush cursor: switches brush based on background luminance
   useEffect(() => {
-    // Hotspot = bristle tip. Image is 99×72px.
-    // Brush diagonal: handle top-left → bristles bottom-right. Tip at (91, 67)
-    const DARK_CURSOR  = "url('/brush-dark.png') 91 67, crosshair";  // dark brush on dark bg
-    const LIGHT_CURSOR = "url('/brush-light.png') 91 67, crosshair"; // light brush on light bg
+    // Hotspot = bristle tip. Image is 99×72px, rotated 180°.
+    // Bristles now at top-left. Tip at (8, 7)
+    const DARK_CURSOR  = "url('/brush-dark.png') 8 7, crosshair";  // dark brush on dark bg
+    const LIGHT_CURSOR = "url('/brush-light.png') 8 7, crosshair"; // light brush on light bg
 
     function getLuminance(el: Element | null): number {
       while (el && el !== document.documentElement) {

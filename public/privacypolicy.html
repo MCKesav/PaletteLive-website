@@ -99,7 +99,7 @@
         <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
           <li><strong>Webpage Content:</strong> To extract colors and styles from the active tab only.</li>
           <li><strong>Clipboard:</strong> To allow you to copy/export color codes (write-only access, never read).</li>
-          <li><strong>Screen Captures:</strong> The "Before/After" comparison feature is implemented via <strong>DOM/CSS rendering</strong> (a cloned overlay layer using <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">clip-path</code>). No browser capture API is used.</li>
+          <li><strong>Screen Captures:</strong> The "Before/After" comparison feature is implemented via <strong>DOM/CSS rendering</strong> (a cloned overlay layer using <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">clip-path</code>). No browser capture API (<code class="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.tabCapture</code>, <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.desktopCapture</code>, or <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">navigator.mediaDevices.getDisplayMedia</code>) is used, and no screen capture manifest permission is required.</li>
         </ul>
 
         <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">What We Do NOT Collect</h3>
@@ -124,7 +124,7 @@
         </p>
         <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
           <li><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.storage.local</code> / <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">browser.storage.local</code> — For saved color palettes and user settings</li>
-          <li><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.storage.session</code> / <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">browser.storage.session</code> — For temporary data during active sessions</li>
+          <li><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">chrome.storage.session</code> / <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">browser.storage.session</code> — For temporary data during active sessions (editor window state, heatmap analysis data, cluster maps)</li>
         </ul>
 
         <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">No External Transmission</h3>
@@ -142,7 +142,7 @@
         <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Data Retention</h3>
         <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
           <li>Saved palettes persist until you manually delete them or uninstall the extension.</li>
-          <li>Temporary session data is automatically cleared when you close the browser.</li>
+          <li>Temporary session data (editor state, heatmap analysis) is automatically cleared when you close the browser.</li>
           <li>You can clear all data at any time through the extension's settings.</li>
         </ul>
 
@@ -155,32 +155,43 @@
               <tr>
                 <th class="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-800">Permission</th>
                 <th class="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-800">Purpose</th>
+                <th class="border border-slate-300 px-4 py-2 text-left font-semibold text-slate-800">Justification</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="border border-slate-300 px-4 py-2"><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">activeTab</code></td>
                 <td class="border border-slate-300 px-4 py-2 text-slate-700">Access the currently active tab for color extraction</td>
+                <td class="border border-slate-300 px-4 py-2 text-slate-700">Scoped to user-initiated actions only; does not grant persistent access</td>
               </tr>
               <tr>
                 <td class="border border-slate-300 px-4 py-2"><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">scripting</code></td>
                 <td class="border border-slate-300 px-4 py-2 text-slate-700">Inject CSS overrides for live color-editing previews</td>
+                <td class="border border-slate-300 px-4 py-2 text-slate-700">Required to apply and remove color changes on the page in real time</td>
               </tr>
               <tr>
                 <td class="border border-slate-300 px-4 py-2"><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">storage</code></td>
                 <td class="border border-slate-300 px-4 py-2 text-slate-700">Save color palettes and settings locally</td>
+                <td class="border border-slate-300 px-4 py-2 text-slate-700">All data stays on-device; no remote writes</td>
               </tr>
               <tr>
-                <td class="border border-slate-300 px-4 py-2"><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">sidePanel</code></td>
-                <td class="border border-slate-300 px-4 py-2 text-slate-700">Open the color editor in the browser's side panel</td>
-              </tr>
-              <tr>
-                <td class="border border-slate-300 px-4 py-2"><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">&lt;all_urls&gt;</code></td>
+                <td class="border border-slate-300 px-4 py-2"><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">host_permissions: &lt;all_urls&gt;</code></td>
                 <td class="border border-slate-300 px-4 py-2 text-slate-700">Re-apply saved palettes when you revisit matching domains</td>
+                <td class="border border-slate-300 px-4 py-2 text-slate-700">Used solely to match saved domains to your local palette data; no crawling, no data collection, no browsing history access</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 px-4 py-2 text-slate-500 italic">(no screen capture permission)</td>
+                <td class="border border-slate-300 px-4 py-2 text-slate-700">Before/After comparison overlay</td>
+                <td class="border border-slate-300 px-4 py-2 text-slate-700">The comparison is implemented via DOM/CSS rendering (<code class="px-1 py-0.5 bg-slate-100 rounded text-sm">clip-path</code> on a cloned layer); no <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">tabCapture</code>, <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">desktopCapture</code>, or <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">getDisplayMedia</code> API is used</td>
               </tr>
             </tbody>
           </table>
         </div>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Why <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">&lt;all_urls&gt;</code> Is Necessary</h3>
+        <p class="text-slate-700 leading-relaxed">
+          <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">activeTab</code> alone cannot re-apply saved palette overrides when a page loads automatically (e.g., on navigation). <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">&lt;all_urls&gt;</code> is required so the extension's content script can check whether the current domain has a saved palette and apply it — purely locally. No URL data is transmitted or stored beyond the domain name you explicitly saved.
+        </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">How We Use Your Data</h2>
         <p class="text-slate-700 leading-relaxed">The collected color data is used solely for:</p>
@@ -203,31 +214,84 @@
           <li><strong>Transmitting data via XHR, fetch, WebSocket, or any network request</strong></li>
           <li><strong>Loading external JavaScript files</strong> at runtime</li>
           <li><strong>Using obfuscated or minified code</strong> beyond what is readable for review</li>
-          <li><strong>Including hidden features</strong> or undisclosed functionality</li>
+          <li><strong>Modifying browser monetization or referral parameters</strong> (including Opera's)</li>
+          <li><strong>Including hidden features</strong> or undisclosed functionality of any kind</li>
         </ul>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Code & Technical Transparency</h2>
         <p class="text-slate-700 leading-relaxed mb-2">PaletteLive is built to be fully transparent and reviewable:</p>
         <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
-          <li><strong>No obfuscation:</strong> All extension code is human-readable</li>
-          <li><strong>No remote scripts:</strong> The extension does not load JavaScript from any external URL</li>
-          <li><strong>No external dependencies at runtime:</strong> No CDN-loaded libraries</li>
-          <li><strong>Fully auditable:</strong> Complete source code is available for review</li>
+          <li><strong>No obfuscation:</strong> All extension code is human-readable. No minification or obfuscation is applied.</li>
+          <li><strong>No remote scripts:</strong> The extension does not load JavaScript from any external URL. All code is bundled and packaged locally within the extension.</li>
+          <li><strong>No external dependencies at runtime:</strong> No CDN-loaded libraries, no dynamic <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">import()</code> from remote sources.</li>
+          <li><strong>No build tools producing unreadable output:</strong> The source code submitted is the same code that runs in the browser.</li>
+          <li><strong>Official library versions only:</strong> Any third-party libraries used are from their official sources and are included verbatim in the package.</li>
+          <li><strong>Fully auditable:</strong> The complete source code is available for review without any additional build steps.</li>
         </ul>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Monetization Transparency</h2>
-        <p class="text-slate-700 leading-relaxed">
-          This extension is <strong>not monetized</strong> and does <strong>not</strong> display advertisements. No ads, affiliate links, or revenue is generated from user data or extension usage.
-        </p>
+        <p class="text-slate-700 leading-relaxed mb-2">This extension is <strong>not monetized</strong> and does <strong>not</strong> display advertisements.</p>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li>No ads are shown to users</li>
+          <li>No affiliate links or referral tracking</li>
+          <li>No sponsored content</li>
+          <li>The extension does not interfere with, modify, or replace browser monetization systems (including Opera's built-in monetization or referral parameters)</li>
+          <li>No revenue is generated from user data or extension usage</li>
+        </ul>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">AI / Machine Learning Disclosure</h2>
-        <p class="text-slate-700 leading-relaxed">
-          PaletteLive does <strong>not</strong> use any artificial intelligence, machine learning models, or large language models (LLMs). No user data is used for AI/ML training or sent to AI service providers. All color processing uses deterministic algorithms.
-        </p>
+        <p class="text-slate-700 leading-relaxed mb-2">PaletteLive does <strong>not</strong> use any artificial intelligence, machine learning models, or large language models (LLMs).</p>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li>No user data is used for AI/ML training</li>
+          <li>No data is sent to AI service providers (e.g., OpenAI, Google AI, Anthropic, etc.)</li>
+          <li>All color processing uses deterministic algorithms (CSS parsing, color space math, contrast calculations) with no inference models</li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Browser-Specific Declarations</h2>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Mozilla Firefox (AMO)</h3>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li><code class="px-1 py-0.5 bg-slate-100 rounded text-sm">browser_specific_settings.gecko.data_collection_permissions</code> (in <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">manifest.json</code>): declared as an object with a <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">required</code> array listing <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">"none"</code> — confirming that PaletteLive collects no user data that is transmitted off-device.</li>
+          <li>The extension uses <code class="px-1 py-0.5 bg-slate-100 rounded text-sm">browser.storage</code> APIs (compatible via WebExtensions API).</li>
+          <li>No external connections are established at any point.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Google Chrome (Chrome Web Store)</h3>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li>The <strong>Privacy Practices</strong> tab on the Chrome Web Store dashboard is filled to match this policy exactly.</li>
+          <li><strong>Limited Use compliance</strong>: Data accessed via Chrome APIs is used solely to provide the extension's color-extraction feature and is not transferred, sold, or used for any secondary purpose.</li>
+          <li>Every data category declared in the dashboard has a corresponding explanation in this policy.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Microsoft Edge (Edge Add-ons Store)</h3>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li>This privacy policy URL is provided in the Edge Add-ons submission.</li>
+          <li>Each requested manifest permission is individually justified in the submission notes.</li>
+          <li>The extension complies with Microsoft Edge Add-ons Store policies.</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Opera (Opera Add-ons)</h3>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li>This privacy policy URL is provided in the Opera Add-ons submission.</li>
+          <li>The extension does <strong>not</strong> modify Opera's monetization or referral parameters.</li>
+          <li>Each permission is independently justified and minimal.</li>
+        </ul>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Compliance & Children's Privacy</h2>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Legal Compliance</h3>
+        <p class="text-slate-700 leading-relaxed mb-2">We comply with the developer program policies of all supported browser stores:</p>
+        <ul class="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+          <li>Google Chrome Web Store Developer Program Policies</li>
+          <li>Microsoft Edge Add-ons Store Policies</li>
+          <li>Opera Add-ons Policies</li>
+          <li>Mozilla Firefox Add-on Policies (AMO)</li>
+        </ul>
+        <p class="text-slate-700 leading-relaxed">We do <strong>not</strong> sell, trade, license, or otherwise transfer user data to any outside party.</p>
+
+        <h3 class="text-xl font-semibold text-slate-800 mt-6 mb-3">Children's Privacy</h3>
         <p class="text-slate-700 leading-relaxed">
-          PaletteLive is <strong>not</strong> intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13. We comply with all supported browser store developer program policies.
+          PaletteLive is <strong>not</strong> intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, please contact us immediately to have it removed.
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Security</h2>
@@ -260,7 +324,7 @@
         </p>
         <p class="text-slate-700 leading-relaxed mb-4">
           <strong>Movva Chenna Kesav</strong><br />
-          Email: <a href="mailto:mckesavdev+support@gmail.com" class="text-blue-600 hover:underline">mckesavdev+support@gmail.com</a>
+          Email: <a href="mailto:movva.chenna.kesav@gmail.com" class="text-blue-600 hover:underline">movva.chenna.kesav@gmail.com</a>
         </p>
 
         <h2 class="text-2xl font-semibold text-slate-900 mt-8 mb-4">Summary</h2>

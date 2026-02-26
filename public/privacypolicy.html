@@ -14,12 +14,12 @@
     <meta property="og:image" content="https://palettelive.mckesav.in/logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      *, *::before, *::after { cursor: inherit !important; }
+      body *, body *::before, body *::after { cursor: inherit !important; }
     </style>
     <script>
       (function() {
-        var DARK = "url('/brush-dark.png') 10 116, crosshair";
-        var LIGHT = "url('/brush-light.png') 10 116, crosshair";
+        var DARK = "url('/brush-dark.png') 4 44, crosshair";
+        var LIGHT = "url('/brush-light.png') 4 44, crosshair";
         function lum(el) {
           while (el && el !== document.documentElement) {
             var bg = window.getComputedStyle(el).backgroundColor;

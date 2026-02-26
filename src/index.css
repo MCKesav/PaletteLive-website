@@ -1,7 +1,7 @@
 ﻿@import "tailwindcss";
 
 /* Force all elements to inherit the custom brush cursor set on body */
-*, *::before, *::after {
+body *, body *::before, body *::after {
   cursor: inherit !important;
 }
 

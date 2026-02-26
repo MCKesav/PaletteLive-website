@@ -208,8 +208,7 @@ function SitePreview({ pal, heatmapOn = false, onColorClick }: { pal: PaletteDat
       <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("surface"); } : undefined}
         style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 16px", background: pal.surface, borderBottom: `1px solid ${pal.accent}22`, cursor: clickable ? "pointer" : undefined, transition: "background 0.5s" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("accent"); } : undefined}
-            style={{ width: 20, height: 20, borderRadius: 6, background: `linear-gradient(135deg, ${pal.accent}, ${pal.primary})`, flexShrink: 0, cursor: clickable ? "pointer" : undefined }} />
+          <img src="/images/logo.png" alt="PaletteLive Logo" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }} />
           <span style={{ fontSize: 12, fontWeight: 800, color: pal.accent, letterSpacing: "-0.02em", transition: "color 0.5s" }}>PaletteLive</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -786,10 +785,8 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
             {/* Popup header */}
             <div className="flex items-center justify-between px-3 py-2" style={{ borderBottom: "1px solid var(--pl-border)", background: "var(--pl-bg)", position: "sticky", top: 0, zIndex: 10 }}>
               <div className="flex items-center gap-2" style={{ fontWeight: 700, fontSize: 15, color: "var(--pl-primary)" }}>
-                <div className="h-6 w-6 rounded-md bg-gradient-to-br from-violet-500 to-indigo-500 p-0.5">
-                  <div className="flex h-full w-full items-center justify-center">
-                    <Icon name="sparkles" className="h-3.5 w-3.5 text-white" />
-                  </div>
+                <div className="h-6 w-6 rounded-md bg-white p-0.5 flex items-center justify-center">
+                  <img src="/images/logo.png" alt="PaletteLive Logo" className="h-full w-full object-contain rounded-md" />
                 </div>
                 <a href="https://palettelive.mckesav.in" target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>PaletteLive</a>
               </div>
@@ -1609,6 +1606,14 @@ export function App() {
             ))}
           </div>
           </div>
+
+        {/* Contact Info Section */}
+        <section className="bg-slate-950 text-white py-8">
+          <div className="mx-auto max-w-2xl px-5">
+            <h2 className="text-xl font-semibold mb-2">Contact & Support</h2>
+            <p className="text-sm text-white/80 mb-2">For support, questions, or bug reports, please contact us at:</p>
+            <a href="mailto:mckesavdev+support@gmail.com" className="text-sm text-blue-400 hover:underline">mckesavdev+support@gmail.com</a>
+          </div>
         </section>
 
         {/* Power pillars */}
@@ -2005,9 +2010,7 @@ export function App() {
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 shadow-lg shadow-indigo-500/20">
-                    <Icon name="sparkles" className="h-5 w-5" />
-                  </div>
+                  <img src="/images/logo.png" alt="PaletteLive Logo" className="h-10 w-10 rounded-2xl shadow-lg" />
                   <div>
                     <div className="text-sm font-semibold">PaletteLive</div>
                     <div className="text-xs text-white/60">Professional palette tooling for live websites</div>
@@ -2036,7 +2039,7 @@ export function App() {
                     <Icon name="github" className="h-4 w-4" />
                     GitHub
                   </a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#">Support / Bug report</a>
+                  <a className="block text-sm text-white/65 hover:text-white" href="mailto:mckesavdev+support@gmail.com">Support / Bug report</a>
                 </div>
               </div>
             </div>

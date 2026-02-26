@@ -1,14 +1,35 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/images/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Support the Developer — PaletteLive</title>
+    <title>Support the Developer â€” PaletteLive</title>
     <meta name="description" content="Your support keeps PaletteLive free and growing. Help fund the next big features." />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       *, *::before, *::after { cursor: inherit !important; }
+      body { font-family: 'Inter', sans-serif; background-color: #0d1b2a; color: #e0e1dd; }
+      .card { background-color: #1b263b; border: 1px solid #415a77; transition: transform 0.2s ease; }
+      .card:hover { transform: translateY(-4px); }
+      .qr-card { background-color: #1b263b; border: 1px solid #415a77; box-shadow: 0 0 60px rgba(65,90,119,0.4), 0 0 20px rgba(65,90,119,0.2); }
+      .qr-img-wrap { border: 2px solid #415a77; box-shadow: 0 0 40px rgba(119,141,169,0.3); }
+      @keyframes pulse-ring {
+        0%   { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(1.14); opacity: 0; }
+      }
+      .pulse-ring { animation: pulse-ring 2.2s ease-out infinite; border-color: #415a77; }
+      .badge-main     { background-color: #415a77; color: #e0e1dd; }
+      .badge-progress { background-color: rgba(119,141,169,0.2); color: #778da9; }
+      .badge-planned  { background-color: rgba(65,90,119,0.25); color: #778da9; }
+      .cta-btn { background: linear-gradient(135deg, #415a77, #778da9); color: #e0e1dd; box-shadow: 0 8px 32px rgba(65,90,119,0.45); transition: opacity 0.2s; }
+      .cta-btn:hover { opacity: 0.88; }
+      .amount-chip        { background-color: #1b263b; border: 1px solid #415a77; color: #e0e1dd; }
+      .amount-chip-active { background-color: #415a77; border: 1px solid #778da9; color: #e0e1dd; }
+      .upi-box { background-color: #0d1b2a; border: 1px solid #415a77; }
+      header { background-color: rgba(13,27,42,0.85); border-bottom: 1px solid #1b263b; }
+      footer { background-color: #0d1b2a; border-top: 1px solid #1b263b; }
+      a { transition: color 0.2s; }
     </style>
     <script>
       (function() {
@@ -36,192 +57,166 @@
         });
       })();
     </script>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-      body { font-family: 'Inter', sans-serif; }
-      .glow { box-shadow: 0 0 40px rgba(139, 92, 246, 0.35); }
-      .tier-card:hover { transform: translateY(-4px); }
-      .tier-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-      .qr-glow { box-shadow: 0 0 60px rgba(139, 92, 246, 0.4), 0 0 20px rgba(139, 92, 246, 0.2); }
-      @keyframes pulse-ring {
-        0% { transform: scale(1); opacity: 0.6; }
-        100% { transform: scale(1.12); opacity: 0; }
-      }
-      .pulse-ring { animation: pulse-ring 2s ease-out infinite; }
-    </style>
   </head>
-  <body class="bg-slate-950 text-white">
+  <body>
 
     <!-- Header -->
-    <header class="border-b border-white/5 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <header class="sticky top-0 z-50 backdrop-blur">
       <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-4">
         <a href="/" class="flex items-center gap-3">
           <img src="/images/logo.png" alt="PaletteLive Logo" class="h-9 w-9 rounded-xl shadow-lg" />
           <div>
-            <div class="text-sm font-semibold tracking-tight">PaletteLive</div>
-            <div class="text-xs text-white/50">Live website palette engine</div>
+            <div class="text-sm font-semibold" style="color:#e0e1dd">PaletteLive</div>
+            <div class="text-xs" style="color:#778da9">Live website palette engine</div>
           </div>
         </a>
-        <a href="/" class="text-sm text-white/50 hover:text-white transition-colors">← Back to Home</a>
+        <a href="/" style="color:#778da9" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#778da9'" class="text-sm">â† Back to Home</a>
       </div>
     </header>
 
     <!-- Hero -->
     <section class="relative overflow-hidden pt-20 pb-12 px-5 text-center">
-      <!-- Background glow orbs -->
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
-        <div class="absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full bg-violet-600/10 blur-3xl"></div>
-        <div class="absolute right-1/4 top-10 h-72 w-72 translate-x-1/2 rounded-full bg-indigo-600/10 blur-3xl"></div>
+        <div class="absolute left-1/4 top-0 h-96 w-96 -translate-x-1/2 rounded-full blur-3xl" style="background:rgba(65,90,119,0.18)"></div>
+        <div class="absolute right-1/4 top-10 h-72 w-72 translate-x-1/2 rounded-full blur-3xl" style="background:rgba(119,141,169,0.10)"></div>
       </div>
-
       <div class="relative z-10 mx-auto max-w-2xl">
-        <div class="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-xs font-semibold text-violet-300 mb-6">
-          ☕ Support Independent Development
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold mb-6" style="background:rgba(65,90,119,0.2);border:1px solid #415a77;color:#778da9">
+          â˜• Support Independent Development
         </div>
-        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-5">
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-5" style="color:#e0e1dd">
           Your support keeps<br />
-          <span class="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">PaletteLive free</span><br />
+          <span style="background:linear-gradient(to right,#778da9,#e0e1dd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">PaletteLive free</span><br />
           for everyone.
         </h1>
-        <p class="text-lg text-white/60 leading-relaxed max-w-xl mx-auto">
-          PaletteLive is built solo, nights and weekends — no VC funding, no subscriptions, no ads.
+        <p class="text-lg leading-relaxed max-w-xl mx-auto" style="color:#778da9">
+          PaletteLive is built solo, nights and weekends â€” no VC funding, no subscriptions, no ads.
           Every cup of coffee you buy directly fuels the next feature you've been waiting for.
         </p>
       </div>
     </section>
 
-    <!-- What Your Support Unlocks -->
+    <!-- Impact Cards -->
     <section class="px-5 pb-12">
       <div class="mx-auto max-w-3xl">
-        <h2 class="text-xs font-bold tracking-widest text-white/40 text-center uppercase mb-8">What your support enables</h2>
+        <h2 class="text-xs font-bold tracking-widest text-center uppercase mb-8" style="color:#415a77">What your support enables</h2>
         <div class="grid sm:grid-cols-3 gap-4">
-          <div class="tier-card rounded-2xl border border-white/8 bg-white/4 p-5">
-            <div class="text-2xl mb-3">🐛</div>
-            <div class="text-sm font-semibold mb-1">Bug Fixes Faster</div>
-            <p class="text-xs text-white/55 leading-relaxed">₹50 covers a focused debugging session — every annoying issue you've hit gets prioritised.</p>
+          <div class="card rounded-2xl p-5">
+            <div class="text-2xl mb-3">ðŸ›</div>
+            <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Bug Fixes Faster</div>
+            <p class="text-xs leading-relaxed" style="color:#778da9">â‚¹50 covers a focused debugging session â€” every annoying issue you've hit gets prioritised.</p>
           </div>
-          <div class="tier-card rounded-2xl border border-violet-500/30 bg-violet-500/8 p-5 relative">
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-500 px-3 py-0.5 text-xs font-bold text-white">Most Impactful</div>
-            <div class="text-2xl mb-3">⚡</div>
-            <div class="text-sm font-semibold mb-1">Ship New Features</div>
-            <p class="text-xs text-white/55 leading-relaxed">₹100 buys a full Saturday of dev time — Firefox support, palette export presets, and more.</p>
+          <div class="card rounded-2xl p-5 relative" style="border-color:#778da9">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-xs font-bold badge-main">Most Impactful</div>
+            <div class="text-2xl mb-3">âš¡</div>
+            <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Ship New Features</div>
+            <p class="text-xs leading-relaxed" style="color:#778da9">â‚¹100 buys a full Saturday of dev time â€” Firefox support, palette export presets, and more.</p>
           </div>
-          <div class="tier-card rounded-2xl border border-white/8 bg-white/4 p-5">
-            <div class="text-2xl mb-3">🚀</div>
-            <div class="text-sm font-semibold mb-1">Keep the Lights On</div>
-            <p class="text-xs text-white/55 leading-relaxed">₹200+ covers domain & infrastructure for months — the extension stays free for everyone.</p>
+          <div class="card rounded-2xl p-5">
+            <div class="text-2xl mb-3">ðŸš€</div>
+            <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Keep the Lights On</div>
+            <p class="text-xs leading-relaxed" style="color:#778da9">â‚¹200+ covers domain & infrastructure for months â€” the extension stays free for everyone.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- QR + Payment Section -->
+    <!-- QR + Payment -->
     <section class="px-5 pb-16">
       <div class="mx-auto max-w-md">
-        <div class="rounded-3xl border border-white/10 bg-white/5 p-8 text-center glow">
-          
-          <p class="text-sm font-semibold text-white/70 mb-6">Scan to pay via any UPI app</p>
-
-          <!-- QR Code with pulse effect -->
+        <div class="qr-card rounded-3xl p-8 text-center">
+          <p class="text-sm font-semibold mb-6" style="color:#778da9">Scan to pay via any UPI app</p>
           <div class="relative inline-flex items-center justify-center mb-6">
-            <div class="pulse-ring absolute h-64 w-64 rounded-2xl border-2 border-violet-500/50"></div>
-            <div class="qr-glow relative rounded-2xl overflow-hidden border-2 border-white/15 bg-white p-3">
-              <img
-                src="/upi-qr.jpg"
-                alt="UPI QR Code — mckesav05"
-                class="h-52 w-52 object-contain"
-              />
+            <div class="pulse-ring absolute h-64 w-64 rounded-2xl border-2"></div>
+            <div class="qr-img-wrap relative rounded-2xl overflow-hidden bg-white p-3">
+              <img src="/upi-qr.jpg" alt="UPI QR Code â€” mckesav05" class="h-52 w-52 object-contain" />
             </div>
           </div>
-
           <div class="mb-5">
-            <div class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2">
-              <span class="text-xs text-white/50">UPI ID</span>
-              <span class="text-sm font-mono font-semibold text-white" id="upiId">mckesav05@oksbi</span>
-              <button onclick="copyUPI()" class="text-violet-400 hover:text-violet-300 transition-colors ml-1" title="Copy UPI ID">
+            <div class="inline-flex items-center gap-2 rounded-xl px-4 py-2 upi-box">
+              <span class="text-xs" style="color:#415a77">UPI ID</span>
+              <span class="text-sm font-mono font-semibold" style="color:#e0e1dd" id="upiId">mckesav05@oksbi</span>
+              <button onclick="copyUPI()" style="color:#778da9" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#778da9'" class="ml-1" title="Copy UPI ID">
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
                 </svg>
               </button>
             </div>
-            <div id="copyMsg" class="text-xs text-emerald-400 mt-2 opacity-0 transition-opacity duration-300">✓ Copied to clipboard!</div>
+            <div id="copyMsg" class="text-xs mt-2 opacity-0 transition-opacity duration-300" style="color:#778da9">âœ“ Copied!</div>
           </div>
-
-          <!-- Suggested amounts -->
           <div class="mb-6">
-            <p class="text-xs text-white/40 mb-3">Suggested amounts</p>
+            <p class="text-xs mb-3" style="color:#415a77">Suggested amounts</p>
             <div class="flex justify-center gap-2 flex-wrap">
-              <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold cursor-default">₹50</span>
-              <span class="rounded-xl border border-violet-500/40 bg-violet-500/15 px-4 py-2 text-sm font-semibold text-violet-300 cursor-default">₹100</span>
-              <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold cursor-default">₹200</span>
-              <span class="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold cursor-default">₹500</span>
+              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">â‚¹50</span>
+              <span class="amount-chip-active rounded-xl px-4 py-2 text-sm font-semibold">â‚¹100</span>
+              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">â‚¹200</span>
+              <span class="amount-chip rounded-xl px-4 py-2 text-sm font-semibold">â‚¹500</span>
             </div>
           </div>
-
-          <p class="text-xs text-white/35">Works with GPay, PhonePe, Paytm, BHIM & any UPI app</p>
+          <p class="text-xs" style="color:#415a77">Works with GPay, PhonePe, Paytm, BHIM & any UPI app</p>
         </div>
       </div>
     </section>
 
-    <!-- Transparency Section -->
-    <section class="border-t border-white/8 px-5 py-14">
+    <!-- Transparency -->
+    <section class="px-5 py-14" style="border-top:1px solid #1b263b">
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-xs font-bold tracking-widest text-white/40 uppercase mb-4">100% Transparent</h2>
-        <p class="text-white/60 text-sm leading-relaxed mb-8">
+        <h2 class="text-xs font-bold tracking-widest uppercase mb-4" style="color:#415a77">100% Transparent</h2>
+        <p class="text-sm leading-relaxed mb-8" style="color:#778da9">
           Every rupee is reinvested into PaletteLive. No middlemen, no platform cuts.
-          Here's exactly where your support goes:
         </p>
         <div class="grid sm:grid-cols-3 gap-4 text-left">
-          <div class="rounded-2xl border border-white/8 bg-white/4 p-5">
-            <div class="text-lg font-bold text-violet-400 mb-1">40%</div>
-            <div class="text-sm font-semibold mb-1">Dev Time</div>
-            <p class="text-xs text-white/50">Weekends freed up to build features instead of side gigs.</p>
+          <div class="card rounded-2xl p-5">
+            <div class="text-lg font-bold mb-1" style="color:#778da9">40%</div>
+            <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Dev Time</div>
+            <p class="text-xs" style="color:#778da9">Weekends freed up to build features instead of side gigs.</p>
           </div>
-          <div class="rounded-2xl border border-white/8 bg-white/4 p-5">
-            <div class="text-lg font-bold text-indigo-400 mb-1">40%</div>
-            <div class="text-sm font-semibold mb-1">Infrastructure</div>
-            <p class="text-xs text-white/50">Domains, hosting, and the tools that keep the site running.</p>
+          <div class="card rounded-2xl p-5">
+            <div class="text-lg font-bold mb-1" style="color:#415a77">40%</div>
+            <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Infrastructure</div>
+            <p class="text-xs" style="color:#778da9">Domains, hosting, and the tools that keep the site running.</p>
           </div>
-          <div class="rounded-2xl border border-white/8 bg-white/4 p-5">
-            <div class="text-lg font-bold text-blue-400 mb-1">20%</div>
-            <div class="text-sm font-semibold mb-1">Testing Devices</div>
-            <p class="text-xs text-white/50">Real-device testing across browsers to ensure every user has a great experience.</p>
+          <div class="card rounded-2xl p-5">
+            <div class="text-lg font-bold mb-1" style="color:#e0e1dd">20%</div>
+            <div class="text-sm font-semibold mb-1" style="color:#e0e1dd">Testing Devices</div>
+            <p class="text-xs" style="color:#778da9">Real-device testing across browsers for every user.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Roadmap Teaser -->
-    <section class="border-t border-white/8 px-5 py-14">
+    <!-- Roadmap -->
+    <section class="px-5 py-14" style="border-top:1px solid #1b263b">
       <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-xs font-bold tracking-widest text-white/40 uppercase mb-4">What's coming next</h2>
-        <p class="text-white/60 text-sm mb-8">Your support directly accelerates these features:</p>
+        <h2 class="text-xs font-bold tracking-widest uppercase mb-4" style="color:#415a77">What's coming next</h2>
+        <p class="text-sm mb-8" style="color:#778da9">Your support directly accelerates these features:</p>
         <div class="space-y-3 text-left max-w-sm mx-auto">
-          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
-            <span class="text-lg">🦊</span>
+          <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
+            <span class="text-lg">ðŸ¦Š</span>
             <div>
-              <span class="text-sm font-semibold">Firefox & Edge support</span>
-              <span class="ml-2 rounded-full bg-amber-500/20 text-amber-400 text-xs px-2 py-0.5 font-medium">In progress</span>
+              <span class="text-sm font-semibold" style="color:#e0e1dd">Firefox &amp; Edge support</span>
+              <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-progress">In progress</span>
             </div>
           </div>
-          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
-            <span class="text-lg">🎨</span>
+          <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
+            <span class="text-lg">ðŸŽ¨</span>
             <div>
-              <span class="text-sm font-semibold">Palette presets & community sharing</span>
-              <span class="ml-2 rounded-full bg-slate-500/30 text-white/40 text-xs px-2 py-0.5 font-medium">Planned</span>
+              <span class="text-sm font-semibold" style="color:#e0e1dd">Palette presets &amp; community sharing</span>
+              <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-planned">Planned</span>
             </div>
           </div>
-          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
-            <span class="text-lg">📱</span>
+          <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
+            <span class="text-lg">ðŸ“±</span>
             <div>
-              <span class="text-sm font-semibold">Figma & Framer token sync</span>
-              <span class="ml-2 rounded-full bg-slate-500/30 text-white/40 text-xs px-2 py-0.5 font-medium">Planned</span>
+              <span class="text-sm font-semibold" style="color:#e0e1dd">Figma &amp; Framer token sync</span>
+              <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-planned">Planned</span>
             </div>
           </div>
-          <div class="flex items-center gap-3 rounded-xl border border-white/8 bg-white/4 px-4 py-3">
-            <span class="text-lg">🤝</span>
+          <div class="card flex items-center gap-3 rounded-xl px-4 py-3">
+            <span class="text-lg">ðŸ¤</span>
             <div>
-              <span class="text-sm font-semibold">Team palette collaboration</span>
-              <span class="ml-2 rounded-full bg-slate-500/30 text-white/40 text-xs px-2 py-0.5 font-medium">Planned</span>
+              <span class="text-sm font-semibold" style="color:#e0e1dd">Team palette collaboration</span>
+              <span class="ml-2 rounded-full text-xs px-2 py-0.5 font-medium badge-planned">Planned</span>
             </div>
           </div>
         </div>
@@ -229,26 +224,26 @@
     </section>
 
     <!-- Final CTA -->
-    <section class="border-t border-white/8 px-5 py-16 text-center">
+    <section class="px-5 py-16 text-center" style="border-top:1px solid #1b263b">
       <div class="mx-auto max-w-lg">
-        <p class="text-2xl font-bold mb-3">Ready to fuel the next update?</p>
-        <p class="text-white/55 text-sm mb-8">Even ₹50 makes a real difference. Thank you for believing in independent open tools.</p>
-        <a href="#qr" onclick="document.querySelector('.qr-glow').scrollIntoView({behavior:'smooth'}); return false;"
-          class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 text-sm font-bold text-white hover:from-violet-500 hover:to-indigo-500 transition-all shadow-lg shadow-violet-900/40">
-          ☕ Support Now via UPI
+        <p class="text-2xl font-bold mb-3" style="color:#e0e1dd">Ready to fuel the next update?</p>
+        <p class="text-sm mb-8" style="color:#778da9">Even â‚¹50 makes a real difference. Thank you for believing in independent open tools.</p>
+        <a href="#" onclick="document.querySelector('.qr-card').scrollIntoView({behavior:'smooth'}); return false;"
+          class="cta-btn inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-sm font-bold">
+          â˜• Support Now via UPI
         </a>
-        <p class="mt-5 text-xs text-white/30">No account needed. Instant. Secure.</p>
+        <p class="mt-5 text-xs" style="color:#415a77">No account needed. Instant. Secure.</p>
       </div>
     </section>
 
     <!-- Footer -->
-    <footer class="border-t border-white/8 py-8 px-5">
-      <div class="mx-auto max-w-5xl text-center text-xs text-white/35">
-        <p>© 2026 PaletteLive · Built with ♥ by <a href="https://github.com/MCKesav" class="hover:text-white transition-colors">MCKesav</a></p>
+    <footer class="py-8 px-5">
+      <div class="mx-auto max-w-5xl text-center text-xs" style="color:#415a77">
+        <p>Â© 2026 PaletteLive Â· Built with â™¥ by <a href="https://github.com/MCKesav" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">MCKesav</a></p>
         <p class="mt-2">
-          <a href="/" class="hover:text-white transition-colors">Home</a> ·
-          <a href="/privacypolicy" class="hover:text-white transition-colors ml-2">Privacy</a> ·
-          <a href="/contact" class="hover:text-white transition-colors ml-2">Contact</a>
+          <a href="/" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Home</a> Â·
+          <a href="/privacypolicy" class="ml-2" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Privacy</a> Â·
+          <a href="/contact" class="ml-2" onmouseover="this.style.color='#e0e1dd'" onmouseout="this.style.color='#415a77'">Contact</a>
         </p>
       </div>
     </footer>

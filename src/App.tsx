@@ -450,11 +450,12 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
 
   // ─── Guided tour ───
   const TOUR_STEPS = [
-    { id: "pl-tour-palettes", icon: "🌈", title: "Switch Palettes", body: "Click any palette preset to instantly recolor the entire live preview. Or hit the play/pause button for auto-cycling animation.", tip: "Step 1 of 5" },
-    { id: "pl-tour-swatches", icon: "✏️", title: "Edit Any Color", body: "Click a swatch to open the color editor. Use the hex field, native color picker, or paste a Coolors URL to apply a whole palette at once.", tip: "Step 2 of 5" },
-    { id: "pl-tour-toggles", icon: "🔥", title: "Heatmap \u0026 Compare", body: "Heatmap visualizes color density across the page. Compare lets you drag a split-screen divider to diff original vs. recolored side-by-side.", tip: "Step 3 of 5" },
-    { id: "pl-tour-vision", icon: "👁️", title: "Vision Simulation", body: "See how colorblind users experience your palette — protanopia, deuteranopia, tritanopia & achromatopsia via live SVG filters.", tip: "Step 4 of 5" },
-    { id: "pl-tour-export", icon: "📤", title: "Export Anywhere", body: "Copy your palette as CSS variables, JSON design tokens, Tailwind config, CMYK, CIE LAB or OKLCH — or download as a file.", tip: "Step 5 of 5" },
+    { id: "pl-tour-palettes", icon: "🌈", title: "Switch Palettes", body: "Click any palette preset to instantly recolor the entire live preview. Or hit the play/pause button for auto-cycling animation.", tip: "Step 1 of 6" },
+    { id: "pl-tour-swatches", icon: "✏️", title: "Edit Any Color", body: "Click a swatch to open the color editor. Use the hex field, native color picker, or paste a Coolors URL to apply a whole palette at once.", tip: "Step 2 of 6" },
+    { id: "pl-tour-toggles", icon: "🔥", title: "Heatmap \u0026 Compare", body: "Heatmap visualizes color density across the page. Compare lets you drag a split-screen divider to diff original vs. recolored side-by-side.", tip: "Step 3 of 6" },
+    { id: "pl-tour-vision", icon: "👁️", title: "Vision Simulation", body: "See how colorblind users experience your palette — protanopia, deuteranopia, tritanopia & achromatopsia via live SVG filters.", tip: "Step 4 of 6" },
+    { id: "pl-tour-editor", icon: "🎨", title: "PaletteLive Editor", body: "Type a hex code or click the color bar to open the native picker. The live preview updates instantly. Check WCAG contrast scores below — AA needs 4.5:1, AAA needs 7:1. Hit 'Apply Color To Export Set' when you're happy.", tip: "Step 5 of 6" },
+    { id: "pl-tour-export", icon: "📤", title: "Export Anywhere", body: "Copy your palette as CSS variables, JSON design tokens, Tailwind config, CMYK, CIE LAB or OKLCH — or download as a file.", tip: "Step 6 of 6" },
   ];
   const [tourStep, setTourStep] = useState<number | null>(null);
   const [spotlightRect, setSpotlightRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
@@ -473,6 +474,11 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
   useEffect(() => {
     if (tourStep === null) return;
     const step = TOUR_STEPS[tourStep];
+    // Auto-select a swatch when editor step is reached so the panel opens
+    if (step.id === "pl-tour-editor" && selectedSwatch === null) {
+      setSelectedSwatch(4); // primary swatch
+      setEditingHex(swatches[4] ?? "#A9B4FF");
+    }
     const el = document.getElementById(step.id);
     if (!el) return;
     // Scroll the target into view first, then measure after scroll settles
@@ -879,6 +885,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
 
           {/* ══ PaletteLive Editor sidepanel card ══ */}
           <div
+            id="pl-tour-editor"
             ref={editorRef}
             className="overflow-hidden rounded-2xl border shadow-lg"
             style={{

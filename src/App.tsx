@@ -921,7 +921,12 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
             {selectedSwatch !== null && (
             <div className="px-3 py-2 space-y-2">
             {/* Hex input + color picker + swatch bar in one row */}
-            <div className="flex items-center gap-2">
+            {tourStep === 4 && (
+              <div style={{ fontSize: 11, fontWeight: 700, color: displayPal.accent, display: "flex", alignItems: "center", gap: 4, animation: "pulse 1.5s ease-in-out infinite" }}>
+                <span>▼</span> Change color here
+              </div>
+            )}
+            <div className="flex items-center gap-2" style={tourStep === 4 ? { boxShadow: `0 0 0 2px ${displayPal.accent}, 0 0 16px ${displayPal.accent}55`, borderRadius: 8, padding: 4, transition: "box-shadow 0.3s", animation: "pulse 1.5s ease-in-out infinite" } : undefined}>
               <input
                 type="text"
                 value={editingHex}
@@ -977,7 +982,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
             </div>
 
             {/* Color swatch bar — clicking opens the color picker */}
-            <label htmlFor="pl-color-picker-input" className="block rounded p-0.5 transition-colors duration-500" style={{ border: "2px solid var(--pl-border)", height: 32, cursor: "pointer" }} title="Open color picker">
+            <label htmlFor="pl-color-picker-input" className="block rounded p-0.5 transition-colors duration-500" style={{ border: tourStep === 4 ? `2px solid ${displayPal.accent}` : "2px solid var(--pl-border)", height: 32, cursor: "pointer", boxShadow: tourStep === 4 ? `0 0 12px ${displayPal.accent}55` : "none", transition: "border-color 0.3s, box-shadow 0.3s" }} title="Open color picker">
               <div className="h-full w-full rounded transition-colors duration-150" style={{ background: /^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : activeColor }} />
             </label>
 

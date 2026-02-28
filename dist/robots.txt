@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://palettelive.mckesav.in/sitemap.xml
+
+# PaletteLive - The Live Website Palette Engine
+# https://palettelive.mckesav.in

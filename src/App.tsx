@@ -1256,21 +1256,12 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
               <div className="flex gap-1.5" style={{ alignItems: "stretch" }}>
                 <button
                   onClick={() => {
-                    const hexes = customPaletteInput.match(/#[0-9a-fA-F]{6}/gi);
-                    if (hexes && hexes.length >= 2) {
-                      const next: Record<number, string> = {};
-                      hexes.slice(0, 6).forEach((h, i) => { next[i] = h; });
-                      setCustomSwatches(next);
-                      setAutoPlay(false);
-                      setEditingHex(hexes[2] ?? hexes[0]);
-                    }
                     setApplyAnim(true);
                     setScanAnim(true);
                     setTimeout(() => setApplyAnim(false), 1200);
                     setTimeout(() => setScanAnim(false), 650);
                   }}
-                  disabled={!customPaletteInput.match(/#[0-9a-fA-F]{6}/gi)}
-                  style={{ flex: 1, padding: "7px 14px", borderRadius: 6, border: "none", fontSize: 12, fontWeight: 600, background: applyAnim ? "#22c55e" : "var(--pl-primary)", color: "#fff", cursor: customPaletteInput.match(/#[0-9a-fA-F]{6}/gi) ? "pointer" : "not-allowed", opacity: customPaletteInput.match(/#[0-9a-fA-F]{6}/gi) ? 1 : 0.5, transition: "all 0.15s" }}
+                  style={{ flex: 1, padding: "7px 14px", borderRadius: 6, border: "none", fontSize: 12, fontWeight: 600, background: applyAnim ? "#22c55e" : "var(--pl-primary)", color: "#fff", cursor: "pointer", transition: "all 0.15s" }}
                 >
                   {applyAnim ? "✓ Applied to Page!" : "Apply to Page"}
                 </button>
@@ -1606,16 +1597,59 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
       {tourStep !== null && spotlightRect && tourVisible && (() => {
         const step = TOUR_STEPS[tourStep];
         const pad = 10;
-        const tipHeight = 260; // estimated tooltip height
-        const tipGap = 14; // gap between spotlight and tooltip
-        const spaceBelow = window.innerHeight - (spotlightRect.top + spotlightRect.height + pad);
-        const spaceAbove = spotlightRect.top - pad;
-        // Place tooltip below if there's enough room, otherwise above
-        const placeBelow = spaceBelow >= tipHeight + tipGap || spaceBelow >= spaceAbove;
-        const tipTop = placeBelow
-          ? spotlightRect.top + spotlightRect.height + pad + tipGap
-          : Math.max(12, spotlightRect.top - pad - tipGap - tipHeight);
-        const tipLeft = Math.max(12, Math.min(spotlightRect.left + (spotlightRect.width / 2) - 146, window.innerWidth - 304));
+        const tipW = 292;
+        const tipH = 260; // estimated tooltip height
+        const gap = 14;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        // Available space in each direction from the spotlight box (incl. pad)
+        const sTop = spotlightRect.top - pad;
+        const sBottom = vh - (spotlightRect.top + spotlightRect.height + pad);
+        const sLeft = spotlightRect.left - pad;
+        const sRight = vw - (spotlightRect.left + spotlightRect.width + pad);
+
+        // Decide placement: prefer below, then above, then right, then left, whichever fits
+        type Placement = "below" | "above" | "right" | "left";
+        let placement: Placement = "below";
+        if (sBottom >= tipH + gap) {
+          placement = "below";
+        } else if (sTop >= tipH + gap) {
+          placement = "above";
+        } else if (sRight >= tipW + gap) {
+          placement = "right";
+        } else if (sLeft >= tipW + gap) {
+          placement = "left";
+        } else {
+          // Nothing fully fits; pick the direction with the most space
+          const best = Math.max(sBottom, sTop, sRight, sLeft);
+          if (best === sBottom) placement = "below";
+          else if (best === sTop) placement = "above";
+          else if (best === sRight) placement = "right";
+          else placement = "left";
+        }
+
+        let tipTop = 0;
+        let tipLeft = 0;
+        if (placement === "below") {
+          tipTop = spotlightRect.top + spotlightRect.height + pad + gap;
+          tipLeft = spotlightRect.left + spotlightRect.width / 2 - tipW / 2;
+        } else if (placement === "above") {
+          tipTop = spotlightRect.top - pad - gap - tipH;
+          tipLeft = spotlightRect.left + spotlightRect.width / 2 - tipW / 2;
+        } else if (placement === "right") {
+          tipLeft = spotlightRect.left + spotlightRect.width + pad + gap;
+          tipTop = spotlightRect.top + spotlightRect.height / 2 - tipH / 2;
+        } else {
+          tipLeft = spotlightRect.left - pad - gap - tipW;
+          tipTop = spotlightRect.top + spotlightRect.height / 2 - tipH / 2;
+        }
+
+        // Clamp so the tooltip is always fully visible inside the viewport
+        tipTop = Math.max(8, Math.min(tipTop, vh - tipH - 8));
+        tipLeft = Math.max(8, Math.min(tipLeft, vw - tipW - 8));
+
+        const isDark = theme === "dark";
         return (
           <>
             <div onClick={tourEnd} style={{ position: "fixed", inset: 0, zIndex: 10000, cursor: "default" }} />
@@ -1629,8 +1663,8 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
             }} />
             <div style={{
               position: "fixed", zIndex: 10002,
-              top: tipTop, left: tipLeft, width: 292,
-              background: theme === "dark" ? "#0d1117" : "#ffffff",
+              top: tipTop, left: tipLeft, width: tipW,
+              background: isDark ? "#0d1117" : "#ffffff",
               border: `1.5px solid ${displayPal.accent}50`,
               borderRadius: 18, padding: "16px 18px 14px",
               boxShadow: "0 24px 72px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.04)",
@@ -1643,42 +1677,45 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                   <div style={{ width: 26, height: 26, borderRadius: "50%", background: `${displayPal.accent}20`, border: `1.5px solid ${displayPal.accent}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{step.icon}</div>
                   <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: displayPal.accent }}>{step.tip}</span>
                 </div>
-                <button onClick={tourEnd} style={{ background: "none", border: "none", cursor: "pointer", color: theme === "dark" ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)", fontSize: 19, lineHeight: 1, padding: "2px 5px", borderRadius: 6 }} aria-label="Close tour">×</button>
+                <button onClick={tourEnd} style={{ background: "none", border: "none", cursor: "pointer", color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)", fontSize: 19, lineHeight: 1, padding: "2px 5px", borderRadius: 6 }} aria-label="Close tour">×</button>
               </div>
-              <div style={{ fontWeight: 800, fontSize: 15.5, color: theme === "dark" ? "#f1f5f9" : "#0f172a", marginBottom: 7, lineHeight: 1.25 }}>{step.title}</div>
-              <div style={{ fontSize: 12.5, color: theme === "dark" ? "#94a3b8" : "#475569", lineHeight: 1.65, marginBottom: 15 }}>{step.body}</div>
+              <div style={{ fontWeight: 800, fontSize: 15.5, color: isDark ? "#f1f5f9" : "#0f172a", marginBottom: 7, lineHeight: 1.25 }}>{step.title}</div>
+              <div style={{ fontSize: 12.5, color: isDark ? "#94a3b8" : "#475569", lineHeight: 1.65, marginBottom: 15 }}>{step.body}</div>
+              {/* Progress dots */}
               <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 14 }}>
                 {TOUR_STEPS.map((_, i) => (
                   <button key={i} onClick={() => setTourStep(i)} style={{
                     width: i === tourStep ? 22 : 6, height: 6, borderRadius: 99, border: "none",
-                    background: i === tourStep ? displayPal.accent : (theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.13)"),
+                    background: i === tourStep ? displayPal.accent : (isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.13)"),
                     cursor: "pointer", transition: "all 0.3s", padding: 0,
                   }} />
                 ))}
               </div>
-              <div style={{ display: "flex", gap: 8 }}>
+              {/* Buttons row */}
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 {tourStep > 0 && (
                   <button onClick={() => setTourStep((s) => (s ?? 1) - 1)} style={{
-                    flex: 1, borderRadius: 10, padding: "9px 12px", fontSize: 12, fontWeight: 600,
-                    background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-                    color: theme === "dark" ? "#94a3b8" : "#64748b",
-                    border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
-                    cursor: "pointer",
+                    padding: "7px 14px", borderRadius: 9, fontSize: 11.5, fontWeight: 700,
+                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                    color: isDark ? "#94a3b8" : "#64748b",
+                    border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)",
+                    cursor: "pointer", whiteSpace: "nowrap",
                   }}>← Back</button>
                 )}
                 <button onClick={tourEnd} style={{
-                  flex: 1, borderRadius: 10, padding: "9px 12px", fontSize: 12, fontWeight: 600,
-                  background: "none",
-                  color: theme === "dark" ? "#94a3b8" : "#64748b",
-                  border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
-                  cursor: "pointer",
-                }}>Skip Tour</button>
+                  padding: "7px 14px", borderRadius: 9, fontSize: 11.5, fontWeight: 700,
+                  background: "transparent",
+                  color: isDark ? "rgba(255,255,255,0.32)" : "rgba(0,0,0,0.32)",
+                  border: isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
+                  cursor: "pointer", whiteSpace: "nowrap",
+                }}>Skip</button>
                 <button onClick={tourNext} style={{
-                  flex: 2, borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 800,
+                  flex: 1, borderRadius: 9, padding: "8px 16px", fontSize: 12, fontWeight: 800,
                   background: `linear-gradient(135deg, ${displayPal.accent}, ${displayPal.primary})`,
                   color: luminance(displayPal.accent) > 0.4 ? "#000" : "#fff",
-                  border: "none", cursor: "pointer", letterSpacing: "0.025em",
-                  boxShadow: `0 4px 14px ${displayPal.accent}40`,
+                  border: "none", cursor: "pointer", letterSpacing: "0.02em",
+                  boxShadow: `0 3px 12px ${displayPal.accent}40`,
+                  whiteSpace: "nowrap",
                 }}>
                   {tourStep < TOUR_STEPS.length - 1 ? "Next →" : "Start Exploring! ✨"}
                 </button>
@@ -1944,7 +1981,7 @@ export function App() {
             </div>
           </a>
 
-          <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex">
+          <nav className="hidden items-center gap-6 text-sm text-white/70 md:flex" aria-label="Main navigation">
             <a className="hover:text-white" href="#features">Features</a>
             <a className="hover:text-white" href="#showcase">Before/After</a>
             <a className="hover:text-white" href="#compare">Compare</a>
@@ -1970,7 +2007,7 @@ export function App() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden" aria-label="Hero">
         <div className="absolute inset-0">
           <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-violet-500/20 blur-3xl" />
           <div className="absolute -right-40 top-20 h-[520px] w-[520px] rounded-full bg-indigo-500/20 blur-3xl" />
@@ -2126,7 +2163,7 @@ export function App() {
         </section>
 
         {/* Power pillars */}
-        <section id="features" className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60">
+        <section id="features" className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Core features">
           <CanvasImage side="right" />
 
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
@@ -2193,7 +2230,7 @@ export function App() {
         </section>
 
         {/* Before/After */}
-        <section id="showcase" className="relative overflow-hidden px-5 py-16">
+        <section id="showcase" className="relative overflow-hidden px-5 py-16" aria-label="Before and after showcase">
           <CanvasImage side="left" />
           <div className="relative z-10 mx-auto max-w-6xl">
           <SectionTitle
@@ -2209,7 +2246,7 @@ export function App() {
         </section>
 
         {/* Use cases */}
-        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60">
+        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Use cases">
           <CanvasImage side="right" />
 
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
@@ -2243,7 +2280,7 @@ export function App() {
         </section>
 
         {/* Export workflow */}
-        <section className="mx-auto max-w-6xl px-5 py-16" id="docs">
+        <section className="mx-auto max-w-6xl px-5 py-16" id="docs" aria-label="Export workflow">
           <SectionTitle
             eyebrow="WORKFLOW"
             title="Import → Map → Apply → Export"
@@ -2302,7 +2339,7 @@ export function App() {
         </section>
 
         {/* Built for modern web / trust */}
-        <section className="border-t border-slate-200 bg-slate-50/60">
+        <section className="border-t border-slate-200 bg-slate-50/60" aria-label="Trust and technology">
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="TRUST & TECH"
@@ -2348,7 +2385,7 @@ export function App() {
         </section>
 
         {/* Comparison */}
-        <section id="compare" className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+        <section id="compare" className="relative z-10 mx-auto max-w-6xl px-5 py-16" aria-label="Feature comparison">
           <SectionTitle
             eyebrow="POSITIONING"
             title="PaletteLive vs basic color pickers"
@@ -2390,7 +2427,7 @@ export function App() {
         </section>
 
         {/* Testimonials */}
-        <section className="border-t border-slate-200 bg-slate-50/60">
+        <section className="border-t border-slate-200 bg-slate-50/60" aria-label="Testimonials">
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="EARLY FEEDBACK"
@@ -2423,7 +2460,7 @@ export function App() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+        <section id="faq" className="relative z-10 mx-auto max-w-6xl px-5 py-16" aria-label="Frequently asked questions">
           <SectionTitle
             eyebrow="FAQ"
             title="Answers to common objections"
@@ -2459,7 +2496,7 @@ export function App() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="border-t border-slate-200 bg-slate-950 text-white">
+        <section className="border-t border-slate-200 bg-slate-950 text-white" aria-label="Call to action">
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <div className="grid gap-8 lg:grid-cols-[1.3fr_.7fr] lg:items-center">
               <div>
@@ -2575,7 +2612,7 @@ export function App() {
         </section>
 
         {/* Footer */}
-        <footer className="bg-slate-950 text-white">
+        <footer className="bg-slate-950 text-white" role="contentinfo">
           <div className="mx-auto max-w-6xl px-5 py-10">
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
               <div>

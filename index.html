@@ -2,21 +2,153 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PaletteLive — The Live Website Palette Engine</title>
+
+    <!-- Primary Meta Tags -->
+    <title>PaletteLive — The Live Website Palette Engine | Extract, Edit & Export Colors</title>
     <meta
       name="description"
-      content="PaletteLive is a Manifest V3 Chrome extension that extracts, edits, and exports any live website's full color palette—Shadow DOM, CSS variables, WCAG contrast, and per-domain persistence included."
+      content="PaletteLive is a free Manifest V3 browser extension that extracts, edits, and exports any live website's full color palette. Shadow DOM support, CSS variables, WCAG contrast enforcement, and per-domain persistence included."
     />
-    <meta property="og:title" content="PaletteLive — The Live Website Palette Engine" />
-    <meta property="og:description" content="Extract, edit, and export any live website's full color palette. Free Chrome extension." />
-    <meta property="og:image" content="https://palettelive.mckesav.in/logo.png" />
-    <meta property="og:url" content="https://palettelive.mckesav.in" />
+    <meta name="keywords" content="color palette extractor, website color picker, CSS variables, WCAG contrast checker, browser extension, color accessibility, Tailwind color export, design tokens, color blindness simulator, shadow DOM colors, live color editor, palette generator, Edge extension, Chrome extension, color management tool" />
+    <meta name="author" content="MCKesav" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#0d1b2a" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://palettelive.mckesav.in/" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:url" content="https://palettelive.mckesav.in/" />
+    <meta property="og:title" content="PaletteLive — The Live Website Palette Engine" />
+    <meta property="og:description" content="Extract, edit, and export any live website's full color palette in real time. Free browser extension with Shadow DOM support, WCAG contrast enforcement, and 7+ export formats." />
+    <meta property="og:image" content="https://palettelive.mckesav.in/logo.png" />
+    <meta property="og:image:alt" content="PaletteLive logo — live website palette engine" />
+    <meta property="og:site_name" content="PaletteLive" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://palettelive.mckesav.in/" />
+    <meta name="twitter:title" content="PaletteLive — The Live Website Palette Engine" />
+    <meta name="twitter:description" content="Extract, edit, and export any live website's full color palette. Free browser extension with WCAG contrast, Shadow DOM, and per-domain persistence." />
     <meta name="twitter:image" content="https://palettelive.mckesav.in/logo.png" />
+    <meta name="twitter:image:alt" content="PaletteLive logo" />
+
+    <!-- JSON-LD Structured Data: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PaletteLive",
+      "description": "A Manifest V3 browser extension that extracts, edits, and exports any live website's full color palette with Shadow DOM support, CSS variables, WCAG contrast enforcement, and per-domain persistence.",
+      "url": "https://palettelive.mckesav.in",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Windows, macOS, Linux, ChromeOS",
+      "softwareVersion": "0.1",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "MCKesav",
+        "url": "https://www.linkedin.com/in/mckesav"
+      },
+      "installUrl": "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam",
+      "screenshot": "https://palettelive.mckesav.in/logo.png",
+      "featureList": [
+        "Full DOM color extraction including Shadow DOM",
+        "CSS variables and stylesheets parsing",
+        "Real-time non-destructive color overrides",
+        "WCAG AA/AAA contrast checking and auto-fix",
+        "Per-domain persistence across reloads and SPA routes",
+        "Export to CSS Variables, JSON Tokens, Tailwind Config, OKLCH, CIE LAB, CMYK",
+        "Color blindness simulation overlays",
+        "Heatmap overlay with hex tooltips",
+        "Harmony generation with 6 modes"
+      ]
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "PaletteLive",
+      "url": "https://palettelive.mckesav.in",
+      "description": "The live website palette engine — extract, edit, and export color palettes from any website."
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does PaletteLive modify the website's source code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Overrides are applied at runtime (non-destructive) via inline CSS patching—your changes live in the browser and can be persisted per domain without editing the site's codebase."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will PaletteLive slow down pages?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "PaletteLive is designed to scan efficiently and re-apply overrides only when needed. The watchdog/mutation observer focuses on staying sticky without constant heavy reprocessing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does PaletteLive work with React, Vue, Next.js, and SPAs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes—persistence across SPA route changes is a core feature. Overrides can survive re-renders and route transitions."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is PaletteLive safe? Does data leave my browser?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All processing is client-side. No tracking and no analytics on visited pages. Permissions are used solely for scanning and applying your own overrides."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why not just use DevTools instead of PaletteLive?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "DevTools is great for debugging, but it doesn't give you a persistent per-domain override engine, palette clustering, harmony generation/scoring, WCAG auto-fix, or multi-format export workflow."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I export colors to Tailwind and design tokens?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes—export formats are designed for real workflows: CSS variables, JSON tokens, Tailwind config, plus OKLCH/LAB/CMYK and export history."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Performance hints -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">

@@ -2,15 +2,38 @@
 
 const EDGE_ADDON_URL = "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam";
 
-// Opens the link in a new tab AND tries to launch it in Microsoft Edge via the microsoft-edge: protocol.
+// Detect if user is on Edge (Chromium-based Edge includes "Edg/" in the UA)
+const isEdgeBrowser = () => /Edg\//i.test(navigator.userAgent);
+
+// If on Edge: navigate directly to the add-ons page (default link behavior).
+// If NOT on Edge: try microsoft-edge: protocol. If user cancels the prompt,
+// fall back to opening the URL in a new tab.
 const openEdgeLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  if (isEdgeBrowser()) {
+    // Already on Edge — let the normal <a href="..."> navigate in-page or new tab
+    return;
+  }
+  // Not on Edge — prevent the default navigation and try Edge protocol
+  e.preventDefault();
+
+  let edgeLaunched = false;
+
+  const onBlur = () => { edgeLaunched = true; };
+  const onVisChange = () => { if (document.hidden) edgeLaunched = true; };
+
+  window.addEventListener("blur", onBlur);
+  document.addEventListener("visibilitychange", onVisChange);
+
+  window.location.href = `microsoft-edge:${EDGE_ADDON_URL}`;
+
+  // If Edge didn't open after ~1.5s (user cancelled), open in new tab as fallback
   setTimeout(() => {
-    const a = document.createElement("a");
-    a.href = `microsoft-edge:${EDGE_ADDON_URL}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }, 200);
+    window.removeEventListener("blur", onBlur);
+    document.removeEventListener("visibilitychange", onVisChange);
+    if (!edgeLaunched) {
+      window.open(EDGE_ADDON_URL, "_blank", "noopener,noreferrer");
+    }
+  }, 1500);
 };
 
 type Theme = "dark" | "light";

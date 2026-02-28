@@ -473,16 +473,19 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
   useEffect(() => {
     if (tourStep === null) return;
     const step = TOUR_STEPS[tourStep];
+    const el = document.getElementById(step.id);
+    if (!el) return;
+    // Scroll the target into view first, then measure after scroll settles
+    el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     const update = () => {
-      const el = document.getElementById(step.id);
-      if (!el) return;
       const rect = el.getBoundingClientRect();
       setSpotlightRect({ top: rect.top, left: rect.left, width: rect.width, height: rect.height });
     };
-    update();
+    // Wait for scroll to settle before first measurement
+    const scrollTimer = setTimeout(update, 420);
     window.addEventListener("resize", update);
     window.addEventListener("scroll", update, true);
-    return () => { window.removeEventListener("resize", update); window.removeEventListener("scroll", update, true); };
+    return () => { clearTimeout(scrollTimer); window.removeEventListener("resize", update); window.removeEventListener("scroll", update, true); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStep]);
 
@@ -1584,11 +1587,16 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
       {tourStep !== null && spotlightRect && tourVisible && (() => {
         const step = TOUR_STEPS[tourStep];
         const pad = 10;
-        const above = spotlightRect.top + spotlightRect.height + 230 > window.innerHeight;
-        const tipTop = above
-          ? Math.max(12, spotlightRect.top - pad - 215)
-          : spotlightRect.top + spotlightRect.height + pad + 8;
-        const tipLeft = Math.max(12, Math.min(spotlightRect.left - 4, window.innerWidth - 304));
+        const tipHeight = 260; // estimated tooltip height
+        const tipGap = 14; // gap between spotlight and tooltip
+        const spaceBelow = window.innerHeight - (spotlightRect.top + spotlightRect.height + pad);
+        const spaceAbove = spotlightRect.top - pad;
+        // Place tooltip below if there's enough room, otherwise above
+        const placeBelow = spaceBelow >= tipHeight + tipGap || spaceBelow >= spaceAbove;
+        const tipTop = placeBelow
+          ? spotlightRect.top + spotlightRect.height + pad + tipGap
+          : Math.max(12, spotlightRect.top - pad - tipGap - tipHeight);
+        const tipLeft = Math.max(12, Math.min(spotlightRect.left + (spotlightRect.width / 2) - 146, window.innerWidth - 304));
         return (
           <>
             <div onClick={tourEnd} style={{ position: "fixed", inset: 0, zIndex: 10000, cursor: "default" }} />

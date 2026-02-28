@@ -1666,6 +1666,13 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     cursor: "pointer",
                   }}>← Back</button>
                 )}
+                <button onClick={tourEnd} style={{
+                  flex: 1, borderRadius: 10, padding: "9px 12px", fontSize: 12, fontWeight: 600,
+                  background: "none",
+                  color: theme === "dark" ? "#94a3b8" : "#64748b",
+                  border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
+                  cursor: "pointer",
+                }}>Skip Tour</button>
                 <button onClick={tourNext} style={{
                   flex: 2, borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 800,
                   background: `linear-gradient(135deg, ${displayPal.accent}, ${displayPal.primary})`,

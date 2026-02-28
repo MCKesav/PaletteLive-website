@@ -15,6 +15,133 @@ const openEdgeLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
 
 type Theme = "dark" | "light";
 
+// ─── Pure export helpers (ported from extension's exporter.js) ───
+type ExportColor = { name: string; value: string };
+
+function exportToCSS(colors: ExportColor[]) {
+  let out = ":root {\n";
+  colors.forEach((c) => {
+    const name = c.name.startsWith("--") ? c.name : "--" + c.name;
+    out += `  ${name}: ${c.value};\n`;
+  });
+  return out + "}";
+}
+
+function exportToJSON(colors: ExportColor[]) {
+  const tokens: Record<string, string> = {};
+  colors.forEach((c) => {
+    const key = c.name.replace(/^--/, "");
+    tokens[key] = c.value;
+  });
+  return JSON.stringify(tokens, null, 2);
+}
+
+function exportToTailwind(colors: ExportColor[]) {
+  let out = "module.exports = {\n  theme: {\n    extend: {\n      colors: {\n";
+  colors.forEach((c) => {
+    const key = c.name.replace(/^--/, "");
+    out += `        "${key}": '${c.value}',\n`;
+  });
+  out += "      }\n    }\n  }\n}";
+  return out;
+}
+
+function exportToCMYK(colors: ExportColor[]) {
+  const lines = ["/* CMYK Color Palette */\n"];
+  colors.forEach((c) => {
+    const hex = c.value.replace("#", "").slice(0, 6);
+    if (hex.length !== 6) { lines.push(`${c.name}: cmyk(0%, 0%, 0%, 100%)`); return; }
+    const r = parseInt(hex.slice(0,2),16)/255, g = parseInt(hex.slice(2,4),16)/255, b = parseInt(hex.slice(4,6),16)/255;
+    const k = 1 - Math.max(r,g,b);
+    const cy = k<1 ? (1-r-k)/(1-k) : 0;
+    const ma = k<1 ? (1-g-k)/(1-k) : 0;
+    const ye = k<1 ? (1-b-k)/(1-k) : 0;
+    lines.push(`${c.name}: cmyk(${(cy*100).toFixed(1)}%, ${(ma*100).toFixed(1)}%, ${(ye*100).toFixed(1)}%, ${(k*100).toFixed(1)}%)`);
+  });
+  return lines.join("\n");
+}
+
+function exportToLAB(colors: ExportColor[]) {
+  function toLinear(v: number) { v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+  function hexToLab(hex: string) {
+    hex = hex.replace("#","").slice(0,6);
+    const r = toLinear(parseInt(hex.slice(0,2),16)), g = toLinear(parseInt(hex.slice(2,4),16)), b = toLinear(parseInt(hex.slice(4,6),16));
+    let x=(r*0.4124+g*0.3576+b*0.1805)/0.95047, y=r*0.2126+g*0.7152+b*0.0722, z=(r*0.0193+g*0.1192+b*0.9505)/1.08883;
+    const f=(v: number)=>v>0.008856?Math.cbrt(v):7.787*v+16/116;
+    x=f(x); y=f(y); z=f(z);
+    return { l:116*y-16, a:500*(x-y), b:200*(y-z) };
+  }
+  const lines = ["/* CIE LAB Color Palette (D65) */\n"];
+  colors.forEach((c) => { const lab=hexToLab(c.value); lines.push(`${c.name}: lab(${lab.l.toFixed(2)}% ${lab.a.toFixed(2)} ${lab.b.toFixed(2)})`); });
+  return lines.join("\n");
+}
+
+function exportToOKLCH(colors: ExportColor[]) {
+  function toLinear(v: number) { v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+  function hexToOklch(hex: string) {
+    hex = hex.replace("#","").slice(0,6);
+    const r=toLinear(parseInt(hex.slice(0,2),16)), g=toLinear(parseInt(hex.slice(2,4),16)), b=toLinear(parseInt(hex.slice(4,6),16));
+    const l_=Math.cbrt(0.4122214708*r+0.5363325363*g+0.0514459929*b);
+    const m_=Math.cbrt(0.2119034982*r+0.6806995451*g+0.1073969566*b);
+    const s_=Math.cbrt(0.0883024619*r+0.2817188376*g+0.6299787005*b);
+    const L=0.2104542553*l_+0.793617785*m_-0.0040720468*s_;
+    const a=1.9779984951*l_-2.428592205*m_+0.4505937099*s_;
+    const bOk=0.0259040371*l_+0.7827717662*m_-0.808675766*s_;
+    const C=Math.sqrt(a*a+bOk*bOk);
+    let H=Math.atan2(bOk,a)*(180/Math.PI); if(H<0) H+=360;
+    return { l:L, c:C, h:H };
+  }
+  const lines = ["/* OKLCH Color Palette */\n/* oklch(Lightness  Chroma  Hue) */\n"];
+  colors.forEach((c) => { const ok=hexToOklch(c.value); lines.push(`${c.name}: oklch(${(ok.l*100).toFixed(1)}% ${ok.c.toFixed(4)} ${ok.h.toFixed(1)})`); });
+  return lines.join("\n");
+}
+
+function exportToPaletteLive(colors: ExportColor[]) {
+  const overrides: Record<string,string> = {};
+  colors.forEach((c) => { overrides[c.name] = c.value; });
+  return JSON.stringify({ version: "1.0", format: "palettelive", overrides }, null, 2);
+}
+
+function buildExportColors(swatches: string[], customSwatches: Record<number,string>, roleNames: string[]) {
+  return swatches.map((c, i) => ({
+    name: roleNames[i] ?? `--color-${i}`,
+    value: customSwatches[i] ?? c,
+  }));
+}
+
+function downloadFile(filename: string, content: string) {
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function fixTextContrast(swatches: string[], customSwatches: Record<number,string>): Record<number,string> {
+  // Identify background (index 0) and text-ish colors (indices >= 3)
+  const bg = customSwatches[0] ?? swatches[0];
+  const next = { ...customSwatches };
+  swatches.forEach((_, i) => {
+    if (i < 3) return; // only fix text/primary colors
+    const current = next[i] ?? swatches[i];
+    let ratio = contrastRatio(current, bg);
+    if (ratio >= 4.5) return; // already passes AA
+    // Try lightening or darkening
+    let hex = current.replace("#", "");
+    let r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    const isDark = luminance(bg) > 0.5;
+    for (let step = 0; step < 20 && ratio < 4.5; step++) {
+      if (isDark) { r=Math.min(255,r+12); g=Math.min(255,g+12); b=Math.min(255,b+12); }
+      else       { r=Math.max(0,r-12);   g=Math.max(0,g-12);   b=Math.max(0,b-12); }
+      const fixed = "#" + [r,g,b].map(v => v.toString(16).padStart(2,"0")).join("");
+      ratio = contrastRatio(fixed, bg);
+      if (ratio >= 4.5) { next[i] = fixed; break; }
+    }
+  });
+  return next;
+}
+
 function Icon({ name, className }: { name: string; className?: string }) {
   const common = `h-5 w-5 ${className ?? ""}`;
   switch (name) {
@@ -279,7 +406,7 @@ function SitePreview({ pal, heatmapOn = false, onColorClick }: { pal: PaletteDat
   );
 }
 
-function InteractiveDemo({ theme }: { theme: Theme }) {
+function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tourStarted?: boolean; onTourEnd?: () => void }) {
   const [paletteIdx, setPaletteIdx] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
@@ -313,6 +440,110 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
   const [scanAnim, setScanAnim] = useState(false);
   const [customPaletteInput, setCustomPaletteInput] = useState("");
   const isDraggingCompare = useRef(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [copiedFmt, setCopiedFmt] = useState<string | null>(null);
+  const [importText, setImportText] = useState("");
+  const [importMode, setImportMode] = useState<"menu" | "clipboard">("menu");
+  const [fixTextAnim, setFixTextAnim] = useState(false);
+  const [reapplyAnim, setReapplyAnim] = useState(false);
+  const [resetAnim, setResetAnim] = useState(false);
+
+  // ─── Guided tour ───
+  const TOUR_STEPS = [
+    { id: "pl-tour-palettes", icon: "🌈", title: "Switch Palettes", body: "Click any palette preset to instantly recolor the entire live preview. Or hit the play/pause button for auto-cycling animation.", tip: "Step 1 of 5" },
+    { id: "pl-tour-swatches", icon: "✏️", title: "Edit Any Color", body: "Click a swatch to open the color editor. Use the hex field, native color picker, or paste a Coolors URL to apply a whole palette at once.", tip: "Step 2 of 5" },
+    { id: "pl-tour-toggles", icon: "🔥", title: "Heatmap \u0026 Compare", body: "Heatmap visualizes color density across the page. Compare lets you drag a split-screen divider to diff original vs. recolored side-by-side.", tip: "Step 3 of 5" },
+    { id: "pl-tour-vision", icon: "👁️", title: "Vision Simulation", body: "See how colorblind users experience your palette — protanopia, deuteranopia, tritanopia & achromatopsia via live SVG filters.", tip: "Step 4 of 5" },
+    { id: "pl-tour-export", icon: "📤", title: "Export Anywhere", body: "Copy your palette as CSS variables, JSON design tokens, Tailwind config, CMYK, CIE LAB or OKLCH — or download as a file.", tip: "Step 5 of 5" },
+  ];
+  const [tourStep, setTourStep] = useState<number | null>(null);
+  const [spotlightRect, setSpotlightRect] = useState<{ top: number; left: number; width: number; height: number } | null>(null);
+  const [tourVisible, setTourVisible] = useState(false);
+
+  useEffect(() => {
+    if (tourStarted) {
+      setTourStep(0);
+      setAutoPlay(false);
+      setTourVisible(false);
+      setTimeout(() => setTourVisible(true), 60);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tourStarted]);
+
+  useEffect(() => {
+    if (tourStep === null) return;
+    const step = TOUR_STEPS[tourStep];
+    const update = () => {
+      const el = document.getElementById(step.id);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setSpotlightRect({ top: rect.top, left: rect.left, width: rect.width, height: rect.height });
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => { window.removeEventListener("resize", update); window.removeEventListener("scroll", update, true); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tourStep]);
+
+  const tourNext = () => {
+    if (tourStep === null) return;
+    if (tourStep < TOUR_STEPS.length - 1) {
+      setTourStep(tourStep + 1);
+    } else {
+      setTourStep(null); setSpotlightRect(null); setTourVisible(false);
+      onTourEnd?.();
+    }
+  };
+  const tourEnd = () => { setTourStep(null); setSpotlightRect(null); setTourVisible(false); onTourEnd?.(); };
+
+  // Build the swatch role names for export
+  const ROLE_NAMES = ["--color-bg","--color-surface","--color-accent","--color-text","--color-primary","--color-secondary"];
+
+  function getExportColors() {
+    return buildExportColors(swatches.slice(0, 6), customSwatches, ROLE_NAMES);
+  }
+
+  function getExportText(fmt: string) {
+    const cols = getExportColors();
+    if (fmt === "css") return exportToCSS(cols);
+    if (fmt === "json") return exportToJSON(cols);
+    if (fmt === "tailwind") return exportToTailwind(cols);
+    if (fmt === "cmyk") return exportToCMYK(cols);
+    if (fmt === "lab") return exportToLAB(cols);
+    if (fmt === "oklch") return exportToOKLCH(cols);
+    if (fmt === "palettelive") return exportToPaletteLive(cols);
+    return "";
+  }
+
+  function copyFmt(fmt: string) {
+    setAutoPlay(false);
+    setExportFmt(fmt as typeof exportFmt);
+    const text = getExportText(fmt);
+    navigator.clipboard.writeText(text).catch(() => {});
+    setCopiedFmt(fmt);
+    setTimeout(() => setCopiedFmt(null), 2000);
+  }
+
+  function downloadFmt(fmt: string) {
+    setAutoPlay(false);
+    const text = getExportText(fmt);
+    const ext = fmt === "json" ? ".json" : fmt === "tailwind" ? ".js" : fmt === "palettelive" ? ".plpalette" : ".txt";
+    downloadFile(`palette-${PALETTES[paletteIdx].name.toLowerCase()}${ext}`, text);
+  }
+
+  function applyImportText(raw: string) {
+    const hexes = raw.match(/#[0-9a-fA-F]{6}/gi);
+    if (!hexes || hexes.length < 2) return;
+    const next: Record<number,string> = {};
+    hexes.slice(0,6).forEach((h,i) => { next[i] = h; });
+    setCustomSwatches(next);
+    setAutoPlay(false);
+    setEditingHex(hexes[2] ?? hexes[0]);
+    setImportOpen(false);
+    setImportMode("menu");
+    setImportText("");
+  }
 
   const pal = PALETTES[paletteIdx];
 
@@ -415,9 +646,18 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
       <div className="flex items-center justify-between px-4 py-2.5" style={{ background: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)", borderBottom: theme === "dark" ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)", backdropFilter: "blur(20px)" }}>
         <div className="flex items-center gap-2">
           <div className={"text-xs font-semibold " + (theme === "dark" ? "text-white/40" : "text-slate-500")}>PaletteLive — Interactive Demo</div>
+          {/* Theme toggle — lives here since it only affects the demo panel */}
+          <button
+            onClick={() => { setAutoPlay(false); setPopupTheme((t) => t === "dark" ? "light" : "dark"); }}
+            className="rounded px-2 py-0.5 text-[10px] font-semibold transition"
+            style={{ border: "1px solid " + (theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)"), color: theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.45)", background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)" }}
+            title="Toggle panel theme (dark/light)"
+          >
+            {popupTheme === "dark" ? "☀ Light" : "☾ Dark"}
+          </button>
         </div>
-        <div className="flex items-center gap-1.5">
-          {PALETTES.map((p, i) => (
+        <div id="pl-tour-palettes" className="flex items-center gap-1.5">
+            {PALETTES.map((p, i) => (
             <button
               key={p.name}
               onClick={() => pick(i)}
@@ -636,6 +876,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
 
           {/* ══ PaletteLive Editor sidepanel card ══ */}
           <div
+            ref={editorRef}
             className="overflow-hidden rounded-2xl border shadow-lg"
             style={{
               borderColor: "var(--pl-border)",
@@ -699,6 +940,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
               />
               <label style={{ cursor: "pointer", position: "relative", flexShrink: 0 }} title="Open color picker">
                 <input
+                  id="pl-color-picker-input"
                   type="color"
                   value={/^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : "#000000"}
                   onChange={(e) => {
@@ -724,10 +966,10 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
               </label>
             </div>
 
-            {/* Color swatch bar */}
-            <div className="rounded p-0.5 transition-colors duration-500" style={{ border: "2px solid var(--pl-border)", height: 32 }}>
+            {/* Color swatch bar — clicking opens the color picker */}
+            <label htmlFor="pl-color-picker-input" className="block rounded p-0.5 transition-colors duration-500" style={{ border: "2px solid var(--pl-border)", height: 32, cursor: "pointer" }} title="Open color picker">
               <div className="h-full w-full rounded transition-colors duration-150" style={{ background: /^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : activeColor }} />
-            </div>
+            </label>
 
             {/* Real-time toggle + export select on one row */}
             <div className="flex items-center gap-4">
@@ -800,14 +1042,6 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                 <a href="https://palettelive.mckesav.in" target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>PaletteLive</a>
               </div>
               <div className="flex items-center gap-1">
-                {/* Theme toggle */}
-                <button onClick={() => { setAutoPlay(false); setPopupTheme((t) => t === "dark" ? "light" : "dark"); }} className="rounded p-1 transition" style={{ border: "1px solid var(--pl-border)", color: popupTheme === "dark" ? "#f59e0b" : "var(--pl-fg-muted)" }} title={`Theme: ${popupTheme === "dark" ? "Dark" : "Light"} (click to cycle)`} aria-label="Toggle Theme" aria-pressed={popupTheme === "dark"}>
-                  {popupTheme === "dark" ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-                  ) : (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                  )}
-                </button>
                 {/* Power toggle */}
                 <button onClick={() => { setAutoPlay(false); setExtensionPaused((v) => !v); }} className="rounded p-1 transition" style={{ border: `1px solid ${extensionPaused ? "#ef4444" : "#22c55e"}`, color: extensionPaused ? "#ef4444" : "#22c55e", background: extensionPaused ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)" }} title={extensionPaused ? "Extension paused — click to resume" : "Extension enabled — click to pause"} aria-label="Toggle extension" aria-pressed={!extensionPaused}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
@@ -821,7 +1055,17 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h1"/></svg>
                 </button>
                 {/* Reset */}
-                <button className="rounded p-1 transition" style={{ border: "1px solid var(--pl-border)", color: "var(--pl-fg-muted)" }} title="Reset All Overrides" aria-label="Reset All Overrides">
+                <button
+                  className="rounded p-1 transition"
+                  style={{ border: "1px solid " + (resetAnim ? "#ef4444" : "var(--pl-border)"), color: resetAnim ? "#ef4444" : "var(--pl-fg-muted)", background: resetAnim ? "rgba(239,68,68,0.08)" : "transparent" }}
+                  title="Reset All Overrides"
+                  aria-label="Reset All Overrides"
+                  onClick={() => {
+                    setCustomSwatches({});
+                    setResetAnim(true);
+                    setTimeout(() => setResetAnim(false), 1200);
+                  }}
+                >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                 </button>
               </div>
@@ -1016,7 +1260,20 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                 >
                   {applyAnim ? "✓ Applied to Page!" : "Apply to Page"}
                 </button>
-                <button className="rounded-md px-3 py-1.5 text-xs font-medium" style={{ background: "var(--pl-surface)", border: "1px solid var(--pl-border)", color: "var(--pl-fg)" }} title="Remove palette overrides">Reset</button>
+                <button
+                  onClick={() => {
+                    setCustomSwatches({});
+                    setCustomPaletteInput("");
+                    setAutoPlay(false);
+                    setResetAnim(true);
+                    setScanAnim(true);
+                    setTimeout(() => setResetAnim(false), 1200);
+                    setTimeout(() => setScanAnim(false), 650);
+                  }}
+                  className="rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-300"
+                  style={{ background: resetAnim ? "rgba(239,68,68,0.1)" : "var(--pl-surface)", border: "1px solid " + (resetAnim ? "#ef4444" : "var(--pl-border)"), color: resetAnim ? "#ef4444" : "var(--pl-fg)" }}
+                  title="Clear all color overrides and restore original palette"
+                >{resetAnim ? "✓ Reset!" : "Reset"}</button>
               </div>
               {/* Apply palette status */}
               {applyAnim && (
@@ -1058,14 +1315,14 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                 <span className="rounded-full px-1.5 py-0" style={{ fontSize: 10, fontWeight: 600, color: "var(--pl-fg-muted)", background: "var(--pl-hover)" }}>{swatches.length}</span>
                 <span style={{ fontSize: 9, color: "var(--pl-fg-muted)", fontStyle: "italic", marginLeft: 2 }}>· click to edit</span>
               </div>
-              <div className="grid grid-cols-9 gap-1">
+              <div id="pl-tour-swatches" className="grid grid-cols-9 gap-1">
                 {swatches.map((c, i) => {
                   const swatchColor = customSwatches[i] ?? c;
                   const isEdited = !!customSwatches[i];
                   return (
                     <button
                       key={i}
-                      onClick={() => { setAutoPlay(false); setSelectedSwatch(i); setEditingHex(swatchColor); }}
+                      onClick={() => { setAutoPlay(false); setSelectedSwatch(i); setEditingHex(swatchColor); setTimeout(() => editorRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60); }}
                       className="rounded-lg transition-all duration-200 relative"
                       style={{
                         aspectRatio: "1", background: swatchColor,
@@ -1089,27 +1346,60 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
             <div className="px-3 py-2 space-y-2" style={{ borderTop: "1px solid var(--pl-border)", background: "var(--pl-surface)" }}>
               <div className="flex items-center gap-1.5 flex-wrap">
                 <button
-                  onClick={() => { setApplyAnim(true); setScanAnim(true); setTimeout(() => setApplyAnim(false), 1200); setTimeout(() => setScanAnim(false), 650); }}
+                  onClick={() => {
+                    setAutoPlay(false);
+                    setScanAnim(true);
+                    setTimeout(() => setScanAnim(false), 650);
+                    // Re-derive swatches by resetting custom overrides for non-edited swatches
+                    setCustomSwatches((prev) => {
+                      // keep only explicitly edited ones, remove generated extras
+                      const kept: Record<number,string> = {};
+                      Object.entries(prev).forEach(([k, v]) => { if (Number(k) < 6) kept[Number(k)] = v; });
+                      return kept;
+                    });
+                  }}
                   className="rounded-md px-2.5 py-1 text-xs font-semibold transition-all duration-300"
-                  style={{ background: applyAnim ? "#22c55e" : "var(--pl-primary)", color: "#fff", border: "none" }}
+                  style={{ background: "var(--pl-primary)", color: "#fff", border: "none" }}
+                  title="Re-scan and refresh extracted color palette"
                 >
-                  {applyAnim ? "✓ Applied!" : "Rescan"}
+                  Rescan
                 </button>
-                <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium" style={{ border: "1px solid var(--pl-border)", background: "var(--pl-card)", color: "var(--pl-fg)" }} title="Fix all unreadable text on the page (WCAG AA contrast)">
+                <button
+                  onClick={() => {
+                    setAutoPlay(false);
+                    setFixTextAnim(true);
+                    setTimeout(() => setFixTextAnim(false), 1400);
+                    setCustomSwatches((prev) => fixTextContrast(swatches, prev));
+                  }}
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-all duration-300"
+                  style={{ border: "1px solid " + (fixTextAnim ? "#22c55e" : "var(--pl-border)"), background: fixTextAnim ? "rgba(34,197,94,0.1)" : "var(--pl-card)", color: fixTextAnim ? "#22c55e" : "var(--pl-fg)" }}
+                  title="Auto-fix all low-contrast text colors to pass WCAG AA (4.5:1)"
+                >
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7V4h16v3"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg>
-                  Fix Text
+                  {fixTextAnim ? "✓ Fixed!" : "Fix Text"}
                 </button>
                 {/* Force Reapply button */}
-                <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium" style={{ border: "1px solid var(--pl-border)", background: "var(--pl-card)", color: "var(--pl-fg)" }} title="Force re-apply all color changes to the page">
+                <button
+                  onClick={() => {
+                    setAutoPlay(false);
+                    setReapplyAnim(true);
+                    setScanAnim(true);
+                    setTimeout(() => setReapplyAnim(false), 1200);
+                    setTimeout(() => setScanAnim(false), 650);
+                  }}
+                  className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-all duration-300"
+                  style={{ border: "1px solid " + (reapplyAnim ? "#22c55e" : "var(--pl-border)"), background: reapplyAnim ? "rgba(34,197,94,0.1)" : "var(--pl-card)", color: reapplyAnim ? "#22c55e" : "var(--pl-fg)" }}
+                  title="Force re-apply all color overrides"
+                >
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2.5 12a10 10 0 0 1 16.4-6.2L21.5 8"/><path d="M21.5 12a10 10 0 0 1-16.4 6.2L2.5 16"/></svg>
-                  Reapply
+                  {reapplyAnim ? "✓ Applied!" : "Reapply"}
                 </button>
                 <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium" style={{ border: "1px solid var(--pl-border)", background: "var(--pl-card)", color: "var(--pl-fg)" }} title="Pick a color from the page">
                   <Icon name="pipette" className="h-3 w-3" />
                   Pick
                 </button>
                 {/* Export with dropdown */}
-                <div className="relative">
+                <div id="pl-tour-export" className="relative">
                   <button
                     onClick={() => { setExportOpen((v) => !v); setImportOpen(false); }}
                     className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition"
@@ -1121,28 +1411,35 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                     <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 2.5l3 2.5 3-2.5"/></svg>
                   </button>
                   {exportOpen && (
-                    <div className="absolute bottom-full mb-1 left-0 z-50 rounded-lg overflow-hidden shadow-xl" style={{ background: "var(--pl-bg)", border: "1px solid var(--pl-border)", minWidth: 230 }} role="menu">
-                      {/* PaletteLive format */}
-                      <button onClick={() => setExportFmt("palettelive")} className="w-full text-left px-3 py-1.5 text-[11px] font-medium transition hover:opacity-80" style={{ background: exportFmt === "palettelive" ? "var(--pl-primary)" : "transparent", color: exportFmt === "palettelive" ? "#fff" : "var(--pl-fg)" }} role="menuitem" title="Lossless backup — import restores exact colors">PaletteLive Palette ↺</button>
+                    <div className="absolute bottom-full mb-1 left-0 z-50 rounded-lg overflow-hidden shadow-xl" style={{ background: "var(--pl-bg)", border: "1px solid var(--pl-border)", minWidth: 240 }} role="menu">
                       {/* Copy to clipboard section */}
-                      <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider" style={{ color: "var(--pl-fg-muted)", borderTop: "1px solid var(--pl-border)", borderBottom: "1px solid var(--pl-border)", background: "var(--pl-hover)" }}>Copy to Clipboard</div>
-                      {(["css","json","tailwind","cmyk","lab","oklch"] as const).map(f => (
-                        <button key={f} onClick={() => setExportFmt(f)} className="w-full text-left px-3 py-1.5 text-[11px] font-medium transition hover:opacity-80" style={{ background: exportFmt === f ? "var(--pl-primary)" : "transparent", color: exportFmt === f ? "#fff" : "var(--pl-fg)" }} role="menuitem">{f === "css" ? "CSS Variables" : f === "json" ? "JSON Tokens" : f === "tailwind" ? "Tailwind Config" : f.toUpperCase()}</button>
-                      ))}
+                      <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider" style={{ color: "var(--pl-fg-muted)", borderBottom: "1px solid var(--pl-border)", background: "var(--pl-hover)" }}>Copy to Clipboard</div>
+                      {(["palettelive","css","json","tailwind","cmyk","lab","oklch"] as const).map(f => {
+                        const isCopied = copiedFmt === f;
+                        const label = f === "css" ? "CSS Variables" : f === "json" ? "JSON Tokens" : f === "tailwind" ? "Tailwind Config" : f === "palettelive" ? "PaletteLive Palette ↺" : f.toUpperCase();
+                        return (
+                          <button key={f} onClick={() => copyFmt(f)}
+                            className="w-full text-left px-3 py-1.5 text-[11px] font-medium transition hover:opacity-80 flex items-center justify-between"
+                            style={{ background: isCopied ? "rgba(34,197,94,0.12)" : "transparent", color: isCopied ? "#22c55e" : "var(--pl-fg)" }}
+                            role="menuitem">
+                            <span>{label}</span>
+                            {isCopied && <span style={{ fontSize: 9, fontWeight: 700 }}>✓ Copied!</span>}
+                          </button>
+                        );
+                      })}
                       {/* Export as file section */}
-                      <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider" style={{ color: "var(--pl-fg-muted)", borderTop: "1px solid var(--pl-border)", borderBottom: "1px solid var(--pl-border)", background: "var(--pl-hover)" }}>Export as File</div>
+                      <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider" style={{ color: "var(--pl-fg-muted)", borderTop: "1px solid var(--pl-border)", borderBottom: "1px solid var(--pl-border)", background: "var(--pl-hover)" }}>Download as File</div>
                       {(["palettelive","css","json","tailwind","cmyk","lab","oklch"] as const).map(f => (
-                        <button key={"file-"+f} className="w-full text-left px-3 py-1.5 text-[11px] font-medium transition hover:opacity-80" style={{ color: "var(--pl-fg)" }} role="menuitem">{f === "palettelive" ? "PaletteLive Palette ↺" : f === "css" ? "CSS Variables" : f === "json" ? "JSON Tokens" : f === "tailwind" ? "Tailwind Config" : f.toUpperCase()}</button>
+                        <button key={"file-"+f} onClick={() => downloadFmt(f)}
+                          className="w-full text-left px-3 py-1.5 text-[11px] font-medium transition hover:opacity-80 flex items-center gap-1"
+                          style={{ color: "var(--pl-fg)" }} role="menuitem">
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                          {f === "palettelive" ? "PaletteLive Palette ↺" : f === "css" ? "CSS Variables" : f === "json" ? "JSON Tokens" : f === "tailwind" ? "Tailwind Config" : f.toUpperCase()}
+                        </button>
                       ))}
                       {/* Export preview */}
-                      <pre className="p-2.5 text-[10px] leading-relaxed overflow-auto" style={{ fontFamily: "'SF Mono', monospace", color: "var(--pl-fg)", maxHeight: 100, background: "var(--pl-surface)", borderTop: "1px solid var(--pl-border)" }}>
-                        {exportFmt === "palettelive" && `{\n  "version": "1.0",\n  "overrides": {\n    "${displayPal.bg}": "${displayPal.accent}",\n    "${displayPal.surface}": "${displayPal.primary}"\n  }\n}`}
-                        {exportFmt === "css" && `:root {\n  --color-bg: ${displayPal.bg};\n  --color-surface: ${displayPal.surface};\n  --color-accent: ${displayPal.accent};\n  --color-text: ${displayPal.text};\n  --color-primary: ${displayPal.primary};\n  --color-secondary: ${displayPal.secondary};\n}`}
-                        {exportFmt === "json" && `{\n  "bg": "${displayPal.bg}",\n  "surface": "${displayPal.surface}",\n  "accent": "${displayPal.accent}",\n  "text": "${displayPal.text}",\n  "primary": "${displayPal.primary}",\n  "secondary": "${displayPal.secondary}"\n}`}
-                        {exportFmt === "tailwind" && `extend: {\n  colors: {\n    bg: '${displayPal.bg}',\n    surface: '${displayPal.surface}',\n    accent: '${displayPal.accent}',\n    primary: '${displayPal.primary}',\n  }\n}`}
-                        {exportFmt === "cmyk" && `/* CMYK approximation */\n/* bg */  cmyk(0%, 0%, 0%, ${Math.round((1 - parseInt(displayPal.bg.slice(1,3),16)/255)*100)}%)\n/* accent */ cmyk(0%, 0%, 0%, ${Math.round((1 - parseInt(displayPal.accent.slice(1,3),16)/255)*100)}%)\n/* primary */ cmyk(0%, 0%, 0%, ${Math.round((1 - parseInt(displayPal.primary.slice(1,3),16)/255)*100)}%)`}
-                        {exportFmt === "lab" && `/* CIE LAB (D50) */\n--color-accent: lab(from ${displayPal.accent} l a b);\n--color-primary: lab(from ${displayPal.primary} l a b);\n--color-bg: lab(from ${displayPal.bg} l a b);`}
-                        {exportFmt === "oklch" && `/* OKLCH conversion */\n--color-accent: oklch(from ${displayPal.accent} l c h);\n--color-primary: oklch(from ${displayPal.primary} l c h);\n--color-bg: oklch(from ${displayPal.bg} l c h);`}
+                      <pre className="p-2.5 text-[10px] leading-relaxed overflow-auto select-all" style={{ fontFamily: "'SF Mono', monospace", color: "var(--pl-fg)", maxHeight: 110, background: "var(--pl-surface)", borderTop: "1px solid var(--pl-border)", whiteSpace: "pre" }}>
+                        {getExportText(exportFmt)}
                       </pre>
                     </div>
                   )}
@@ -1160,14 +1457,52 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                     <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 2.5l3 2.5 3-2.5"/></svg>
                   </button>
                   {importOpen && (
-                    <div className="absolute bottom-full mb-1 left-0 z-50 rounded-lg overflow-hidden shadow-xl" style={{ background: "var(--pl-bg)", border: "1px solid var(--pl-border)", minWidth: 180 }} role="menu">
-                      <button className="w-full text-left px-3 py-2 text-[11px] font-medium transition hover:opacity-80" style={{ color: "var(--pl-fg)", borderBottom: "1px solid var(--pl-border)" }} role="menuitem">Import from File</button>
-                      <button className="w-full text-left px-3 py-2 text-[11px] font-medium transition hover:opacity-80" style={{ color: "var(--pl-fg)" }} role="menuitem">Import from Clipboard</button>
+                    <div className="absolute bottom-full mb-1 left-0 z-50 rounded-lg shadow-xl" style={{ background: "var(--pl-bg)", border: "1px solid var(--pl-border)", minWidth: 220, overflow: "visible" }} role="menu">
+                      {importMode === "menu" ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              const text = customPaletteInput || "";
+                              if (text) { applyImportText(text); } else { setImportMode("clipboard"); }
+                            }}
+                            className="w-full text-left px-3 py-2 text-[11px] font-medium transition hover:opacity-80"
+                            style={{ color: "var(--pl-fg)", borderBottom: "1px solid var(--pl-border)" }} role="menuitem"
+                          >Paste from Clipboard</button>
+                          <label className="flex items-center gap-2 px-3 py-2 text-[11px] font-medium cursor-pointer hover:opacity-80" style={{ color: "var(--pl-fg)" }} role="menuitem">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Import from File (.plpalette / .json)
+                            <input type="file" accept=".json,.plpalette,.txt" className="hidden" onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const reader = new FileReader();
+                              reader.onload = (ev) => { applyImportText(String(ev.target?.result ?? "")); };
+                              reader.readAsText(file);
+                            }} />
+                          </label>
+                        </>
+                      ) : (
+                        <div className="p-2 space-y-1.5">
+                          <div style={{ fontSize: 10, color: "var(--pl-fg-muted)", fontWeight: 600 }}>Paste hex codes or Coolors URL</div>
+                          <textarea
+                            value={importText}
+                            onChange={(e) => setImportText(e.target.value)}
+                            rows={3}
+                            placeholder="#264653, #2a9d8f, #e9c46a ..."
+                            className="w-full rounded px-2 py-1 text-[11px] resize-none"
+                            style={{ border: "1px solid var(--pl-border)", background: "var(--pl-surface)", color: "var(--pl-fg)", outline: "none", fontFamily: "monospace" }}
+                            autoFocus
+                          />
+                          <div className="flex gap-1">
+                            <button onClick={() => applyImportText(importText)} disabled={!importText.match(/#[0-9a-fA-F]{6}/gi)} className="flex-1 rounded py-1 text-[11px] font-semibold" style={{ background: "var(--pl-primary)", color: "#fff", border: "none", opacity: importText.match(/#[0-9a-fA-F]{6}/gi) ? 1 : 0.4 }}>Apply</button>
+                            <button onClick={() => { setImportMode("menu"); setImportText(""); }} className="rounded px-2 py-1 text-[11px]" style={{ border: "1px solid var(--pl-border)", color: "var(--pl-fg-muted)", background: "var(--pl-surface)" }}>Back</button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div id="pl-tour-toggles" className="flex items-center gap-3">
                 <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg-muted)" }}>
                   <div className="relative" style={{ width: 32, height: 18 }}>
                     <input type="checkbox" checked={heatmapOn} onChange={() => { setAutoPlay(false); setHeatmapOn((v) => !v); }} className="sr-only peer" />
@@ -1186,7 +1521,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                   {compareOn && <span style={{ fontSize: 9, opacity: 0.55, fontStyle: "italic" }} aria-live="polite">drag to split</span>}
                 </label>
               </div>
-              <div className="flex items-center gap-2">
+              <div id="pl-tour-vision" className="flex items-center gap-2">
                 <label htmlFor="pl-vision-sim" style={{ fontSize: 12, color: "var(--pl-fg-muted)" }}>Vision</label>
                 <select id="pl-vision-sim" value={visionSim} onChange={(e) => { setAutoPlay(false); setVisionSim(e.target.value); }} className="rounded-md px-1.5 py-0.5" style={{ height: 24, border: "1px solid var(--pl-border)", background: "var(--pl-surface)", color: "var(--pl-fg)", fontSize: 12 }}>
                   <option value="none">Off</option>
@@ -1244,6 +1579,80 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
           </>
         )}
       </div>
+
+      {/* ─── Guided Tour Overlay ─── */}
+      {tourStep !== null && spotlightRect && tourVisible && (() => {
+        const step = TOUR_STEPS[tourStep];
+        const pad = 10;
+        const above = spotlightRect.top + spotlightRect.height + 230 > window.innerHeight;
+        const tipTop = above
+          ? Math.max(12, spotlightRect.top - pad - 215)
+          : spotlightRect.top + spotlightRect.height + pad + 8;
+        const tipLeft = Math.max(12, Math.min(spotlightRect.left - 4, window.innerWidth - 304));
+        return (
+          <>
+            <div onClick={tourEnd} style={{ position: "fixed", inset: 0, zIndex: 10000, cursor: "default" }} />
+            <div style={{
+              position: "fixed", zIndex: 10001,
+              top: spotlightRect.top - pad, left: spotlightRect.left - pad,
+              width: spotlightRect.width + pad * 2, height: spotlightRect.height + pad * 2,
+              borderRadius: 14, pointerEvents: "none",
+              boxShadow: `0 0 0 9999px rgba(0,0,0,0.82), 0 0 0 2.5px ${displayPal.accent}, 0 0 28px 6px ${displayPal.accent}55`,
+              transition: "top 0.38s cubic-bezier(.4,0,.2,1), left 0.38s cubic-bezier(.4,0,.2,1), width 0.38s cubic-bezier(.4,0,.2,1), height 0.38s cubic-bezier(.4,0,.2,1)",
+            }} />
+            <div style={{
+              position: "fixed", zIndex: 10002,
+              top: tipTop, left: tipLeft, width: 292,
+              background: theme === "dark" ? "#0d1117" : "#ffffff",
+              border: `1.5px solid ${displayPal.accent}50`,
+              borderRadius: 18, padding: "16px 18px 14px",
+              boxShadow: "0 24px 72px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.04)",
+              transition: "top 0.38s cubic-bezier(.4,0,.2,1), left 0.38s cubic-bezier(.4,0,.2,1)",
+              pointerEvents: "all",
+              fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <div style={{ width: 26, height: 26, borderRadius: "50%", background: `${displayPal.accent}20`, border: `1.5px solid ${displayPal.accent}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{step.icon}</div>
+                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.09em", textTransform: "uppercase", color: displayPal.accent }}>{step.tip}</span>
+                </div>
+                <button onClick={tourEnd} style={{ background: "none", border: "none", cursor: "pointer", color: theme === "dark" ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)", fontSize: 19, lineHeight: 1, padding: "2px 5px", borderRadius: 6 }} aria-label="Close tour">×</button>
+              </div>
+              <div style={{ fontWeight: 800, fontSize: 15.5, color: theme === "dark" ? "#f1f5f9" : "#0f172a", marginBottom: 7, lineHeight: 1.25 }}>{step.title}</div>
+              <div style={{ fontSize: 12.5, color: theme === "dark" ? "#94a3b8" : "#475569", lineHeight: 1.65, marginBottom: 15 }}>{step.body}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 14 }}>
+                {TOUR_STEPS.map((_, i) => (
+                  <button key={i} onClick={() => setTourStep(i)} style={{
+                    width: i === tourStep ? 22 : 6, height: 6, borderRadius: 99, border: "none",
+                    background: i === tourStep ? displayPal.accent : (theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.13)"),
+                    cursor: "pointer", transition: "all 0.3s", padding: 0,
+                  }} />
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {tourStep > 0 && (
+                  <button onClick={() => setTourStep((s) => (s ?? 1) - 1)} style={{
+                    flex: 1, borderRadius: 10, padding: "9px 12px", fontSize: 12, fontWeight: 600,
+                    background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
+                    color: theme === "dark" ? "#94a3b8" : "#64748b",
+                    border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)",
+                    cursor: "pointer",
+                  }}>← Back</button>
+                )}
+                <button onClick={tourNext} style={{
+                  flex: 2, borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 800,
+                  background: `linear-gradient(135deg, ${displayPal.accent}, ${displayPal.primary})`,
+                  color: luminance(displayPal.accent) > 0.4 ? "#000" : "#fff",
+                  border: "none", cursor: "pointer", letterSpacing: "0.025em",
+                  boxShadow: `0 4px 14px ${displayPal.accent}40`,
+                }}>
+                  {tourStep < TOUR_STEPS.length - 1 ? "Next →" : "Start Exploring! ✨"}
+                </button>
+              </div>
+            </div>
+          </>
+        );
+      })()}
     </div>
   );
 }
@@ -1410,6 +1819,9 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export function App() {
   const [theme, setTheme] = useState<Theme>("dark");
+  const [showDemoPopup, setShowDemoPopup] = useState(false);
+  const [demoPopupDismissed, setDemoPopupDismissed] = useState(false);
+  const [tourRequested, setTourRequested] = useState(false);
 
   useEffect(() => {
     // Keep body background consistent for the hero feel.
@@ -1418,6 +1830,25 @@ export function App() {
       document.body.classList.remove("bg-slate-950");
     };
   }, []);
+
+  // Show popup when user scrolls to the demo section (fires only once)
+  useEffect(() => {
+    const el = document.getElementById("demo");
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !demoPopupDismissed) {
+          setShowDemoPopup(true);
+          observer.disconnect();
+          // Auto-dismiss after 7 seconds
+          setTimeout(() => setShowDemoPopup(false), 7000);
+        }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [demoPopupDismissed]);
 
   // Custom paint-brush cursor: switches brush based on background luminance
   useEffect(() => {
@@ -1574,7 +2005,7 @@ export function App() {
           </div>
 
           <div id="demo" className="mt-10 sm:mt-12">
-            <InteractiveDemo theme={theme} />
+            <InteractiveDemo theme={theme} tourStarted={tourRequested} onTourEnd={() => setTourRequested(false)} />
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -2141,6 +2572,70 @@ export function App() {
           </div>
         </footer>
       </main>
+
+      {/* ── Demo popup toast ── */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: 28,
+          left: "50%",
+          transform: showDemoPopup ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(120px)",
+          opacity: showDemoPopup ? 1 : 0,
+          pointerEvents: showDemoPopup ? "auto" : "none",
+          transition: "transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease",
+          zIndex: 9999,
+          width: "min(420px, calc(100vw - 32px))",
+          background: "linear-gradient(135deg, #1b263b 0%, #0d1b2a 100%)",
+          border: "1.5px solid #415a77",
+          borderRadius: 16,
+          boxShadow: "0 8px 40px 0 rgba(0,0,0,0.55), 0 0 0 1px #778da922",
+          padding: "18px 20px 16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#778da9", marginBottom: 4 }}>Live Demo</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: "#e0e1dd", lineHeight: 1.3 }}>Try the extension right here!</div>
+          </div>
+          <button
+            onClick={() => { setShowDemoPopup(false); setDemoPopupDismissed(true); }}
+            style={{ flexShrink: 0, background: "none", border: "none", color: "#778da9", cursor: "pointer", fontSize: 18, lineHeight: 1, padding: "2px 4px", borderRadius: 6 }}
+            aria-label="Dismiss"
+          >×</button>
+        </div>
+        {/* Body */}
+        <div style={{ fontSize: 12.5, color: "#a0b0c0", lineHeight: 1.6 }}>
+          Scroll down and interact with the <strong style={{ color: "#e0e1dd" }}>PaletteLive demo</strong> — switch palettes, toggle heatmaps, simulate vision modes and more, all without installing anything.
+        </div>
+        {/* CTA */}
+        <div style={{ display: "flex", gap: 8, marginTop: 2 }}>
+          <a
+            href={cwsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={openEdgeLink}
+            style={{ flex: 1, textAlign: "center", borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 700, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", textDecoration: "none", letterSpacing: "0.02em" }}
+          >
+            Add to Edge →
+          </a>
+          <button
+            onClick={() => {
+              setShowDemoPopup(false);
+              setDemoPopupDismissed(true);
+              document.getElementById("demo")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              setTimeout(() => setTourRequested(true), 800);
+              setTimeout(() => setTourRequested(false), 850);
+            }}
+            style={{ flex: 1, borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 700, background: "#0d1b2a", color: "#e0e1dd", border: "1.5px solid #415a77", cursor: "pointer" }}
+          >
+            Try Demo →
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

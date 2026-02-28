@@ -1208,7 +1208,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
           {/* ── CTA card — fills empty space below popup ── */}
           <div style={{ flex: 1, borderRadius: 16, padding: "18px 16px", background: "#1b263b", border: "1.5px solid #415a77", display: "flex", flexDirection: "column", justifyContent: "center", gap: 12 }}>
             <div>
-              <div style={{ fontSize: 22, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.13em", color: "#e0e1dd", marginBottom: 6 }}>⚡ Interactive Demo</div>
+              <div style={{ fontSize: 22, fontWeight: 900, textTransform: "uppercase", letterSpacing: "normal", color: "#e0e1dd", marginBottom: 6 }}>Interactive Demo</div>
               <div style={{ fontSize: 17, fontWeight: 800, color: "#e0e1dd", lineHeight: 1.35, marginBottom: 8 }}>You're seeing just a glimpse of what PaletteLive can do.</div>
               <div style={{ fontSize: 11, color: "#778da9", lineHeight: 1.65, marginBottom: 14 }}>Download the <strong style={{ color: "#e0e1dd", fontWeight: 700 }}>free extension</strong> to unlock all 18+ features — real-time recoloring, WCAG contrast checker, 6 export formats & more.</div>
             </div>
@@ -1219,7 +1219,7 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
                 style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "#0d1b2a", color: "#778da9", textDecoration: "none", border: "1.5px solid #415a77" }}>View Full Feature List</a>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
-              {[["18+ Features", "#e0e1dd"], ["Free Forever", "#778da9"], ["MV3 Secure", "#415a77"], ["Open Source", "#778da9"]].map(([tag, color]) => (
+              {[["18+ Features", "#e0e1dd"], ["100% Free", "#778da9"], ["MV3 Secure", "#415a77"], ["Open Source", "#778da9"]].map(([tag, color]) => (
                 <span key={tag} style={{ fontSize: 9, fontWeight: 700, borderRadius: 6, padding: "4px 10px", background: "#0d1b2a", color: color, border: `1px solid ${color}40` }}>{tag}</span>
               ))}
             </div>

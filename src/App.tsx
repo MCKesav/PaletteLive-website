@@ -2498,15 +2498,37 @@ export function App() {
                 <p className="text-sm text-white/70 mb-6">
                   For technical support, bug reports, feature requests, or general questions about PaletteLive, please don't hesitate to reach out.
                 </p>
-                <a 
-                  href="mailto:mckesavdev+support@gmail.com" 
-                  className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
-                >
-                  <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                  </svg>
-                  mckesavdev+support@gmail.com
-                </a>
+                <div className="flex flex-col items-center gap-4">
+                  <a 
+                    href="mailto:mckesavdev+support@gmail.com" 
+                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
+                  >
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    mckesavdev+support@gmail.com
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/mckesav"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
+                  >
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                    linkedin.com/in/mckesav
+                  </a>
+                  <a
+                    href="tel:+919490251635"
+                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
+                  >
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/>
+                    </svg>
+                    +91 94902 51635
+                  </a>
+                </div>
               </div>
             </div>
             

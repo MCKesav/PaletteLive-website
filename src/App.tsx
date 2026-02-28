@@ -649,11 +649,11 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
           {/* Theme toggle — lives here since it only affects the demo panel */}
           <button
             onClick={() => { setAutoPlay(false); setPopupTheme((t) => t === "dark" ? "light" : "dark"); }}
-            className="rounded px-2 py-0.5 text-[10px] font-semibold transition"
-            style={{ border: "1px solid " + (theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)"), color: theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.45)", background: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)" }}
+            className="rounded-xl px-3 py-1 text-[11px] font-semibold transition"
+            style={{ border: "1px solid " + (theme === "dark" ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.10)"), color: theme === "dark" ? "rgba(255,255,255,0.80)" : "rgba(0,0,0,0.55)", background: theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
             title="Toggle panel theme (dark/light)"
           >
-            {popupTheme === "dark" ? "☀ Light" : "☾ Dark"}
+            Theme: {popupTheme === "dark" ? "Dark" : "Light"}
           </button>
         </div>
         <div id="pl-tour-palettes" className="flex items-center gap-1.5">
@@ -1921,12 +1921,6 @@ export function App() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <button
-              className="hidden rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/10 md:inline-flex"
-              onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-            >
-              Theme: {theme === "dark" ? "Dark" : "Light"}
-            </button>
             <a
               href={cwsUrl}
               target="_blank"

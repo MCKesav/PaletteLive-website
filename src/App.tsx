@@ -1253,7 +1253,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                   <button key={p.name} onClick={() => pick(i)} className="rounded-full px-2 py-0.5 transition" style={{ fontSize: 10, border: "1px solid " + (i === paletteIdx ? "var(--pl-primary)" : "var(--pl-border)"), background: i === paletteIdx ? "var(--pl-primary)" : "var(--pl-surface)", color: i === paletteIdx ? "#fff" : "var(--pl-fg)" }} title={["Dark mode colors", "Deep blue → teal → sand", "Warm oranges & reds", "Earthy greens", "Clean neutrals", "Vibrant pastels"][i]}>{p.name}</button>
                 ))}
               </div>
-              <div className="flex gap-1.5">
+              <div className="flex gap-1.5" style={{ alignItems: "stretch" }}>
                 <button
                   onClick={() => {
                     const hexes = customPaletteInput.match(/#[0-9a-fA-F]{6}/gi);
@@ -1270,8 +1270,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     setTimeout(() => setScanAnim(false), 650);
                   }}
                   disabled={!customPaletteInput.match(/#[0-9a-fA-F]{6}/gi)}
-                  className="flex-1 rounded-md py-1.5 text-xs font-semibold transition-all duration-300"
-                  style={{ background: applyAnim ? "#22c55e" : "var(--pl-primary)", color: "#fff", border: "none", opacity: customPaletteInput.match(/#[0-9a-fA-F]{6}/gi) ? 1 : 0.5, cursor: customPaletteInput.match(/#[0-9a-fA-F]{6}/gi) ? "pointer" : "not-allowed" }}
+                  style={{ flex: 1, padding: "7px 14px", borderRadius: 6, border: "none", fontSize: 12, fontWeight: 600, background: applyAnim ? "#22c55e" : "var(--pl-primary)", color: "#fff", cursor: customPaletteInput.match(/#[0-9a-fA-F]{6}/gi) ? "pointer" : "not-allowed", opacity: customPaletteInput.match(/#[0-9a-fA-F]{6}/gi) ? 1 : 0.5, transition: "all 0.15s" }}
                 >
                   {applyAnim ? "✓ Applied to Page!" : "Apply to Page"}
                 </button>
@@ -1285,9 +1284,8 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     setTimeout(() => setResetAnim(false), 1200);
                     setTimeout(() => setScanAnim(false), 650);
                   }}
-                  className="rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-300"
-                  style={{ background: resetAnim ? "rgba(239,68,68,0.1)" : "var(--pl-surface)", border: "1px solid " + (resetAnim ? "#ef4444" : "var(--pl-border)"), color: resetAnim ? "#ef4444" : "var(--pl-fg)" }}
-                  title="Clear all color overrides and restore original palette"
+                  style={{ flex: "0 0 auto", padding: "7px 14px", borderRadius: 6, fontSize: 12, fontWeight: 600, background: resetAnim ? "rgba(239,68,68,0.1)" : "var(--pl-surface)", border: "1px solid " + (resetAnim ? "#ef4444" : "var(--pl-border)"), color: resetAnim ? "#ef4444" : "var(--pl-fg)", cursor: "pointer", transition: "all 0.15s" }}
+                  title="Remove palette overrides"
                 >{resetAnim ? "✓ Reset!" : "Reset"}</button>
               </div>
               {/* Apply palette status */}
@@ -1517,20 +1515,29 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                   )}
                 </div>
               </div>
-              <div id="pl-tour-toggles" className="flex items-center gap-3">
-                <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg-muted)" }}>
-                  <div className="relative" style={{ width: 32, height: 18 }}>
-                    <input type="checkbox" checked={heatmapOn} onChange={() => { setAutoPlay(false); setHeatmapOn((v) => !v); }} className="sr-only peer" />
-                    <div className="absolute inset-0 rounded-full transition-colors peer-checked:bg-indigo-500" style={{ background: heatmapOn ? "var(--pl-primary)" : "var(--pl-border)" }} />
-                    <div className="absolute top-[2px] left-[2px] h-[14px] w-[14px] rounded-full bg-white shadow transition-transform" style={{ transform: heatmapOn ? "translateX(14px)" : "translateX(0)" }} />
-                  </div>
-                  <span style={{ fontWeight: 500 }}>Heatmap</span>
-                </label>
-                <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg-muted)" }}>
-                  <div className="relative" style={{ width: 32, height: 18 }}>
+              <div id="pl-tour-toggles" className="flex items-center gap-2.5">
+                <button
+                  onClick={() => { setAutoPlay(false); setHeatmapOn((v) => !v); }}
+                  className="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all"
+                  style={{
+                    background: heatmapOn ? "var(--pl-primary)" : "var(--pl-surface)",
+                    border: "1px solid " + (heatmapOn ? "var(--pl-primary)" : "var(--pl-border)"),
+                    color: heatmapOn ? "#fff" : "var(--pl-fg-muted)",
+                  }}
+                  title="Color Frequency Analysis"
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <rect x="2" y="10" width="3" height="4" fill="currentColor" opacity="0.4"/>
+                    <rect x="6" y="7" width="3" height="7" fill="currentColor" opacity="0.6"/>
+                    <rect x="10" y="4" width="3" height="10" fill="currentColor" opacity="0.8"/>
+                  </svg>
+                  Heatmap
+                </button>
+                <label className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg-muted)", userSelect: "none" }}>
+                  <div className="relative" style={{ width: 36, height: 20 }}>
                     <input type="checkbox" checked={compareOn} onChange={() => { setAutoPlay(false); setCompareOn((v) => !v); }} className="sr-only peer" />
                     <div className="absolute inset-0 rounded-full transition-colors" style={{ background: compareOn ? "var(--pl-primary)" : "var(--pl-border)" }} />
-                    <div className="absolute top-[2px] left-[2px] h-[14px] w-[14px] rounded-full bg-white shadow transition-transform" style={{ transform: compareOn ? "translateX(14px)" : "translateX(0)" }} />
+                    <div className="absolute rounded-full bg-white shadow transition-transform" style={{ width: 16, height: 16, top: 2, left: 2, transform: compareOn ? "translateX(16px)" : "translateX(0)", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                   </div>
                   <span style={{ fontWeight: 500 }}>Compare</span>
                   {compareOn && <span style={{ fontSize: 9, opacity: 0.55, fontStyle: "italic" }} aria-live="polite">drag to split</span>}

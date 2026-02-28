@@ -229,7 +229,7 @@ function SitePreview({ pal, heatmapOn = false, onColorClick }: { pal: PaletteDat
         <div style={{ fontSize: 9, color: pal.text, opacity: 0.55, lineHeight: 1.5, maxWidth: 280, margin: "0 auto 10px", transition: "color 0.5s" }}>Extract, edit, generate & export color palettes from any live website in real-time — no page reload needed.</div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 10 }}>
           <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("accent"); } : undefined}
-            style={{ borderRadius: 7, padding: "5px 14px", fontSize: 9, fontWeight: 700, background: pal.accent, color: pal.bg, cursor: clickable ? "pointer" : undefined, transition: "background 0.5s, color 0.5s" }}>Add to Chrome</div>
+            style={{ borderRadius: 7, padding: "5px 14px", fontSize: 9, fontWeight: 700, background: pal.accent, color: pal.bg, cursor: clickable ? "pointer" : undefined, transition: "background 0.5s, color 0.5s" }}>Add to Edge</div>
           <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("surface"); } : undefined}
             style={{ borderRadius: 7, padding: "5px 14px", fontSize: 9, fontWeight: 600, background: pal.surface, color: pal.text, border: `1px solid ${pal.accent}44`, cursor: clickable ? "pointer" : undefined, transition: "background 0.5s, color 0.5s" }}>View Docs</div>
         </div>
@@ -1195,15 +1195,15 @@ function InteractiveDemo({ theme }: { theme: Theme }) {
           {/* ── CTA card — fills empty space below popup ── */}
           <div style={{ flex: 1, borderRadius: 16, padding: "18px 16px", background: "#1b263b", border: "1.5px solid #415a77", display: "flex", flexDirection: "column", justifyContent: "center", gap: 12 }}>
             <div>
-              <div style={{ fontSize: 8.5, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.13em", color: "#e0e1dd", marginBottom: 6 }}>⚡ Interactive Demo</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: "#e0e1dd", lineHeight: 1.35, marginBottom: 8 }}>You're seeing just a glimpse of what PaletteLive can do.</div>
+              <div style={{ fontSize: 22, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.13em", color: "#e0e1dd", marginBottom: 6 }}>⚡ Interactive Demo</div>
+              <div style={{ fontSize: 17, fontWeight: 800, color: "#e0e1dd", lineHeight: 1.35, marginBottom: 8 }}>You're seeing just a glimpse of what PaletteLive can do.</div>
               <div style={{ fontSize: 11, color: "#778da9", lineHeight: 1.65, marginBottom: 14 }}>Download the <strong style={{ color: "#e0e1dd", fontWeight: 700 }}>free extension</strong> to unlock all 18+ features — real-time recoloring, WCAG contrast checker, 6 export formats & more.</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <a href="https://palettelive.mckesav.in" target="_blank" rel="noopener noreferrer"
-                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", textDecoration: "none", border: "none", letterSpacing: "0.02em" }}>📥 Get Full Extension →</a>
-              <a href="https://palettelive.mckesav.in" target="_blank" rel="noopener noreferrer"
-                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "#0d1b2a", color: "#778da9", textDecoration: "none", border: "1.5px solid #415a77" }}>📖 View Full Feature List</a>
+              <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam" target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}
+                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", textDecoration: "none", border: "none", letterSpacing: "0.02em" }}>Get Full Extension →</a>
+              <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam" target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}
+                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "#0d1b2a", color: "#778da9", textDecoration: "none", border: "1.5px solid #415a77" }}>View Full Feature List</a>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
               {[["18+ Features", "#e0e1dd"], ["Free Forever", "#778da9"], ["MV3 Secure", "#415a77"], ["Open Source", "#778da9"]].map(([tag, color]) => (
@@ -1449,9 +1449,23 @@ export function App() {
     };
   }, []);
 
-  const cwsUrl = "https://chrome.google.com/webstore";
+  const cwsUrl = "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam";
   const docsUrl = "/how-to-use";
   const demoUrl = "#demo";
+
+  // Opens the link in a new tab (via href) AND tries to launch it in Microsoft Edge
+  // by invoking the microsoft-edge: URI protocol handler registered on Windows.
+  const openEdgeLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Let the browser open in a new tab normally (target="_blank" on the <a> handles this)
+    // Then fire the Edge protocol handler after a short delay
+    setTimeout(() => {
+      const a = document.createElement("a");
+      a.href = `microsoft-edge:${cwsUrl}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }, 200);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -1485,9 +1499,12 @@ export function App() {
             </button>
             <a
               href={cwsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={openEdgeLink}
               className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-white/90"
             >
-              Add to Chrome
+              Add to Edge
               <Icon name="bolt" className="h-4 w-4" />
             </a>
           </div>
@@ -1523,9 +1540,12 @@ export function App() {
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
                 href={cwsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={openEdgeLink}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-white/10 hover:bg-white/90 sm:w-auto"
               >
-                Add to Chrome (MV3)
+                Add to Edge (MV3)
                 <Icon name="bolt" className="h-4 w-4" />
               </a>
               <a
@@ -1995,9 +2015,12 @@ export function App() {
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <a
                     href={cwsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={openEdgeLink}
                     className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white/90"
                   >
-                    Add to Chrome
+                    Add to Edge
                     <Icon name="bolt" className="h-4 w-4" />
                   </a>
                   <a
@@ -2103,7 +2126,7 @@ export function App() {
                 </div>
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Links</div>
-                  <a className="block text-sm text-white/65 hover:text-white" href={cwsUrl}>Chrome Web Store</a>
+                  <a className="block text-sm text-white/65 hover:text-white" href={cwsUrl} target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}>Edge Add-ons Store</a>
                   <a className="inline-flex items-center gap-2 text-sm text-white/65 hover:text-white" href="#">
                     <Icon name="github" className="h-4 w-4" />
                     GitHub

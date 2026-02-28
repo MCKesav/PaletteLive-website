@@ -1,5 +1,9 @@
 ﻿@import "tailwindcss";
 
+body {
+  font-family: 'IBM Plex Serif', serif;
+}
+
 /* Force all elements to inherit the custom brush cursor set on body */
 body *, body *::before, body *::after {
   cursor: inherit !important;

@@ -1,5 +1,18 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
 
+const EDGE_ADDON_URL = "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam";
+
+// Opens the link in a new tab AND tries to launch it in Microsoft Edge via the microsoft-edge: protocol.
+const openEdgeLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  setTimeout(() => {
+    const a = document.createElement("a");
+    a.href = `microsoft-edge:${EDGE_ADDON_URL}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }, 200);
+};
+
 type Theme = "dark" | "light";
 
 function Icon({ name, className }: { name: string; className?: string }) {
@@ -1452,20 +1465,6 @@ export function App() {
   const cwsUrl = "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam";
   const docsUrl = "/how-to-use";
   const demoUrl = "#demo";
-
-  // Opens the link in a new tab (via href) AND tries to launch it in Microsoft Edge
-  // by invoking the microsoft-edge: URI protocol handler registered on Windows.
-  const openEdgeLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Let the browser open in a new tab normally (target="_blank" on the <a> handles this)
-    // Then fire the Edge protocol handler after a short delay
-    setTimeout(() => {
-      const a = document.createElement("a");
-      a.href = `microsoft-edge:${cwsUrl}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }, 200);
-  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">

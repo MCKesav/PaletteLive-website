@@ -1774,9 +1774,11 @@ function CanvasImage({ side }: { side: "left" | "right" }) {
   return (
     <img
       ref={ref}
-      src={`/images/${side} canvas.png`}
-      alt=""
+      src={`/images/${side}-canvas.png`}
+      alt="Decorative paintbrush canvas illustration"
       aria-hidden="true"
+      loading="lazy"
+      decoding="async"
       className={`pointer-events-none absolute ${side}-0 top-1/2 w-[300px] xl:w-[400px] select-none`}
       style={{ transform: `translateY(-50%) rotate(${rotation}deg)`, transition: "transform 0.15s linear" }}
     />
@@ -1838,18 +1840,26 @@ function BeforeAfter() {
         {/* Before */}
         <div className="absolute inset-0">
           <img
-            src="/images/before image.png"
-            alt="Before – original colors"
+            src="/images/before-image.png"
+            alt="PaletteLive before screenshot showing a website with original unmodified color palette"
             className="h-full w-full object-cover object-top"
+            loading="lazy"
+            decoding="async"
+            width="1920"
+            height="1200"
           />
         </div>
 
         {/* After (clipped) */}
         <div className="absolute inset-0" style={{ clipPath: `inset(0 0 0 ${pct}%)` }}>
           <img
-            src="/images/after image.png"
-            alt="After – accessibility-optimized"
+            src="/images/after-image.png"
+            alt="PaletteLive after screenshot showing the same website with accessibility-optimized color palette applied"
             className="h-full w-full object-cover object-top"
+            loading="lazy"
+            decoding="async"
+            width="1920"
+            height="1200"
           />
         </div>
 
@@ -1890,6 +1900,371 @@ function BeforeAfter() {
       </div>
     </div>
   );
+}
+
+// ─── Heatmap Showcase ───
+const HEATMAP_DEMO_COLORS = [
+  { hex: "#818CF8", name: "Indigo 400", frequency: 47, usage: ["Accent", "Links", "Buttons"] },
+  { hex: "#0B1220", name: "Midnight Blue", frequency: 38, usage: ["Background"] },
+  { hex: "#111C33", name: "Dark Navy", frequency: 34, usage: ["Surface", "Cards"] },
+  { hex: "#EAF0FF", name: "Ice White", frequency: 29, usage: ["Text", "Headings"] },
+  { hex: "#22C55E", name: "Green 500", frequency: 22, usage: ["Success", "Badges"] },
+  { hex: "#64FFDA", name: "Teal Accent", frequency: 18, usage: ["Highlights"] },
+  { hex: "#F97316", name: "Orange 500", frequency: 15, usage: ["Warnings", "CTA"] },
+  { hex: "#FBBF24", name: "Amber 400", frequency: 12, usage: ["Stars", "Icons"] },
+  { hex: "#EC4899", name: "Pink 500", frequency: 10, usage: ["Tags", "Decorative"] },
+  { hex: "#06B6D4", name: "Cyan 500", frequency: 8, usage: ["Info", "Links"] },
+  { hex: "#A78BFA", name: "Violet 400", frequency: 7, usage: ["Hover States"] },
+  { hex: "#F472B6", name: "Pink 400", frequency: 5, usage: ["Borders"] },
+  { hex: "#38BDF8", name: "Sky 400", frequency: 4, usage: ["Focus Rings"] },
+  { hex: "#4ADE80", name: "Green 400", frequency: 3, usage: ["Success Alt"] },
+  { hex: "#FB923C", name: "Orange 400", frequency: 2, usage: ["Warning Alt"] },
+];
+
+function hexToHueSort(hex: string) {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  if (d === 0) return 0;
+  let h;
+  if (max === r) h = ((g - b) / d) % 6;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  h = Math.round(h * 60);
+  return h < 0 ? h + 360 : h;
+}
+
+function HeatmapShowcase() {
+  const [sortBy, setSortBy] = useState<"frequency" | "frequency-asc" | "color">("frequency");
+  const [filter, setFilter] = useState("");
+  const [animProgress, setAnimProgress] = useState(0);
+  const chartRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hoveredBar, setHoveredBar] = useState<number | null>(null);
+
+  // Intersection observer for entrance animation
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setIsVisible(true); obs.disconnect(); }
+    }, { threshold: 0.15 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  // Animate bars on reveal
+  useEffect(() => {
+    if (!isVisible) return;
+    let start: number | null = null;
+    const duration = 900;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const p = Math.min(1, (ts - start) / duration);
+      // ease-out cubic
+      setAnimProgress(1 - Math.pow(1 - p, 3));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }, [isVisible]);
+
+  const filtered = useMemo(() => {
+    let arr = HEATMAP_DEMO_COLORS.filter((c) => {
+      if (!filter) return true;
+      const f = filter.toLowerCase();
+      return c.hex.toLowerCase().includes(f) || c.name.toLowerCase().includes(f) || c.usage.some((u) => u.toLowerCase().includes(f));
+    });
+    if (sortBy === "frequency-asc") arr = [...arr].sort((a, b) => a.frequency - b.frequency);
+    else if (sortBy === "color") arr = [...arr].sort((a, b) => hexToHueSort(a.hex) - hexToHueSort(b.hex));
+    // default "frequency" is already desc
+    return arr;
+  }, [filter, sortBy]);
+
+  const totalColors = HEATMAP_DEMO_COLORS.length;
+  const totalElements = HEATMAP_DEMO_COLORS.reduce((s, c) => s + c.frequency, 0);
+  const mostUsed = HEATMAP_DEMO_COLORS[0];
+  const maxFreq = HEATMAP_DEMO_COLORS[0].frequency;
+
+  // Draw chart
+  useEffect(() => {
+    const canvas = chartRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement!.getBoundingClientRect();
+    const w = rect.width;
+    const h = 220;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    const top = HEATMAP_DEMO_COLORS.slice(0, 12);
+    const gap = 6;
+    const barW = Math.max(12, Math.floor((w - gap * (top.length + 1)) / top.length));
+    const barArea = h - 48;
+    const startX = (w - (barW + gap) * top.length + gap) / 2;
+
+    // Grid lines
+    ctx.strokeStyle = "#e2e8f020";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = 8 + (barArea / 4) * i;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    top.forEach((c, i) => {
+      const barH = Math.max(3, (c.frequency / maxFreq) * barArea * animProgress);
+      const x = startX + i * (barW + gap);
+      const y = h - barH - 32;
+
+      // Bar shadow
+      ctx.fillStyle = c.hex + "33";
+      ctx.beginPath();
+      ctx.roundRect(x + 1, y + 2, barW, barH, [4, 4, 0, 0]);
+      ctx.fill();
+
+      // Bar
+      const grad = ctx.createLinearGradient(x, y, x, y + barH);
+      grad.addColorStop(0, c.hex);
+      grad.addColorStop(1, c.hex + "BB");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+      ctx.fill();
+
+      // Hover highlight
+      if (hoveredBar === i) {
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(x - 1, y - 1, barW + 2, barH + 2, [5, 5, 0, 0]);
+        ctx.stroke();
+      }
+
+      // Frequency label
+      if (animProgress > 0.5) {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "bold 10px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.textAlign = "center";
+        ctx.globalAlpha = Math.min(1, (animProgress - 0.5) * 2);
+        ctx.fillText(c.frequency.toString(), x + barW / 2, y - 6);
+        ctx.globalAlpha = 1;
+      }
+
+      // Hex label
+      if (animProgress > 0.7) {
+        ctx.save();
+        ctx.translate(x + barW / 2, h - 6);
+        ctx.rotate(-Math.PI / 5);
+        ctx.fillStyle = "#94a3b8";
+        ctx.font = "600 8px ui-monospace, monospace";
+        ctx.textAlign = "right";
+        ctx.globalAlpha = Math.min(1, (animProgress - 0.7) * 3.3);
+        ctx.fillText(c.hex, 0, 0);
+        ctx.globalAlpha = 1;
+        ctx.restore();
+      }
+    });
+  }, [animProgress, hoveredBar, maxFreq]);
+
+  // Canvas mouse handling for hover
+  const onCanvasMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = chartRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const top = HEATMAP_DEMO_COLORS.slice(0, 12);
+    const w = rect.width;
+    const gap = 6;
+    const barW = Math.max(12, Math.floor((w - gap * (top.length + 1)) / top.length));
+    const startX = (w - (barW + gap) * top.length + gap) / 2;
+
+    let found = -1;
+    top.forEach((_, i) => {
+      const x = startX + i * (barW + gap);
+      if (mx >= x && mx <= x + barW) found = i;
+    });
+    setHoveredBar(found >= 0 ? found : null);
+  };
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative overflow-hidden border-t border-slate-200 bg-gradient-to-b from-slate-50/80 to-white"
+      aria-label="Heatmap feature"
+      id="heatmap"
+    >
+      <CanvasImage side="left" />
+      <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+        <SectionTitle
+          eyebrow="COLOR FREQUENCY"
+          title="Heatmap — instant color census"
+          desc="PaletteLive scans every element on the page and builds a full color frequency analysis. See exactly which colors dominate, how often they appear, and where they're used — all in real time."
+        />
+
+        {/* Heatmap Panel — mimics extension window */}
+        <div
+          className={`mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-[#1a1a2e] shadow-2xl transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-white/10 bg-[#16213e] px-5 py-3.5">
+            <div className="flex items-center gap-2.5">
+              <div className="flex gap-1.5">
+                <span className="h-3 w-3 rounded-full bg-[#ef4444]" />
+                <span className="h-3 w-3 rounded-full bg-[#fbbf24]" />
+                <span className="h-3 w-3 rounded-full bg-[#22c55e]" />
+              </div>
+              <span className="text-sm font-semibold text-white/90">Color Frequency Analysis</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg bg-[#6366f1] px-3 py-1.5 text-xs font-semibold text-white">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84861 2 11.5 2.87 12.5 4.25" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M12 1L12 5L8 5" stroke="currentColor" strokeWidth="1.5"/>
+              </svg>
+              Refresh
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-3 bg-[#0f1419] p-5">
+            {[
+              { label: "Total Colors", value: isVisible ? totalColors : 0 },
+              { label: "Total Elements", value: isVisible ? totalElements : 0 },
+            ].map((s) => (
+              <div key={s.label} className="rounded-lg border border-white/10 bg-[#16213e] p-4">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-white/40">{s.label}</div>
+                <div className="mt-1.5 text-2xl font-bold text-white/90 tabular-nums">
+                  <AnimatedNumber value={s.value} />
+                </div>
+              </div>
+            ))}
+            <div className="rounded-lg border border-white/10 bg-[#16213e] p-4">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-white/40">Most Used</div>
+              <div className="mt-1.5 flex items-center gap-2">
+                <span className="h-6 w-6 rounded flex-shrink-0 border border-white/10" style={{ background: mostUsed.hex }} />
+                <span className="font-mono text-sm font-bold text-white/90">{mostUsed.hex}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-wrap items-center gap-3 border-b border-white/10 bg-[#16213e] px-5 py-3">
+            <label className="text-xs font-medium text-white/50">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              className="rounded bg-[#0f1419] px-2.5 py-1.5 text-xs font-medium text-white/80 border border-white/10 outline-none focus:border-[#6366f1]"
+            >
+              <option value="frequency">Frequency (High → Low)</option>
+              <option value="frequency-asc">Frequency (Low → High)</option>
+              <option value="color">Color (Hue)</option>
+            </select>
+            <label className="text-xs font-medium text-white/50">Filter:</label>
+            <input
+              type="text"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              placeholder="Search hex, name, usage…"
+              className="flex-1 max-w-[220px] rounded bg-[#0f1419] px-2.5 py-1.5 text-xs text-white/80 border border-white/10 outline-none placeholder:text-white/30 focus:border-[#6366f1]"
+            />
+          </div>
+
+          {/* Chart */}
+          <div className="border-b border-white/10 bg-[#16213e] px-5 py-5">
+            <canvas
+              ref={chartRef}
+              onMouseMove={onCanvasMove}
+              onMouseLeave={() => setHoveredBar(null)}
+              className="w-full cursor-crosshair"
+            />
+          </div>
+
+          {/* Color list */}
+          <div className="max-h-[360px] overflow-y-auto px-5 py-4 space-y-2 heatmap-scrollbar">
+            {filtered.map((c, i) => {
+              const barPct = (c.frequency / maxFreq) * 100;
+              return (
+                <div
+                  key={c.hex}
+                  className="grid items-center gap-3 rounded-lg border border-white/8 bg-[#16213e] px-3.5 py-3 transition-all hover:border-[#6366f1]/60"
+                  style={{
+                    gridTemplateColumns: "40px 90px 1fr 90px",
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? "translateX(0)" : "translateX(-16px)",
+                    transition: `opacity 0.4s ${0.05 * i}s ease-out, transform 0.4s ${0.05 * i}s ease-out, border-color 0.2s`,
+                  }}
+                >
+                  {/* Swatch */}
+                  <div className="h-10 w-10 rounded border border-white/10 flex-shrink-0" style={{ background: c.hex }} />
+                  {/* Hex */}
+                  <div className="font-mono text-xs font-bold text-white/90">{c.hex}</div>
+                  {/* Details */}
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold text-white/80 truncate">{c.name}</div>
+                    <div className="text-[10px] text-white/40 truncate">{c.usage.join(" · ")}</div>
+                  </div>
+                  {/* Frequency */}
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-sm font-bold text-white/90 tabular-nums">{c.frequency}</span>
+                    <div className="h-1 w-16 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-[#6366f1] transition-all duration-700"
+                        style={{ width: `${barPct * animProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Explainer pills below */}
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {[
+            { icon: "🎯", title: "Full DOM scan", desc: "Every element, every shadow root, every CSS variable — nothing is missed." },
+            { icon: "📊", title: "Frequency ranked", desc: "Colors sorted by how often they appear. Spot dominant colors at a glance." },
+            { icon: "🏷️", title: "Usage categories", desc: "Each color is tagged: background, text, border, accent — know the role instantly." },
+          ].map((p) => (
+            <div key={p.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <span className="text-xl">{p.icon}</span>
+              <div className="mt-2 text-sm font-semibold text-slate-900">{p.title}</div>
+              <div className="mt-1 text-sm text-slate-600">{p.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AnimatedNumber({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0);
+  const prev = useRef(0);
+  useEffect(() => {
+    const from = prev.current;
+    const diff = value - from;
+    if (diff === 0) return;
+    const duration = 700;
+    let start: number | null = null;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const p = Math.min(1, (ts - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(Math.round(from + diff * eased));
+      if (p < 1) requestAnimationFrame(step);
+      else prev.current = value;
+    }
+    requestAnimationFrame(step);
+  }, [value]);
+  return <>{display}</>;
 }
 
 function FAQItem({ q, a }: { q: string; a: string }) {
@@ -1945,11 +2320,49 @@ export function App() {
   }, [demoPopupDismissed]);
 
   // Custom paint-brush cursor: switches brush based on background luminance
+  // Resizes original 99×72 brush images to 32×23 for optimal cursor size
   useEffect(() => {
-    // Hotspot = bristle tip. Image is 99×72px, rotated 180°.
-    // Bristles now at top-left. Tip at (8, 7)
-    const DARK_CURSOR  = "url('/brush-dark.png') 8 7, crosshair";  // dark brush on dark bg
-    const LIGHT_CURSOR = "url('/brush-light.png') 8 7, crosshair"; // light brush on light bg
+    const TARGET_WIDTH = 32;
+    const ORIG_W = 99, ORIG_H = 72;
+    const SCALE = TARGET_WIDTH / ORIG_W;
+    const TARGET_HEIGHT = Math.round(ORIG_H * SCALE); // ≈ 23
+    // Hotspot scaled from (8,7) → (3,2)
+    const HOTSPOT_X = Math.round(8 * SCALE);
+    const HOTSPOT_Y = Math.round(7 * SCALE);
+
+    function resizeBrush(src: string): Promise<string> {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement("canvas");
+          c.width = TARGET_WIDTH;
+          c.height = TARGET_HEIGHT;
+          const ctx = c.getContext("2d")!;
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.drawImage(img, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+          resolve(c.toDataURL("image/png"));
+        };
+        img.onerror = () => resolve(src); // fallback to original
+        img.src = src;
+      });
+    }
+
+    let darkCursor = "";
+    let lightCursor = "";
+    let lastCursor = "";
+    let cancelled = false;
+
+    Promise.all([
+      resizeBrush("/brush-dark.png"),
+      resizeBrush("/brush-light.png"),
+    ]).then(([darkUrl, lightUrl]) => {
+      if (cancelled) return;
+      darkCursor  = `url('${darkUrl}') ${HOTSPOT_X} ${HOTSPOT_Y}, crosshair`;
+      lightCursor = `url('${lightUrl}') ${HOTSPOT_X} ${HOTSPOT_Y}, crosshair`;
+      document.body.style.cursor = darkCursor;
+      lastCursor = darkCursor;
+    });
 
     function getLuminance(el: Element | null): number {
       while (el && el !== document.documentElement) {
@@ -1958,7 +2371,6 @@ export function App() {
           const m = bg.match(/[\d.]+/g);
           if (m && m.length >= 3) {
             const [r, g, b] = m.map(Number);
-            // Relative luminance (0 = black, 1 = white)
             return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
           }
         }
@@ -1967,21 +2379,20 @@ export function App() {
       return 0; // default dark
     }
 
-    let lastCursor = "";
     function onMouseMove(e: MouseEvent) {
+      if (!darkCursor) return; // images not loaded yet
       const el = document.elementFromPoint(e.clientX, e.clientY);
       const lum = getLuminance(el);
-      const next = lum > 0.45 ? LIGHT_CURSOR : DARK_CURSOR;
+      const next = lum > 0.45 ? lightCursor : darkCursor;
       if (next !== lastCursor) {
         document.body.style.cursor = next;
         lastCursor = next;
       }
     }
 
-    // Set initial cursor
-    document.body.style.cursor = DARK_CURSOR;
     window.addEventListener("mousemove", onMouseMove);
     return () => {
+      cancelled = true;
       window.removeEventListener("mousemove", onMouseMove);
       document.body.style.cursor = "";
     };
@@ -1996,8 +2407,8 @@ export function App() {
       {/* Top nav */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
-          <a href="#" className="flex items-center gap-3">
-            <img src="/logo.png" alt="PaletteLive Logo" className="h-10 w-10 rounded-2xl shadow-lg shadow-indigo-500/20" />
+          <a href="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="PaletteLive - Live website color palette engine" className="h-10 w-10 rounded-2xl shadow-lg shadow-indigo-500/20" width="40" height="40" />
             <div>
               <div className="text-sm font-semibold tracking-tight">PaletteLive</div>
               <div className="text-xs text-white/60">Live website palette engine</div>
@@ -2267,6 +2678,9 @@ export function App() {
           </div>
           </div>
         </section>
+
+        {/* Heatmap showcase */}
+        <HeatmapShowcase />
 
         {/* Use cases */}
         <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Use cases">
@@ -2640,7 +3054,7 @@ export function App() {
             <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <img src="/logo.png" alt="PaletteLive Logo" className="h-10 w-10 rounded-2xl shadow-lg" />
+                  <img src="/logo.png" alt="PaletteLive - Professional palette tooling for live websites" className="h-10 w-10 rounded-2xl shadow-lg" width="40" height="40" />
                   <div>
                     <div className="text-sm font-semibold">PaletteLive</div>
                     <div className="text-xs text-white/60">Professional palette tooling for live websites</div>
@@ -2667,7 +3081,7 @@ export function App() {
                 <div className="space-y-2">
                   <div className="text-xs font-semibold text-white/80">Links</div>
                   <a className="block text-sm text-white/65 hover:text-white" href={cwsUrl} target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}>Edge Add-ons Store</a>
-                  <a className="inline-flex items-center gap-2 text-sm text-white/65 hover:text-white" href="#">
+                  <a className="inline-flex items-center gap-2 text-sm text-white/65 hover:text-white" href="https://github.com/MCKesav/PaletteLive" target="_blank" rel="noopener noreferrer">
                     <Icon name="github" className="h-4 w-4" />
                     GitHub
                   </a>

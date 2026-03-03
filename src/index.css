@@ -2,6 +2,7 @@
 
 body {
   font-family: 'IBM Plex Serif', serif;
+  cursor: url('/brush-dark.png') 2 2, crosshair;
 }
 
 /* Force all elements to inherit the custom brush cursor set on body */
@@ -19,3 +20,9 @@ body *, body *::before, body *::after {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.55; }
 }
+
+/* Heatmap scrollbar */
+.heatmap-scrollbar::-webkit-scrollbar { width: 8px; }
+.heatmap-scrollbar::-webkit-scrollbar-track { background: #0f1419; }
+.heatmap-scrollbar::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 4px; }
+.heatmap-scrollbar::-webkit-scrollbar-thumb:hover { background: #4a5568; }

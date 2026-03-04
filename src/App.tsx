@@ -2892,7 +2892,7 @@ export function App() {
 
         {/* Use cases */}
         <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Use cases">
-          <CanvasImage side="right" />
+          <CanvasImage side="left" />
 
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
@@ -2926,7 +2926,7 @@ export function App() {
 
         {/* Export workflow */}
         <section className="relative overflow-hidden px-5 py-16" id="docs" aria-label="Export workflow">
-          <CanvasImage side="left" />
+          <CanvasImage side="right" />
           <div className="relative z-10 mx-auto max-w-6xl">
           <SectionTitle
             eyebrow="WORKFLOW"
@@ -2988,7 +2988,7 @@ export function App() {
 
         {/* Built for modern web / trust */}
         <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Trust and technology">
-          <CanvasImage side="right" />
+          <CanvasImage side="left" />
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="TRUST & TECH"
@@ -3035,7 +3035,7 @@ export function App() {
 
         {/* Comparison */}
         <section id="compare" className="relative overflow-hidden border-t border-slate-200" aria-label="Feature comparison">
-          <CanvasImage side="left" />
+          <CanvasImage side="right" />
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="POSITIONING"
@@ -3048,7 +3048,7 @@ export function App() {
 
         {/* Testimonials */}
         <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Testimonials">
-          <CanvasImage side="right" />
+          <CanvasImage side="left" />
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="EARLY FEEDBACK"
@@ -3082,7 +3082,7 @@ export function App() {
 
         {/* FAQ */}
         <section id="faq" className="relative overflow-hidden px-5 py-16" aria-label="Frequently asked questions">
-          <CanvasImage side="left" />
+          <CanvasImage side="right" />
           <div className="relative z-10 mx-auto max-w-6xl">
           <SectionTitle
             eyebrow="FAQ"

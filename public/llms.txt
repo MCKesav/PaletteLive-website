@@ -1,0 +1,78 @@
+# PaletteLive
+
+> Free Manifest V3 browser extension to extract, edit, and export any live website's full color palette in real time.
+
+Website: https://palettelive.mckesav.in
+Install: https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam
+Author: MCKesav (https://www.linkedin.com/in/mckesav)
+Price: Free
+Browsers: Microsoft Edge, Chromium-based browsers
+
+## What is PaletteLive?
+
+PaletteLive is a persistence-first palette system for real websites. It scans the full DOM (including Shadow DOM and CSS variables), overrides colors in real time with non-destructive inline CSS patching, enforces WCAG accessibility contrast standards, and persists changes per domain — across reloads, SPA route changes, and browser back/forward cache — without touching source code.
+
+## Core Features (17 total)
+
+- Shadow DOM support — detects and overrides colors inside Web Components and Shadow roots
+- SPA route resilience — overrides persist through React Router, Next.js, and Vue Router route changes
+- BFCache resilience — re-applies overrides after bfcache restores
+- Per-domain persistence — changes synced across all tabs on the same domain
+- Real-time override persistence — edits saved instantly, no clicking Save
+- Undo / redo history — full edit history like a design app
+- Before / after comparison — split-screen overlay of original vs overrides
+- Color heatmap — overlays every colored element with its hex value
+- Click-to-edit color picker — click any element, pick a new color, instant apply
+- 6 harmony generators — complementary, triadic, split-complementary, and more, each scored for balance
+- Color clustering — groups similar colors to consolidate messy palettes
+- CSS variable detection — reads and rewrites :root and scoped CSS custom properties
+- Pseudo-state color detection — captures :hover, :focus, :active, :visited colors
+- Import & auto-map palettes — paste a Figma palette or design token file and auto-map
+- WCAG auto-fix — one-click contrast auto-fix to meet AA or AAA
+- Vision simulation — simulates 8 types of color vision deficiency
+- Multi-format export — JSON, CSS Variables, Tailwind Config, W3C Design Tokens, OKLCH, CIE LAB, CMYK
+
+## Use Cases
+
+- UI/UX Designers: rapid brand exploration on live sites
+- Frontend Developers: inspect and refactor real-world color systems
+- Accessibility Auditors: test contrast compliance instantly
+- Design System Teams: extract and export structured tokens
+- Brand Designers: re-skin competitor layouts for pitch decks
+- QA Teams: validate dark mode and theme consistency
+
+## FAQ
+
+Q: Does PaletteLive modify the website's source code?
+A: No. Overrides are applied at runtime via inline CSS patching. Changes live in the browser and can be persisted per domain without editing the site's codebase.
+
+Q: Will it slow down pages?
+A: PaletteLive scans efficiently and re-applies overrides only when needed. The watchdog/mutation observer stays sticky without constant heavy reprocessing.
+
+Q: Does it work with React, Vue, Next.js, and SPAs?
+A: Yes. Persistence across SPA route changes is a core feature. Overrides survive re-renders and route transitions.
+
+Q: Is it safe? Does data leave my browser?
+A: All processing is client-side. No tracking, no analytics on visited pages. Permissions are used solely for scanning and applying your own overrides.
+
+Q: Why not just use DevTools?
+A: DevTools doesn't give you a persistent per-domain override engine, palette clustering, harmony generation/scoring, WCAG auto-fix, or multi-format export workflow.
+
+Q: Can I export to Tailwind and design tokens?
+A: Yes. CSS variables, JSON tokens, Tailwind config, plus OKLCH/LAB/CMYK and export history.
+
+## Pages
+
+- Home: https://palettelive.mckesav.in/
+- Features: https://palettelive.mckesav.in/#features
+- Feature Comparison: https://palettelive.mckesav.in/#compare
+- FAQ: https://palettelive.mckesav.in/#faq
+- Privacy Policy: https://palettelive.mckesav.in/privacypolicy
+- Contact: https://palettelive.mckesav.in/#contact
+- Support: https://palettelive.mckesav.in/supportdev
+
+## Contact
+
+Email: mckesavdev+support@gmail.com
+GitHub: https://github.com/MCKesav/PaletteLive
+LinkedIn: https://www.linkedin.com/in/mckesav

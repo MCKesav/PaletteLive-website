@@ -1,4 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { AddExtensionButton } from "./components/AddExtensionButton";
 
 const EDGE_ADDON_URL = "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam";
 
@@ -1584,10 +1585,11 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
               <div style={{ fontSize: 11, color: "#778da9", lineHeight: 1.65, marginBottom: 14 }}>Download the <strong style={{ color: "#e0e1dd", fontWeight: 700 }}>free extension</strong> to unlock all 18+ features — real-time recoloring, WCAG contrast checker, 6 export formats & more.</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam" target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}
-                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", textDecoration: "none", border: "none", letterSpacing: "0.02em" }}>Get Full Extension →</a>
-              <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam" target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}
-                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "#0d1b2a", color: "#778da9", textDecoration: "none", border: "1.5px solid #415a77" }}>View Full Feature List</a>
+              <AddExtensionButton
+                style={{ display: "block", textAlign: "center", borderRadius: 11, padding: "11px 16px", fontSize: 12, fontWeight: 800, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", letterSpacing: "0.02em", border: "none", width: "100%", cursor: "pointer" }}
+              >
+                Get Full Extension →
+              </AddExtensionButton>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
               {[["18+ Features", "#e0e1dd"], ["100% Free", "#778da9"], ["MV3 Secure", "#415a77"], ["Open Source", "#778da9"]].map(([tag, color]) => (
@@ -2101,7 +2103,7 @@ function HeatmapShowcase() {
       aria-label="Heatmap feature"
       id="heatmap"
     >
-      <CanvasImage side="left" />
+      <CanvasImage side="right" />
       <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
         <SectionTitle
           eyebrow="COLOR FREQUENCY"
@@ -2286,6 +2288,224 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+// ─── Comparison Table ───────────────────────────────────────────
+const comparisonFeatures = [
+  {
+    name: "Shadow DOM Support",
+    seo: "Works inside Shadow DOM",
+    desc: "Detects and overrides colors inside Web Components and Shadow roots — not just the light DOM.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "SPA Route Resilience",
+    seo: "Survives page navigation in SPAs",
+    desc: "Overrides persist through React Router, Next.js, and Vue Router route changes without re-injection.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "BFCache Resilience",
+    seo: "Survives browser back/forward cache",
+    desc: "Re-applies overrides after bfcache restores so colors never snap back on Back button.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Per-Domain Persistence",
+    seo: "Synced across all your tabs",
+    desc: "Changes made in one tab are immediately visible in every other tab on the same domain.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Real-Time Override Persistence",
+    seo: "Edits saved instantly — no clicking Save",
+    desc: "Every color change is committed to storage in real time; nothing is lost on close or refresh.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Undo / Redo History",
+    seo: "Full undo & redo for every color change",
+    desc: "Step backward and forward through your entire edit history, just like a design app.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Before / After Comparison",
+    seo: "Side-by-side before & after view",
+    desc: "Toggle a split-screen overlay to compare the original palette against your overrides at a glance.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Heatmap Visualization",
+    seo: "Color heatmap with hex tooltips",
+    desc: "Overlays every colored element on the page with its hex value so nothing hides from you.",
+    us: true,
+    them: true,
+  },
+  {
+    name: "Basic Color Picker",
+    seo: "Click-to-edit color picker",
+    desc: "Click any element, pick a new color, and see it applied instantly — no DevTools needed.",
+    us: true,
+    them: true,
+  },
+  {
+    name: "Harmony Generation",
+    seo: "6 harmony types with quality scoring",
+    desc: "Generates complementary, triadic, split-complementary, and 3 more harmonies — each scored for balance.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Color Clustering",
+    seo: "Groups similar colors across your site",
+    desc: "Clusters near-duplicate colors so you can consolidate a messy palette into a coherent system.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "CSS Variable Detection",
+    seo: "Reads and rewrites CSS custom properties",
+    desc: "Parses :root and scoped CSS variables, letting you edit design tokens directly — not just computed values.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Pseudo-State Color Detection",
+    seo: "Captures :hover and :focus colors",
+    desc: "Detects colors applied in :hover, :focus, :active, and :visited states — not just default styles.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Import & Auto-Map Palettes",
+    seo: "Import a palette and auto-map to your site",
+    desc: "Paste in a Figma palette or design token file and PaletteLive maps each color to the closest live element.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "WCAG Auto-Fix",
+    seo: "One-click WCAG contrast auto-fix",
+    desc: "Detects failing text contrast ratios and auto-adjusts foreground colors to meet AA or AAA in one click.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Vision Simulation",
+    seo: "Preview your site for color-blind users",
+    desc: "Simulates 8 types of color vision deficiency so you can verify accessibility before shipping.",
+    us: true,
+    them: false,
+  },
+  {
+    name: "Multi-Format Export",
+    seo: "Export to JSON, Tailwind, Design Tokens, OKLCH, LAB & CMYK",
+    desc: "One-click export in every format your stack needs — from Tailwind config to W3C Design Tokens.",
+    us: true,
+    them: false,
+  },
+];
+
+function ComparisonCheck() {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="10" fill="#4F46E5" fillOpacity="0.15" />
+        <path d="M6 10.5l2.5 2.5 5.5-6" stroke="#4F46E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      Yes
+    </span>
+  );
+}
+
+function ComparisonCross() {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-400">
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="10" fill="#F3F4F6" />
+        <path d="M7 7l6 6M13 7l-6 6" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+      Usually no
+    </span>
+  );
+}
+
+function ComparisonTable({ cwsUrl, onEdgeClick }: { cwsUrl: string; onEdgeClick: (e: React.MouseEvent<HTMLAnchorElement>) => void }) {
+  const [hovered, setHovered] = useState<number | null>(null);
+  return (
+    <>
+      <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        {/* Column headers */}
+        <div className="grid grid-cols-[1fr_130px_130px] bg-slate-50 px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+          <div>Feature</div>
+          <div className="text-center">
+            <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-700">PaletteLive</span>
+          </div>
+          <div className="text-center">
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-500">Others</span>
+          </div>
+        </div>
+
+        {/* Rows */}
+        {comparisonFeatures.map((f, i) => (
+          <div
+            key={f.name}
+            className={`grid grid-cols-[1fr_130px_130px] items-center px-6 py-3.5 border-t border-slate-100 transition-colors ${
+              hovered === i ? "bg-indigo-50/60" : i % 2 === 0 ? "bg-white" : "bg-slate-50/40"
+            }`}
+          >
+            {/* Feature name + tooltip */}
+            <div className="relative">
+              <span
+                className="text-sm font-medium text-slate-800 border-b border-dashed border-indigo-200 pb-px cursor-default"
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                {f.seo}
+              </span>
+              {hovered === i && (
+                <div
+                  className="absolute bottom-[calc(100%+8px)] left-0 z-20 w-56 rounded-xl bg-slate-900 px-3 py-2.5 text-xs leading-relaxed text-slate-200 shadow-xl"
+                  style={{ pointerEvents: "none" }}
+                >
+                  {f.desc}
+                  <div className="absolute top-full left-5 border-4 border-transparent" style={{ borderTopColor: "#0f172a" }} />
+                </div>
+              )}
+            </div>
+
+            {/* PaletteLive */}
+            <div className="flex justify-center">
+              {f.us ? <ComparisonCheck /> : <ComparisonCross />}
+            </div>
+
+            {/* Others */}
+            <div className="flex justify-center">
+              {f.them ? <ComparisonCheck /> : <ComparisonCross />}
+            </div>
+          </div>
+        ))}
+
+        {/* Footer CTA */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-indigo-50/60 px-6 py-4">
+          <p className="text-sm font-semibold text-indigo-600">17 features. One extension.</p>
+          <AddExtensionButton className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-500 transition-colors">
+            Add to Browser — it's free
+            <Icon name="bolt" className="h-3.5 w-3.5" />
+          </AddExtensionButton>
+        </div>
+      </div>
+
+      <p className="mt-5 text-center text-xs text-slate-400">Hover any feature name for details · "Others" = typical color-picker extensions</p>
+    </>
+  );
+}
+
 export function App() {
   const [theme, setTheme] = useState<Theme>("dark");
   const [showDemoPopup, setShowDemoPopup] = useState(false);
@@ -2426,16 +2646,10 @@ export function App() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <a
-              href={cwsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={openEdgeLink}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-white/90"
-            >
-              Add to Edge
+            <AddExtensionButton className="inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-900 hover:bg-white/90">
+              Add to Browser
               <Icon name="bolt" className="h-4 w-4" />
-            </a>
+            </AddExtensionButton>
           </div>
         </div>
       </header>
@@ -2467,16 +2681,10 @@ export function App() {
             </p>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <a
-                href={cwsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={openEdgeLink}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-white/10 hover:bg-white/90 sm:w-auto"
-              >
-                Add to Edge (MV3)
+              <AddExtensionButton className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-white/10 hover:bg-white/90 sm:w-auto">
+                Add to Browser
                 <Icon name="bolt" className="h-4 w-4" />
-              </a>
+              </AddExtensionButton>
               <a
                 href={demoUrl}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 sm:w-auto"
@@ -2717,7 +2925,9 @@ export function App() {
         </section>
 
         {/* Export workflow */}
-        <section className="mx-auto max-w-6xl px-5 py-16" id="docs" aria-label="Export workflow">
+        <section className="relative overflow-hidden px-5 py-16" id="docs" aria-label="Export workflow">
+          <CanvasImage side="left" />
+          <div className="relative z-10 mx-auto max-w-6xl">
           <SectionTitle
             eyebrow="WORKFLOW"
             title="Import → Map → Apply → Export"
@@ -2773,10 +2983,12 @@ export function App() {
               </div>
             </div>
           </div>
+          </div>
         </section>
 
         {/* Built for modern web / trust */}
-        <section className="border-t border-slate-200 bg-slate-50/60" aria-label="Trust and technology">
+        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Trust and technology">
+          <CanvasImage side="right" />
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="TRUST & TECH"
@@ -2822,49 +3034,21 @@ export function App() {
         </section>
 
         {/* Comparison */}
-        <section id="compare" className="relative z-10 mx-auto max-w-6xl px-5 py-16" aria-label="Feature comparison">
-          <SectionTitle
-            eyebrow="POSITIONING"
-            title="PaletteLive vs basic color pickers"
-            desc="This is not a screenshot picker. It’s a persistence-first palette system for real websites."
-          />
-
-          <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-            <div className="grid grid-cols-3 bg-slate-50 px-5 py-4 text-xs font-semibold text-slate-700">
-              <div>Capability</div>
-              <div className="text-center">PaletteLive</div>
-              <div className="text-center">Basic pickers</div>
-            </div>
-            {[
-              "Shadow DOM support",
-              "Real-time override persistence",
-              "SPA route resilience",
-              "Harmony generation + scoring",
-              "WCAG auto-fix for text",
-              "Export: Tailwind/OKLCH/LAB/CMYK",
-              "Per-domain persistence across tabs",
-            ].map((cap) => (
-              <div key={cap} className="grid grid-cols-3 items-center border-t border-slate-200 px-5 py-4">
-                <div className="text-sm font-medium text-slate-800">{cap}</div>
-                <div className="flex justify-center">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    <Icon name="check" className="h-4 w-4" />
-                    Yes
-                  </span>
-                </div>
-                <div className="flex justify-center">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-700">
-                    <Icon name="x" className="h-4 w-4" />
-                    Usually no
-                  </span>
-                </div>
-              </div>
-            ))}
+        <section id="compare" className="relative overflow-hidden border-t border-slate-200" aria-label="Feature comparison">
+          <CanvasImage side="left" />
+          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+            <SectionTitle
+              eyebrow="POSITIONING"
+              title="Everything the others are missing"
+              desc="Most color tools stop at a basic picker. PaletteLive goes deeper — persistence, accessibility, exports, and live-site intelligence that no other extension offers."
+            />
+            <ComparisonTable cwsUrl={cwsUrl} onEdgeClick={openEdgeLink} />
           </div>
         </section>
 
         {/* Testimonials */}
-        <section className="border-t border-slate-200 bg-slate-50/60" aria-label="Testimonials">
+        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Testimonials">
+          <CanvasImage side="right" />
           <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
             <SectionTitle
               eyebrow="EARLY FEEDBACK"
@@ -2897,11 +3081,13 @@ export function App() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="relative z-10 mx-auto max-w-6xl px-5 py-16" aria-label="Frequently asked questions">
+        <section id="faq" className="relative overflow-hidden px-5 py-16" aria-label="Frequently asked questions">
+          <CanvasImage side="left" />
+          <div className="relative z-10 mx-auto max-w-6xl">
           <SectionTitle
             eyebrow="FAQ"
             title="Answers to common objections"
-            desc="Security, performance, modern frameworks, and why this isn’t “just DevTools.”"
+            desc={`Security, performance, modern frameworks, and why this isn't "just DevTools."`}
           />
 
           <div className="mt-10 grid gap-4 lg:grid-cols-2">
@@ -2930,6 +3116,7 @@ export function App() {
               a="Yes—export formats are designed for real workflows: CSS variables, JSON tokens, Tailwind config, plus OKLCH/LAB/CMYK and export history."
             />
           </div>
+          </div>
         </section>
 
         {/* Bottom CTA */}
@@ -2945,16 +3132,10 @@ export function App() {
                   PaletteLive brings production-grade palette control to live websites — with accessibility intelligence and persistence you can trust.
                 </p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <a
-                    href={cwsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={openEdgeLink}
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white/90"
-                  >
-                    Add to Edge
+                  <AddExtensionButton className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white/90">
+                    Add to Browser
                     <Icon name="bolt" className="h-4 w-4" />
-                  </a>
+                  </AddExtensionButton>
                   <a
                     href="#features"
                     className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
@@ -3137,15 +3318,11 @@ export function App() {
         </div>
         {/* CTA */}
         <div style={{ display: "flex", gap: 8, marginTop: 2 }}>
-          <a
-            href={cwsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={openEdgeLink}
-            style={{ flex: 1, textAlign: "center", borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 700, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", textDecoration: "none", letterSpacing: "0.02em" }}
+          <AddExtensionButton
+            style={{ flex: 1, textAlign: "center", borderRadius: 10, padding: "9px 14px", fontSize: 12, fontWeight: 700, background: "linear-gradient(135deg, #415a77 0%, #778da9 100%)", color: "#e0e1dd", letterSpacing: "0.02em", border: "none", cursor: "pointer" }}
           >
-            Add to Edge →
-          </a>
+            Add to Browser →
+          </AddExtensionButton>
           <button
             onClick={() => {
               setShowDemoPopup(false);

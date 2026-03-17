@@ -98,8 +98,46 @@
         "Import palettes from Coolors URLs",
         "Undo/redo history"
       ],
+      "datePublished": "2026-02-01",
+      "dateModified": "2026-03-03",
       "browserRequirements": "Requires Microsoft Edge or Chromium-based browser",
       "permissions": "Access data on all websites (for DOM color scanning only)"
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data: HowTo (Install PaletteLive) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to install PaletteLive on Microsoft Edge",
+      "description": "Install the free PaletteLive browser extension to extract, edit, and export color palettes from any live website.",
+      "totalTime": "PT1M",
+      "tool": {
+        "@type": "HowToTool",
+        "name": "Microsoft Edge or any Chromium-based browser"
+      },
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Open the Edge Add-ons page",
+          "text": "Visit the PaletteLive listing on the Microsoft Edge Add-ons store.",
+          "url": "https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Click Get to install",
+          "text": "Click the Get button on the store listing. Edge will download and install the extension automatically."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Pin and open PaletteLive",
+          "text": "Pin PaletteLive to your toolbar, then click the icon on any website to start extracting and editing its color palette in real time."
+        }
+      ]
     }
     </script>
 
@@ -246,8 +284,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="image" href="/logo.png" />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-VznSpDpr.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-TZdxDK1B.css">
+    <script type="module" crossorigin src="/assets/index-7OM1qjkb.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CFVLNTHY.css">
   </head>
   <body>
     <!--
@@ -272,6 +310,7 @@
           <p>PaletteLive is a free Manifest V3 browser extension that extracts, edits, and exports any live website's full color palette in real time. Scan the full DOM (including Shadow DOM), override colors live, enforce WCAG accessibility, and persist changes per domain — across reloads, SPA routes, and BFCache — without touching source code.</p>
           <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam">Add to Edge (Manifest V3) — Free</a>
         </section>
+
         <section id="features" aria-label="Core features">
           <h2>The four power pillars</h2>
           <h3>Deep color extraction</h3>
@@ -283,12 +322,14 @@
           <h3>Accessibility-first</h3>
           <p>WCAG contrast checker with AA/AAA indicators, auto text contrast enforcement, vision simulation overlays for color blindness, force light/dark mode override, and accessibility diagnostics.</p>
         </section>
+
         <section id="showcase" aria-label="Before and after showcase">
           <h2>Before / After transformation</h2>
           <p>Full-theme remaps, contrast enforcement, and production-ready token output — all on a live website.</p>
         </section>
+
         <section aria-label="Use cases">
-          <h2>Use cases</h2>
+          <h2>Who is PaletteLive for?</h2>
           <ul>
             <li><strong>UI/UX Designers</strong> — Rapid brand exploration on live sites</li>
             <li><strong>Frontend Developers</strong> — Inspect and refactor real-world color systems</li>
@@ -298,14 +339,52 @@
             <li><strong>QA Teams</strong> — Validate dark mode and theme consistency</li>
           </ul>
         </section>
+
         <section id="docs" aria-label="Export workflow">
           <h2>Import → Map → Apply → Export</h2>
           <p>Export-ready for design systems: CSS Variables, JSON Tokens, Tailwind Config, OKLCH, CIE LAB, CMYK. Every export is tracked so you can backtrack and reproduce outputs.</p>
         </section>
+
         <section id="compare" aria-label="Feature comparison">
-          <h2>PaletteLive vs basic color pickers</h2>
-          <p>PaletteLive supports Shadow DOM, real-time override persistence, SPA route resilience, harmony generation with scoring, WCAG auto-fix for text, Tailwind/OKLCH/LAB/CMYK export, and per-domain persistence across tabs — features basic pickers don't offer.</p>
+          <h2>Everything the others are missing</h2>
+          <p>Most color tools stop at a basic picker. PaletteLive goes deeper — persistence, accessibility, exports, and live-site intelligence that no other extension offers.</p>
+          <table>
+            <caption>PaletteLive vs typical color-picker extensions — 17 features compared</caption>
+            <thead>
+              <tr><th>Feature</th><th>PaletteLive</th><th>Others</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Works inside Shadow DOM — detects and overrides colors inside Web Components and Shadow roots</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Survives page navigation in SPAs — overrides persist through React Router, Next.js, and Vue Router route changes</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Survives browser back/forward cache — re-applies overrides after bfcache restores</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Synced across all your tabs — changes in one tab immediately visible in every other tab on the same domain</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Edits saved instantly — every color change committed to storage in real time, no clicking Save</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Full undo and redo for every color change — step backward and forward through entire edit history</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Side-by-side before and after view — toggle a split-screen overlay to compare original vs overrides</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Color heatmap with hex tooltips — overlays every colored element with its hex value</td><td>Yes</td><td>Some</td></tr>
+              <tr><td>Click-to-edit color picker — click any element, pick a new color, see it applied instantly</td><td>Yes</td><td>Yes</td></tr>
+              <tr><td>6 harmony types with quality scoring — complementary, triadic, split-complementary, and more, each scored for balance</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Groups similar colors across your site — clusters near-duplicate colors to consolidate messy palettes</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Reads and rewrites CSS custom properties — edit :root and scoped CSS variables (design tokens) directly</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Captures :hover and :focus colors — detects colors in :hover, :focus, :active, :visited states</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Import a palette and auto-map to your site — paste a Figma palette or design token file and PaletteLive maps each color to the closest live element</td><td>Yes</td><td>No</td></tr>
+              <tr><td>One-click WCAG contrast auto-fix — detects failing text contrast ratios and auto-adjusts to meet AA or AAA</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Preview your site for color-blind users — simulates 8 types of color vision deficiency</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Export to JSON, Tailwind, Design Tokens, OKLCH, LAB and CMYK — one-click export in every format your stack needs</td><td>Yes</td><td>No</td></tr>
+            </tbody>
+          </table>
+          <p>17 features. One extension. <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam">Add to Edge — it's free</a>.</p>
         </section>
+
+        <section aria-label="How to install">
+          <h2>How to install PaletteLive on Edge</h2>
+          <ol>
+            <li>Visit the <a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam">PaletteLive listing</a> on the Edge Add-ons store.</li>
+            <li>Click "Get" to install — Edge downloads and installs it automatically.</li>
+            <li>Pin PaletteLive to your toolbar, then click the icon on any website to start extracting and editing its color palette in real time.</li>
+          </ol>
+        </section>
+
         <section id="faq" aria-label="Frequently asked questions">
           <h2>Frequently Asked Questions</h2>
           <h3>Does PaletteLive modify the website's source code?</h3>
@@ -321,46 +400,16 @@
           <h3>Can I export to Tailwind and design tokens?</h3>
           <p>Yes — CSS variables, JSON tokens, Tailwind config, plus OKLCH/LAB/CMYK and export history.</p>
         </section>
+
         <section id="contact" aria-label="Contact">
           <h2>Get in Touch</h2>
           <p>For technical support, bug reports, feature requests, or general questions: <a href="mailto:mckesavdev+support@gmail.com">mckesavdev+support@gmail.com</a></p>
         </section>
         <footer>
-          <p>&copy; 2026 PaletteLive. All rights reserved. | <a href="/privacypolicy">Privacy Policy</a> | <a href="https://github.com/MCKesav/PaletteLive">GitHub</a></p>
+          <p>&copy; 2026 PaletteLive by MCKesav. All rights reserved. | <a href="/privacypolicy">Privacy Policy</a> | <a href="https://github.com/MCKesav/PaletteLive">GitHub</a></p>
         </footer>
       </main>
     </div>
-
-    <!-- Noscript: ensure search engines and non-JS users see key content -->
-    <noscript>
-      <style>
-        body { font-family: system-ui, sans-serif; margin: 0; background: #0a0f1a; color: #e0e0e0; }
-        .ns-wrap { max-width: 800px; margin: 0 auto; padding: 2rem; }
-        .ns-wrap h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .ns-wrap h2 { font-size: 1.4rem; margin-top: 2rem; }
-        .ns-wrap a { color: #818CF8; }
-        .ns-wrap p { line-height: 1.7; }
-      </style>
-      <div class="ns-wrap">
-        <h1>PaletteLive — The Live Website Palette Engine</h1>
-        <p>PaletteLive is a free Manifest V3 browser extension that extracts, edits, and exports any live website's full color palette in real time. Features include Shadow DOM support, CSS variables extraction, WCAG contrast enforcement, 6 harmony generators, 7 export formats, and per-domain persistence.</p>
-        <p><a href="https://microsoftedge.microsoft.com/addons/detail/palettelive/dglieojmcknbngkffpephfdphbdfbcam">Install PaletteLive for Edge — Free</a></p>
-        <h2>Key Features</h2>
-        <ul>
-          <li>Full DOM + Shadow DOM color extraction</li>
-          <li>Real-time non-destructive color overrides</li>
-          <li>WCAG AA/AAA contrast checking and auto-fix</li>
-          <li>6 harmony generators (mono, analogous, complementary, split, triadic, 60-30-10)</li>
-          <li>Export to CSS Variables, JSON Tokens, Tailwind Config, OKLCH, CIE LAB, CMYK</li>
-          <li>Per-domain persistence across reloads and SPA routes</li>
-          <li>Color blindness simulation overlays</li>
-          <li>Heatmap overlay with hex tooltips</li>
-        </ul>
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:mckesavdev+support@gmail.com">mckesavdev+support@gmail.com</a></p>
-        <p><a href="/privacypolicy">Privacy Policy</a> | <a href="https://github.com/MCKesav/PaletteLive">GitHub</a></p>
-      </div>
-    </noscript>
 
     <script>
       // Scroll to hash after React has rendered

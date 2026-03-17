@@ -75,58 +75,58 @@ function exportToCMYK(colors: ExportColor[]) {
   colors.forEach((c) => {
     const hex = c.value.replace("#", "").slice(0, 6);
     if (hex.length !== 6) { lines.push(`${c.name}: cmyk(0%, 0%, 0%, 100%)`); return; }
-    const r = parseInt(hex.slice(0,2),16)/255, g = parseInt(hex.slice(2,4),16)/255, b = parseInt(hex.slice(4,6),16)/255;
-    const k = 1 - Math.max(r,g,b);
-    const cy = k<1 ? (1-r-k)/(1-k) : 0;
-    const ma = k<1 ? (1-g-k)/(1-k) : 0;
-    const ye = k<1 ? (1-b-k)/(1-k) : 0;
-    lines.push(`${c.name}: cmyk(${(cy*100).toFixed(1)}%, ${(ma*100).toFixed(1)}%, ${(ye*100).toFixed(1)}%, ${(k*100).toFixed(1)}%)`);
+    const r = parseInt(hex.slice(0, 2), 16) / 255, g = parseInt(hex.slice(2, 4), 16) / 255, b = parseInt(hex.slice(4, 6), 16) / 255;
+    const k = 1 - Math.max(r, g, b);
+    const cy = k < 1 ? (1 - r - k) / (1 - k) : 0;
+    const ma = k < 1 ? (1 - g - k) / (1 - k) : 0;
+    const ye = k < 1 ? (1 - b - k) / (1 - k) : 0;
+    lines.push(`${c.name}: cmyk(${(cy * 100).toFixed(1)}%, ${(ma * 100).toFixed(1)}%, ${(ye * 100).toFixed(1)}%, ${(k * 100).toFixed(1)}%)`);
   });
   return lines.join("\n");
 }
 
 function exportToLAB(colors: ExportColor[]) {
-  function toLinear(v: number) { v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+  function toLinear(v: number) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
   function hexToLab(hex: string) {
-    hex = hex.replace("#","").slice(0,6);
-    const r = toLinear(parseInt(hex.slice(0,2),16)), g = toLinear(parseInt(hex.slice(2,4),16)), b = toLinear(parseInt(hex.slice(4,6),16));
-    let x=(r*0.4124+g*0.3576+b*0.1805)/0.95047, y=r*0.2126+g*0.7152+b*0.0722, z=(r*0.0193+g*0.1192+b*0.9505)/1.08883;
-    const f=(v: number)=>v>0.008856?Math.cbrt(v):7.787*v+16/116;
-    x=f(x); y=f(y); z=f(z);
-    return { l:116*y-16, a:500*(x-y), b:200*(y-z) };
+    hex = hex.replace("#", "").slice(0, 6);
+    const r = toLinear(parseInt(hex.slice(0, 2), 16)), g = toLinear(parseInt(hex.slice(2, 4), 16)), b = toLinear(parseInt(hex.slice(4, 6), 16));
+    let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047, y = r * 0.2126 + g * 0.7152 + b * 0.0722, z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+    const f = (v: number) => v > 0.008856 ? Math.cbrt(v) : 7.787 * v + 16 / 116;
+    x = f(x); y = f(y); z = f(z);
+    return { l: 116 * y - 16, a: 500 * (x - y), b: 200 * (y - z) };
   }
   const lines = ["/* CIE LAB Color Palette (D65) */\n"];
-  colors.forEach((c) => { const lab=hexToLab(c.value); lines.push(`${c.name}: lab(${lab.l.toFixed(2)}% ${lab.a.toFixed(2)} ${lab.b.toFixed(2)})`); });
+  colors.forEach((c) => { const lab = hexToLab(c.value); lines.push(`${c.name}: lab(${lab.l.toFixed(2)}% ${lab.a.toFixed(2)} ${lab.b.toFixed(2)})`); });
   return lines.join("\n");
 }
 
 function exportToOKLCH(colors: ExportColor[]) {
-  function toLinear(v: number) { v /= 255; return v <= 0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }
+  function toLinear(v: number) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
   function hexToOklch(hex: string) {
-    hex = hex.replace("#","").slice(0,6);
-    const r=toLinear(parseInt(hex.slice(0,2),16)), g=toLinear(parseInt(hex.slice(2,4),16)), b=toLinear(parseInt(hex.slice(4,6),16));
-    const l_=Math.cbrt(0.4122214708*r+0.5363325363*g+0.0514459929*b);
-    const m_=Math.cbrt(0.2119034982*r+0.6806995451*g+0.1073969566*b);
-    const s_=Math.cbrt(0.0883024619*r+0.2817188376*g+0.6299787005*b);
-    const L=0.2104542553*l_+0.793617785*m_-0.0040720468*s_;
-    const a=1.9779984951*l_-2.428592205*m_+0.4505937099*s_;
-    const bOk=0.0259040371*l_+0.7827717662*m_-0.808675766*s_;
-    const C=Math.sqrt(a*a+bOk*bOk);
-    let H=Math.atan2(bOk,a)*(180/Math.PI); if(H<0) H+=360;
-    return { l:L, c:C, h:H };
+    hex = hex.replace("#", "").slice(0, 6);
+    const r = toLinear(parseInt(hex.slice(0, 2), 16)), g = toLinear(parseInt(hex.slice(2, 4), 16)), b = toLinear(parseInt(hex.slice(4, 6), 16));
+    const l_ = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+    const m_ = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+    const s_ = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    const L = 0.2104542553 * l_ + 0.793617785 * m_ - 0.0040720468 * s_;
+    const a = 1.9779984951 * l_ - 2.428592205 * m_ + 0.4505937099 * s_;
+    const bOk = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.808675766 * s_;
+    const C = Math.sqrt(a * a + bOk * bOk);
+    let H = Math.atan2(bOk, a) * (180 / Math.PI); if (H < 0) H += 360;
+    return { l: L, c: C, h: H };
   }
   const lines = ["/* OKLCH Color Palette */\n/* oklch(Lightness  Chroma  Hue) */\n"];
-  colors.forEach((c) => { const ok=hexToOklch(c.value); lines.push(`${c.name}: oklch(${(ok.l*100).toFixed(1)}% ${ok.c.toFixed(4)} ${ok.h.toFixed(1)})`); });
+  colors.forEach((c) => { const ok = hexToOklch(c.value); lines.push(`${c.name}: oklch(${(ok.l * 100).toFixed(1)}% ${ok.c.toFixed(4)} ${ok.h.toFixed(1)})`); });
   return lines.join("\n");
 }
 
 function exportToPaletteLive(colors: ExportColor[]) {
-  const overrides: Record<string,string> = {};
+  const overrides: Record<string, string> = {};
   colors.forEach((c) => { overrides[c.name] = c.value; });
   return JSON.stringify({ version: "1.0", format: "palettelive", overrides }, null, 2);
 }
 
-function buildExportColors(swatches: string[], customSwatches: Record<number,string>, roleNames: string[]) {
+function buildExportColors(swatches: string[], customSwatches: Record<number, string>, roleNames: string[]) {
   return swatches.map((c, i) => ({
     name: roleNames[i] ?? `--color-${i}`,
     value: customSwatches[i] ?? c,
@@ -142,7 +142,7 @@ function downloadFile(filename: string, content: string) {
   document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
-function fixTextContrast(swatches: string[], customSwatches: Record<number,string>): Record<number,string> {
+function fixTextContrast(swatches: string[], customSwatches: Record<number, string>): Record<number, string> {
   // Identify background (index 0) and text-ish colors (indices >= 3)
   const bg = customSwatches[0] ?? swatches[0];
   const next = { ...customSwatches };
@@ -153,12 +153,12 @@ function fixTextContrast(swatches: string[], customSwatches: Record<number,strin
     if (ratio >= 4.5) return; // already passes AA
     // Try lightening or darkening
     let hex = current.replace("#", "");
-    let r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    let r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
     const isDark = luminance(bg) > 0.5;
     for (let step = 0; step < 20 && ratio < 4.5; step++) {
-      if (isDark) { r=Math.min(255,r+12); g=Math.min(255,g+12); b=Math.min(255,b+12); }
-      else       { r=Math.max(0,r-12);   g=Math.max(0,g-12);   b=Math.max(0,b-12); }
-      const fixed = "#" + [r,g,b].map(v => v.toString(16).padStart(2,"0")).join("");
+      if (isDark) { r = Math.min(255, r + 12); g = Math.min(255, g + 12); b = Math.min(255, b + 12); }
+      else { r = Math.max(0, r - 12); g = Math.max(0, g - 12); b = Math.max(0, b - 12); }
+      const fixed = "#" + [r, g, b].map(v => v.toString(16).padStart(2, "0")).join("");
       ratio = contrastRatio(fixed, bg);
       if (ratio >= 4.5) { next[i] = fixed; break; }
     }
@@ -265,7 +265,7 @@ function SoftBadge({ children }: { children: React.ReactNode }) {
 function Pill({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md">
-      <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 blur-2xl" />
+      <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gradient-to-br from-slate-100 to-slate-50 blur-2xl" />
       <div className="relative flex items-start gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white shadow-sm">
           {icon}
@@ -282,7 +282,7 @@ function Pill({ title, icon, children }: { title: string; icon: React.ReactNode;
 function SectionTitle({ eyebrow, title, desc }: { eyebrow: string; title: string; desc: string }) {
   return (
     <div className="mx-auto max-w-3xl text-center">
-      <div className="mb-3 text-xs font-semibold tracking-[0.25em] text-indigo-600">{eyebrow}</div>
+      <div className="mb-3 text-xs font-semibold tracking-[0.25em] text-slate-500">{eyebrow}</div>
       <h2 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
       <p className="mt-4 text-pretty text-base leading-relaxed text-slate-600">{desc}</p>
     </div>
@@ -389,7 +389,7 @@ function SitePreview({ pal, heatmapOn = false, onColorClick }: { pal: PaletteDat
         <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("accent"); } : undefined}
           style={{ display: "inline-block", borderRadius: 99, padding: "2px 10px", fontSize: 8, fontWeight: 700, background: `${pal.accent}22`, color: pal.accent, marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase", cursor: clickable ? "pointer" : undefined, transition: "background 0.5s, color 0.5s" }}>Chrome Extension · Manifest V3</div>
         <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("text"); } : undefined}
-          style={{ fontSize: 15, fontWeight: 800, lineHeight: 1.2, color: pal.text, letterSpacing: "-0.03em", marginBottom: 5, cursor: clickable ? "pointer" : undefined, transition: "color 0.5s" }}>Color intelligence<br/>for every webpage</div>
+          style={{ fontSize: 15, fontWeight: 800, lineHeight: 1.2, color: pal.text, letterSpacing: "-0.03em", marginBottom: 5, cursor: clickable ? "pointer" : undefined, transition: "color 0.5s" }}>Color intelligence<br />for every webpage</div>
         <div style={{ fontSize: 9, color: pal.text, opacity: 0.55, lineHeight: 1.5, maxWidth: 280, margin: "0 auto 10px", transition: "color 0.5s" }}>Extract, edit, generate & export color palettes from any live website in real-time — no page reload needed.</div>
         <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 10 }}>
           <div onClick={clickable ? (e) => { e.stopPropagation(); onColorClick("accent"); } : undefined}
@@ -492,7 +492,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
       setTourVisible(false);
       setTimeout(() => setTourVisible(true), 60);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStarted]);
 
   useEffect(() => {
@@ -516,7 +516,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
     window.addEventListener("resize", update);
     window.addEventListener("scroll", update, true);
     return () => { clearTimeout(scrollTimer); window.removeEventListener("resize", update); window.removeEventListener("scroll", update, true); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tourStep]);
 
   const tourNext = () => {
@@ -531,7 +531,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
   const tourEnd = () => { setTourStep(null); setSpotlightRect(null); setTourVisible(false); onTourEnd?.(); };
 
   // Build the swatch role names for export
-  const ROLE_NAMES = ["--color-bg","--color-surface","--color-accent","--color-text","--color-primary","--color-secondary"];
+  const ROLE_NAMES = ["--color-bg", "--color-surface", "--color-accent", "--color-text", "--color-primary", "--color-secondary"];
 
   function getExportColors() {
     return buildExportColors(swatches.slice(0, 6), customSwatches, ROLE_NAMES);
@@ -553,7 +553,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
     setAutoPlay(false);
     setExportFmt(fmt as typeof exportFmt);
     const text = getExportText(fmt);
-    navigator.clipboard.writeText(text).catch(() => {});
+    navigator.clipboard.writeText(text).catch(() => { });
     setCopiedFmt(fmt);
     setTimeout(() => setCopiedFmt(null), 2000);
   }
@@ -568,8 +568,8 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
   function applyImportText(raw: string) {
     const hexes = raw.match(/#[0-9a-fA-F]{6}/gi);
     if (!hexes || hexes.length < 2) return;
-    const next: Record<number,string> = {};
-    hexes.slice(0,6).forEach((h,i) => { next[i] = h; });
+    const next: Record<number, string> = {};
+    hexes.slice(0, 6).forEach((h, i) => { next[i] = h; });
     setCustomSwatches(next);
     setAutoPlay(false);
     setEditingHex(hexes[2] ?? hexes[0]);
@@ -690,7 +690,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
           </button>
         </div>
         <div id="pl-tour-palettes" className="flex items-center gap-1.5">
-            {PALETTES.map((p, i) => (
+          {PALETTES.map((p, i) => (
             <button
               key={p.name}
               onClick={() => pick(i)}
@@ -725,9 +725,9 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
             {/* SVG color-blindness simulation defs */}
             <svg width="0" height="0" style={{ position: "absolute", pointerEvents: "none" }} aria-hidden="true">
               <defs>
-                <filter id="vf-protanopia"><feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0"/></filter>
-                <filter id="vf-deuteranopia"><feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0"/></filter>
-                <filter id="vf-tritanopia"><feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0"/></filter>
+                <filter id="vf-protanopia"><feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" /></filter>
+                <filter id="vf-deuteranopia"><feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" /></filter>
+                <filter id="vf-tritanopia"><feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" /></filter>
               </defs>
             </svg>
 
@@ -742,61 +742,61 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
               {/* Active tab — SVG-shaped Chrome tab */}
               <div className="relative flex-shrink-0 ml-1" style={{ width: 200, height: 28 }}>
                 <svg width="200" height="28" viewBox="0 0 200 28" fill="none" style={{ position: "absolute", inset: 0 }}>
-                  <path d="M0 28 C6 28 8 26 10 22 L14 4 C15.5 1 17 0 20 0 L180 0 C183 0 184.5 1 186 4 L190 22 C192 26 194 28 200 28 Z" fill="#f1f3f4"/>
+                  <path d="M0 28 C6 28 8 26 10 22 L14 4 C15.5 1 17 0 20 0 L180 0 C183 0 184.5 1 186 4 L190 22 C192 26 194 28 200 28 Z" fill="#f1f3f4" />
                 </svg>
                 <div className="absolute inset-0 flex items-center gap-1.5 px-5">
                   <div className="h-3 w-3 rounded-sm flex-shrink-0 transition-colors duration-500" style={{ background: displayPal.accent }} />
                   <span className="flex-1 min-w-0 truncate text-[11px] font-medium" style={{ color: "#3c4043" }}>palettelive.mckesav.in</span>
                   <button className="flex-shrink-0 rounded-full p-0.5 hover:bg-black/10 transition">
-                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="#777" strokeWidth="1.6"><path d="M1 1l6 6M7 1l-6 6"/></svg>
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="#777" strokeWidth="1.6"><path d="M1 1l6 6M7 1l-6 6" /></svg>
                   </button>
                 </div>
               </div>
               {/* New tab + button */}
               <button className="mt-1.5 ml-1 h-5 w-5 flex items-center justify-center rounded hover:bg-white/10 transition flex-shrink-0">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.8"><path d="M6 1v10M1 6h10"/></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.8"><path d="M6 1v10M1 6h10" /></svg>
               </button>
             </div>
 
             {/* ── Omnibar / address bar (below tab bar) ── */}
             <div className="flex items-center gap-1.5 px-3 py-2 mt-10" style={{ background: "#f1f3f4" }}>
               <button className="rounded-full p-1.5 text-gray-400 hover:bg-gray-200 transition">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M8.5 1.5L3.5 6l5 4.5"/></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M8.5 1.5L3.5 6l5 4.5" /></svg>
               </button>
               <button className="rounded-full p-1.5 text-gray-300 transition">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M3.5 1.5L8.5 6l-5 4.5"/></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M3.5 1.5L8.5 6l-5 4.5" /></svg>
               </button>
               <button className="rounded-full p-1.5 text-gray-500 hover:bg-gray-200 transition">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M11 6a5 5 0 1 1-1-3.1L11 1.5"/><polyline points="11 1.5 11 4 8.5 4"/></svg>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M11 6a5 5 0 1 1-1-3.1L11 1.5" /><polyline points="11 1.5 11 4 8.5 4" /></svg>
               </button>
               {/* URL bar pill */}
               <div className="flex flex-1 items-center gap-2 rounded-full px-3 py-1.5" style={{ background: "white", border: "1px solid #dadce0", boxShadow: "0 1px 3px rgba(0,0,0,0.07)" }}>
-                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="#9aa0a6" strokeWidth="1.5"><circle cx="5.2" cy="5.2" r="4"/><path d="M8.5 8.5l2.5 2.5"/></svg>
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="#9aa0a6" strokeWidth="1.5"><circle cx="5.2" cy="5.2" r="4" /><path d="M8.5 8.5l2.5 2.5" /></svg>
                 <span className="text-[11px] font-medium" style={{ color: "#202124" }}>palettelive.mckesav.in</span>
               </div>
               {/* Profile avatar */}
               <div className="h-6 w-6 flex-shrink-0 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "#4285f4" }}>M</div>
               <button className="p-1">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="#80868b"><circle cx="7" cy="2.5" r="1.2"/><circle cx="7" cy="7" r="1.2"/><circle cx="7" cy="11.5" r="1.2"/></svg>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="#80868b"><circle cx="7" cy="2.5" r="1.2" /><circle cx="7" cy="7" r="1.2" /><circle cx="7" cy="11.5" r="1.2" /></svg>
               </button>
             </div>
 
             {/* ── Bookmarks bar ── */}
             <div className="flex items-center gap-0 px-3 py-1" style={{ background: "#f1f3f4", borderBottom: "1px solid #e0e0e0" }}>
               <button className="flex items-center gap-1 mr-1 rounded px-2 py-0.5 hover:bg-gray-200 transition text-[10px]" style={{ color: "#3c4043" }}>
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="#5f6368"><rect x=".5" y=".5" width="3.5" height="3.5" rx=".5"/><rect x="6" y=".5" width="3.5" height="3.5" rx=".5"/><rect x=".5" y="6" width="3.5" height="3.5" rx=".5"/><rect x="6" y="6" width="3.5" height="3.5" rx=".5"/></svg>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="#5f6368"><rect x=".5" y=".5" width="3.5" height="3.5" rx=".5" /><rect x="6" y=".5" width="3.5" height="3.5" rx=".5" /><rect x=".5" y="6" width="3.5" height="3.5" rx=".5" /><rect x="6" y="6" width="3.5" height="3.5" rx=".5" /></svg>
                 Apps
               </button>
               <button className="flex items-center gap-1 mr-1 rounded px-2 py-0.5 hover:bg-gray-200 transition text-[10px] italic" style={{ color: "#888" }}>Reading list</button>
               <div className="ml-auto">
                 <button className="flex items-center gap-1 rounded px-2 py-0.5 hover:bg-gray-200 transition text-[10px]" style={{ color: "#3c4043" }}>
                   Other Bookmarks
-                  <svg width="7" height="7" viewBox="0 0 7 7" fill="none" stroke="#9aa0a6" strokeWidth="1.3"><path d="M1 2l2.5 2.5L6 2"/></svg>
+                  <svg width="7" height="7" viewBox="0 0 7 7" fill="none" stroke="#9aa0a6" strokeWidth="1.3"><path d="M1 2l2.5 2.5L6 2" /></svg>
                 </button>
               </div>
             </div>
 
-              {/* ── Website viewport — PaletteLive recolors this ── */}
+            {/* ── Website viewport — PaletteLive recolors this ── */}
             {(() => {
               const filterMap: Record<string, string> = {
                 protanopia: "url(#vf-protanopia)",
@@ -943,126 +943,126 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
 
             {/* Editor content — only shown when a swatch is selected */}
             {selectedSwatch !== null && (
-            <div className="px-3 py-2 space-y-2">
-            {/* Hex input + color picker + swatch bar in one row */}
-            {tourStep === 4 && (
-              <div style={{ fontSize: 11, fontWeight: 700, color: displayPal.accent, display: "flex", alignItems: "center", gap: 4, animation: "pulse 1.5s ease-in-out infinite" }}>
-                <span>▼</span> Change color here
-              </div>
-            )}
-            <div className="flex items-center gap-2" style={tourStep === 4 ? { boxShadow: `0 0 0 2px ${displayPal.accent}, 0 0 16px ${displayPal.accent}55`, borderRadius: 8, padding: 4, transition: "box-shadow 0.3s", animation: "pulse 1.5s ease-in-out infinite" } : undefined}>
-              <input
-                type="text"
-                value={editingHex}
-                onChange={(e) => {
-                  setAutoPlay(false);
-                  const v = e.target.value;
-                  setEditingHex(v);
-                  if (/^#[0-9a-fA-F]{6}$/.test(v) && selectedSwatch !== null) {
-                    setCustomSwatches((s) => ({ ...s, [selectedSwatch]: v }));
-                  }
-                }}
-                maxLength={7}
-                spellCheck={false}
-                className="flex-1 rounded-md px-2 py-1"
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  fontFamily: "'SF Mono', 'Cascadia Code', monospace",
-                  color: "var(--pl-fg)",
-                  border: "1px solid var(--pl-border)",
-                  background: "var(--pl-surface)",
-                  outline: "none",
-                  textTransform: "uppercase",
-                  minWidth: 0,
-                }}
-              />
-              <label style={{ cursor: "pointer", position: "relative", flexShrink: 0 }} title="Open color picker">
-                <input
-                  id="pl-color-picker-input"
-                  type="color"
-                  value={/^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : "#000000"}
-                  onChange={(e) => {
-                    setAutoPlay(false);
-                    const v = e.target.value;
-                    setEditingHex(v);
-                    if (selectedSwatch !== null) {
-                      setCustomSwatches((s) => ({ ...s, [selectedSwatch]: v }));
+              <div className="px-3 py-2 space-y-2">
+                {/* Hex input + color picker + swatch bar in one row */}
+                {tourStep === 4 && (
+                  <div style={{ fontSize: 11, fontWeight: 700, color: displayPal.accent, display: "flex", alignItems: "center", gap: 4, animation: "pulse 1.5s ease-in-out infinite" }}>
+                    <span>▼</span> Change color here
+                  </div>
+                )}
+                <div className="flex items-center gap-2" style={tourStep === 4 ? { boxShadow: `0 0 0 2px ${displayPal.accent}, 0 0 16px ${displayPal.accent}55`, borderRadius: 8, padding: 4, transition: "box-shadow 0.3s", animation: "pulse 1.5s ease-in-out infinite" } : undefined}>
+                  <input
+                    type="text"
+                    value={editingHex}
+                    onChange={(e) => {
+                      setAutoPlay(false);
+                      const v = e.target.value;
+                      setEditingHex(v);
+                      if (/^#[0-9a-fA-F]{6}$/.test(v) && selectedSwatch !== null) {
+                        setCustomSwatches((s) => ({ ...s, [selectedSwatch]: v }));
+                      }
+                    }}
+                    maxLength={7}
+                    spellCheck={false}
+                    className="flex-1 rounded-md px-2 py-1"
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      fontFamily: "'SF Mono', 'Cascadia Code', monospace",
+                      color: "var(--pl-fg)",
+                      border: "1px solid var(--pl-border)",
+                      background: "var(--pl-surface)",
+                      outline: "none",
+                      textTransform: "uppercase",
+                      minWidth: 0,
+                    }}
+                  />
+                  <label style={{ cursor: "pointer", position: "relative", flexShrink: 0 }} title="Open color picker">
+                    <input
+                      id="pl-color-picker-input"
+                      type="color"
+                      value={/^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : "#000000"}
+                      onChange={(e) => {
+                        setAutoPlay(false);
+                        const v = e.target.value;
+                        setEditingHex(v);
+                        if (selectedSwatch !== null) {
+                          setCustomSwatches((s) => ({ ...s, [selectedSwatch]: v }));
+                        }
+                      }}
+                      style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                    />
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 6,
+                        background: /^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : activeColor,
+                        border: "2px solid var(--pl-border)",
+                        transition: "background 0.1s",
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {/* Color swatch bar — clicking opens the color picker */}
+                <label htmlFor="pl-color-picker-input" className="block rounded p-0.5 transition-colors duration-500" style={{ border: tourStep === 4 ? `2px solid ${displayPal.accent}` : "2px solid var(--pl-border)", height: 32, cursor: "pointer", boxShadow: tourStep === 4 ? `0 0 12px ${displayPal.accent}55` : "none", transition: "border-color 0.3s, box-shadow 0.3s" }} title="Open color picker">
+                  <div className="h-full w-full rounded transition-colors duration-150" style={{ background: /^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : activeColor }} />
+                </label>
+
+                {/* Real-time toggle + export select on one row */}
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg)" }}>
+                    <input type="checkbox" checked={realtimeOn} onChange={() => { setAutoPlay(false); setRealtimeOn((v) => !v); }} style={{ width: 13, height: 13, accentColor: "var(--pl-primary)" }} />
+                    Real-time preview
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg)" }}>
+                    <input type="checkbox" checked={exportSelectOn} onChange={() => { setAutoPlay(false); setExportSelectOn((v) => !v); }} style={{ width: 13, height: 13, accentColor: "var(--pl-primary)" }} />
+                    Include in export
+                  </label>
+                </div>
+
+                {/* Variable info */}
+                <div className="rounded px-2 py-1" style={{ background: "var(--pl-surface)", border: "1px solid var(--pl-border)", fontSize: 11, color: "var(--pl-fg-muted)" }}>
+                  CSS variable: <span style={{ fontFamily: "monospace", color: "var(--pl-fg)" }}>--accent-primary</span> (used 14x)
+                </div>
+
+                <button
+                  onClick={() => {
+                    if (selectedSwatch !== null && /^#[0-9a-fA-F]{6}$/.test(editingHex)) {
+                      setCustomSwatches((s) => ({ ...s, [selectedSwatch]: editingHex }));
                     }
                   }}
-                  style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                />
-                <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 6,
-                    background: /^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : activeColor,
-                    border: "2px solid var(--pl-border)",
-                    transition: "background 0.1s",
-                  }}
-                />
-              </label>
-            </div>
+                  className="w-full rounded py-1.5 text-xs font-medium transition" style={{ background: "var(--pl-surface)", border: "1px solid var(--pl-border)", color: "var(--pl-fg)", opacity: selectedSwatch !== null ? 1 : 0.45, cursor: selectedSwatch !== null ? "pointer" : "not-allowed" }}
+                >
+                  Apply Color To Export Set
+                </button>
 
-            {/* Color swatch bar — clicking opens the color picker */}
-            <label htmlFor="pl-color-picker-input" className="block rounded p-0.5 transition-colors duration-500" style={{ border: tourStep === 4 ? `2px solid ${displayPal.accent}` : "2px solid var(--pl-border)", height: 32, cursor: "pointer", boxShadow: tourStep === 4 ? `0 0 12px ${displayPal.accent}55` : "none", transition: "border-color 0.3s, box-shadow 0.3s" }} title="Open color picker">
-              <div className="h-full w-full rounded transition-colors duration-150" style={{ background: /^#[0-9a-fA-F]{6}$/.test(editingHex) ? editingHex : activeColor }} />
-            </label>
-
-            {/* Real-time toggle + export select on one row */}
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg)" }}>
-                <input type="checkbox" checked={realtimeOn} onChange={() => { setAutoPlay(false); setRealtimeOn((v) => !v); }} style={{ width: 13, height: 13, accentColor: "var(--pl-primary)" }} />
-                Real-time preview
-              </label>
-              <label className="flex items-center gap-1.5 cursor-pointer" style={{ fontSize: 12, color: "var(--pl-fg)" }}>
-                <input type="checkbox" checked={exportSelectOn} onChange={() => { setAutoPlay(false); setExportSelectOn((v) => !v); }} style={{ width: 13, height: 13, accentColor: "var(--pl-primary)" }} />
-                Include in export
-              </label>
-            </div>
-
-            {/* Variable info */}
-            <div className="rounded px-2 py-1" style={{ background: "var(--pl-surface)", border: "1px solid var(--pl-border)", fontSize: 11, color: "var(--pl-fg-muted)" }}>
-              CSS variable: <span style={{ fontFamily: "monospace", color: "var(--pl-fg)" }}>--accent-primary</span> (used 14x)
-            </div>
-
-            <button
-              onClick={() => {
-                if (selectedSwatch !== null && /^#[0-9a-fA-F]{6}$/.test(editingHex)) {
-                  setCustomSwatches((s) => ({ ...s, [selectedSwatch]: editingHex }));
-                }
-              }}
-              className="w-full rounded py-1.5 text-xs font-medium transition" style={{ background: "var(--pl-surface)", border: "1px solid var(--pl-border)", color: "var(--pl-fg)", opacity: selectedSwatch !== null ? 1 : 0.45, cursor: selectedSwatch !== null ? "pointer" : "not-allowed" }}
-            >
-              Apply Color To Export Set
-            </button>
-
-            {/* WCAG Contrast Checker */}
-            <div style={{ borderTop: "1px solid var(--pl-border)", paddingTop: 8 }}>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span style={{ textTransform: "uppercase", fontSize: 9, letterSpacing: 1, color: "var(--pl-fg-muted)", fontWeight: 600 }}>Contrast</span>
-                <span style={{ fontSize: 16, fontWeight: 700, fontFamily: "'SF Mono', 'Cascadia Code', monospace", color: "var(--pl-fg)" }}>{ratio.toFixed(2)}:1</span>
-                <span className="rounded px-2 py-0.5" style={{ fontSize: 10, fontWeight: 600, background: passAANorm ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: passAANorm ? "#22c55e" : "#ef4444" }}>
-                  {passAAANorm ? "AAA" : passAANorm ? "AA" : "Fail"}
-                </span>
-                <span style={{ fontSize: 10, color: "var(--pl-fg-muted)" }}>vs target</span>
-              </div>
-              {/* WCAG grid — 2×2 */}
-              <div className="grid grid-cols-2 gap-1">
-                {[
-                  { label: "AA normal", pass: passAANorm },
-                  { label: "AAA normal", pass: passAAANorm },
-                  { label: "AA large", pass: passAALarge },
-                  { label: "AAA large", pass: passAAALarge },
-                ].map((row) => (
-                  <div key={row.label} className="rounded px-2 py-0.5" style={{ fontSize: 11, color: row.pass ? "#22c55e" : "#ef4444", background: row.pass ? "rgba(34,197,94,0.06)" : "rgba(239,68,68,0.06)" }}>
-                    {row.label}: {row.pass ? "Pass" : "Fail"}
+                {/* WCAG Contrast Checker */}
+                <div style={{ borderTop: "1px solid var(--pl-border)", paddingTop: 8 }}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span style={{ textTransform: "uppercase", fontSize: 9, letterSpacing: 1, color: "var(--pl-fg-muted)", fontWeight: 600 }}>Contrast</span>
+                    <span style={{ fontSize: 16, fontWeight: 700, fontFamily: "'SF Mono', 'Cascadia Code', monospace", color: "var(--pl-fg)" }}>{ratio.toFixed(2)}:1</span>
+                    <span className="rounded px-2 py-0.5" style={{ fontSize: 10, fontWeight: 600, background: passAANorm ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", color: passAANorm ? "#22c55e" : "#ef4444" }}>
+                      {passAAANorm ? "AAA" : passAANorm ? "AA" : "Fail"}
+                    </span>
+                    <span style={{ fontSize: 10, color: "var(--pl-fg-muted)" }}>vs target</span>
                   </div>
-                ))}
-              </div>
-            </div>
-            </div>)}{/* end editor content */}
+                  {/* WCAG grid — 2×2 */}
+                  <div className="grid grid-cols-2 gap-1">
+                    {[
+                      { label: "AA normal", pass: passAANorm },
+                      { label: "AAA normal", pass: passAAANorm },
+                      { label: "AA large", pass: passAALarge },
+                      { label: "AAA large", pass: passAAALarge },
+                    ].map((row) => (
+                      <div key={row.label} className="rounded px-2 py-0.5" style={{ fontSize: 11, color: row.pass ? "#22c55e" : "#ef4444", background: row.pass ? "rgba(34,197,94,0.06)" : "rgba(239,68,68,0.06)" }}>
+                        {row.label}: {row.pass ? "Pass" : "Fail"}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>)}{/* end editor content */}
           </div>{/* end editor card */}
         </div>
 
@@ -1083,15 +1083,15 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
               <div className="flex items-center gap-1">
                 {/* Power toggle */}
                 <button onClick={() => { setAutoPlay(false); setExtensionPaused((v) => !v); }} className="rounded p-1 transition" style={{ border: `1px solid ${extensionPaused ? "#ef4444" : "#22c55e"}`, color: extensionPaused ? "#ef4444" : "#22c55e", background: extensionPaused ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)" }} title={extensionPaused ? "Extension paused — click to resume" : "Extension enabled — click to pause"} aria-label="Toggle extension" aria-pressed={!extensionPaused}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg>
                 </button>
                 {/* Undo */}
                 <button className="rounded p-1 transition" style={{ border: "1px solid var(--pl-border)", color: "var(--pl-fg-muted)", opacity: 0.4, cursor: "not-allowed" }} disabled title="Undo Last Change" aria-label="Undo Last Change">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-1"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 14 4 9l5-5" /><path d="M4 9h11a5 5 0 0 1 0 10h-1" /></svg>
                 </button>
                 {/* Redo */}
                 <button className="rounded p-1 transition" style={{ border: "1px solid var(--pl-border)", color: "var(--pl-fg-muted)", opacity: 0.4, cursor: "not-allowed" }} disabled title="Redo Last Undone Change" aria-label="Redo Last Undone Change">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h1"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 14l5-5-5-5" /><path d="M20 9H9a5 5 0 0 0 0 10h1" /></svg>
                 </button>
                 {/* Reset */}
                 <button
@@ -1105,7 +1105,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     setTimeout(() => setResetAnim(false), 1200);
                   }}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" /></svg>
                 </button>
               </div>
             </div>
@@ -1113,7 +1113,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
             {/* Disabled banner */}
             {extensionPaused && (
               <div className="flex items-center gap-2 px-3 py-2" style={{ background: "#fef2f2", borderBottom: "1px solid #fecaca", color: "#991b1b", fontSize: 12 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0" /><line x1="12" y1="2" x2="12" y2="12" /></svg>
                 <span>PaletteLive is <strong>paused</strong> on this site. Click the power button to resume.</span>
               </div>
             )}
@@ -1381,7 +1381,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     // Re-derive swatches by resetting custom overrides for non-edited swatches
                     setCustomSwatches((prev) => {
                       // keep only explicitly edited ones, remove generated extras
-                      const kept: Record<number,string> = {};
+                      const kept: Record<number, string> = {};
                       Object.entries(prev).forEach(([k, v]) => { if (Number(k) < 6) kept[Number(k)] = v; });
                       return kept;
                     });
@@ -1403,7 +1403,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                   style={{ border: "1px solid " + (fixTextAnim ? "#22c55e" : "var(--pl-border)"), background: fixTextAnim ? "rgba(34,197,94,0.1)" : "var(--pl-card)", color: fixTextAnim ? "#22c55e" : "var(--pl-fg)" }}
                   title="Auto-fix all low-contrast text colors to pass WCAG AA (4.5:1)"
                 >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7V4h16v3"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 7V4h16v3" /><line x1="12" y1="4" x2="12" y2="20" /><line x1="8" y1="20" x2="16" y2="20" /></svg>
                   {fixTextAnim ? "✓ Fixed!" : "Fix Text"}
                 </button>
                 {/* Force Reapply button */}
@@ -1419,7 +1419,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                   style={{ border: "1px solid " + (reapplyAnim ? "#22c55e" : "var(--pl-border)"), background: reapplyAnim ? "rgba(34,197,94,0.1)" : "var(--pl-card)", color: reapplyAnim ? "#22c55e" : "var(--pl-fg)" }}
                   title="Force re-apply all color overrides"
                 >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2.5 12a10 10 0 0 1 16.4-6.2L21.5 8"/><path d="M21.5 12a10 10 0 0 1-16.4 6.2L2.5 16"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6" /><path d="M2.5 22v-6h6" /><path d="M2.5 12a10 10 0 0 1 16.4-6.2L21.5 8" /><path d="M21.5 12a10 10 0 0 1-16.4 6.2L2.5 16" /></svg>
                   {reapplyAnim ? "✓ Applied!" : "Reapply"}
                 </button>
                 <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium" style={{ border: "1px solid var(--pl-border)", background: "var(--pl-card)", color: "var(--pl-fg)" }} title="Pick a color from the page">
@@ -1436,13 +1436,13 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     aria-expanded={exportOpen}
                   >
                     Export
-                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 2.5l3 2.5 3-2.5"/></svg>
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 2.5l3 2.5 3-2.5" /></svg>
                   </button>
                   {exportOpen && (
                     <div className="absolute bottom-full mb-1 left-0 z-50 rounded-lg overflow-hidden shadow-xl" style={{ background: "var(--pl-bg)", border: "1px solid var(--pl-border)", minWidth: 240 }} role="menu">
                       {/* Copy to clipboard section */}
                       <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider" style={{ color: "var(--pl-fg-muted)", borderBottom: "1px solid var(--pl-border)", background: "var(--pl-hover)" }}>Copy to Clipboard</div>
-                      {(["palettelive","css","json","tailwind","cmyk","lab","oklch"] as const).map(f => {
+                      {(["palettelive", "css", "json", "tailwind", "cmyk", "lab", "oklch"] as const).map(f => {
                         const isCopied = copiedFmt === f;
                         const label = f === "css" ? "CSS Variables" : f === "json" ? "JSON Tokens" : f === "tailwind" ? "Tailwind Config" : f === "palettelive" ? "PaletteLive Palette ↺" : f.toUpperCase();
                         return (
@@ -1457,11 +1457,11 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                       })}
                       {/* Export as file section */}
                       <div className="px-3 py-1 text-[9px] font-bold uppercase tracking-wider" style={{ color: "var(--pl-fg-muted)", borderTop: "1px solid var(--pl-border)", borderBottom: "1px solid var(--pl-border)", background: "var(--pl-hover)" }}>Download as File</div>
-                      {(["palettelive","css","json","tailwind","cmyk","lab","oklch"] as const).map(f => (
-                        <button key={"file-"+f} onClick={() => downloadFmt(f)}
+                      {(["palettelive", "css", "json", "tailwind", "cmyk", "lab", "oklch"] as const).map(f => (
+                        <button key={"file-" + f} onClick={() => downloadFmt(f)}
                           className="w-full text-left px-3 py-1.5 text-[11px] font-medium transition hover:opacity-80 flex items-center gap-1"
                           style={{ color: "var(--pl-fg)" }} role="menuitem">
-                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
                           {f === "palettelive" ? "PaletteLive Palette ↺" : f === "css" ? "CSS Variables" : f === "json" ? "JSON Tokens" : f === "tailwind" ? "Tailwind Config" : f.toUpperCase()}
                         </button>
                       ))}
@@ -1482,7 +1482,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                     aria-expanded={importOpen}
                   >
                     Import
-                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 2.5l3 2.5 3-2.5"/></svg>
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 2.5l3 2.5 3-2.5" /></svg>
                   </button>
                   {importOpen && (
                     <div className="absolute bottom-full mb-1 left-0 z-50 rounded-lg shadow-xl" style={{ background: "var(--pl-bg)", border: "1px solid var(--pl-border)", minWidth: 220, overflow: "visible" }} role="menu">
@@ -1497,7 +1497,7 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                             style={{ color: "var(--pl-fg)", borderBottom: "1px solid var(--pl-border)" }} role="menuitem"
                           >Paste from Clipboard</button>
                           <label className="flex items-center gap-2 px-3 py-2 text-[11px] font-medium cursor-pointer hover:opacity-80" style={{ color: "var(--pl-fg)" }} role="menuitem">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
                             Import from File (.plpalette / .json)
                             <input type="file" accept=".json,.plpalette,.txt" className="hidden" onChange={(e) => {
                               const file = e.target.files?.[0];
@@ -1542,9 +1542,9 @@ function InteractiveDemo({ theme, tourStarted, onTourEnd }: { theme: Theme; tour
                   title="Color Frequency Analysis"
                 >
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <rect x="2" y="10" width="3" height="4" fill="currentColor" opacity="0.4"/>
-                    <rect x="6" y="7" width="3" height="7" fill="currentColor" opacity="0.6"/>
-                    <rect x="10" y="4" width="3" height="10" fill="currentColor" opacity="0.8"/>
+                    <rect x="2" y="10" width="3" height="4" fill="currentColor" opacity="0.4" />
+                    <rect x="6" y="7" width="3" height="7" fill="currentColor" opacity="0.6" />
+                    <rect x="10" y="4" width="3" height="10" fill="currentColor" opacity="0.8" />
                   </svg>
                   Heatmap
                 </button>
@@ -1826,8 +1826,8 @@ function BeforeAfter() {
   }, []);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
+    <div className="relative overflow-hidden rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white/60 px-4 py-3">
         <div className="flex items-center gap-2">
           <SoftBadge>Before</SoftBadge>
           <span className="text-xs text-slate-500">Original colors</span>
@@ -1882,7 +1882,7 @@ function BeforeAfter() {
             className="pointer-events-auto absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex h-10 w-10 cursor-ew-resize items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-black/10 select-none"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M6 4L2 9l4 5M12 4l4 5-4 5" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6 4L2 9l4 5M12 4l4 5-4 5" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         </div>
@@ -2099,7 +2099,7 @@ function HeatmapShowcase() {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden border-t border-slate-200 bg-gradient-to-b from-slate-50/80 to-white"
+      className="relative overflow-hidden border-t border-slate-200 bg-gradient-to-b from-transparent to-white/50"
       aria-label="Heatmap feature"
       id="heatmap"
     >
@@ -2127,8 +2127,8 @@ function HeatmapShowcase() {
             </div>
             <div className="flex items-center gap-2 rounded-lg bg-[#6366f1] px-3 py-1.5 text-xs font-semibold text-white">
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84861 2 11.5 2.87 12.5 4.25" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M12 1L12 5L8 5" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84861 2 11.5 2.87 12.5 4.25" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M12 1L12 5L8 5" stroke="currentColor" strokeWidth="1.5" />
               </svg>
               Refresh
             </div>
@@ -2235,7 +2235,7 @@ function HeatmapShowcase() {
             { icon: "📊", title: "Frequency ranked", desc: "Colors sorted by how often they appear. Spot dominant colors at a glance." },
             { icon: "🏷️", title: "Usage categories", desc: "Each color is tagged: background, text, border, accent — know the role instantly." },
           ].map((p) => (
-            <div key={p.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div key={p.title} className="rounded-2xl border border-white/80 bg-white/70 backdrop-blur-xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <span className="text-xl">{p.icon}</span>
               <div className="mt-2 text-sm font-semibold text-slate-900">{p.title}</div>
               <div className="mt-1 text-sm text-slate-600">{p.desc}</div>
@@ -2272,14 +2272,14 @@ function AnimatedNumber({ value }: { value: number }) {
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white">
+    <div className="rounded-2xl border border-white/80 bg-white/70 backdrop-blur-xl shadow-sm">
       <button
         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
         <div className="text-sm font-semibold text-slate-900">{q}</div>
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white/60 text-slate-700">
           <span className="text-lg leading-none">{open ? "−" : "+"}</span>
         </span>
       </button>
@@ -2413,10 +2413,10 @@ const comparisonFeatures = [
 
 function ComparisonCheck() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
       <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="10" fill="#4F46E5" fillOpacity="0.15" />
-        <path d="M6 10.5l2.5 2.5 5.5-6" stroke="#4F46E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="10" cy="10" r="10" fill="#10B981" fillOpacity="0.15" />
+        <path d="M6 10.5l2.5 2.5 5.5-6" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       Yes
     </span>
@@ -2425,10 +2425,10 @@ function ComparisonCheck() {
 
 function ComparisonCross() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-400">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-400">
       <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="10" fill="#F3F4F6" />
-        <path d="M7 7l6 6M13 7l-6 6" stroke="#9CA3AF" strokeWidth="1.8" strokeLinecap="round" />
+        <circle cx="10" cy="10" r="10" fill="#FEE2E2" />
+        <path d="M7 7l6 6M13 7l-6 6" stroke="#EF4444" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
       Usually no
     </span>
@@ -2439,12 +2439,12 @@ function ComparisonTable({ cwsUrl, onEdgeClick }: { cwsUrl: string; onEdgeClick:
   const [hovered, setHovered] = useState<number | null>(null);
   return (
     <>
-      <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         {/* Column headers */}
-        <div className="grid grid-cols-[1fr_130px_130px] bg-slate-50 px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+        <div className="grid grid-cols-[1fr_130px_130px] bg-white/60 px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
           <div>Feature</div>
           <div className="text-center">
-            <span className="inline-flex items-center gap-1 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-700">PaletteLive</span>
+            <span className="inline-flex items-center gap-1 rounded-full border border-slate-900 bg-slate-900 px-2.5 py-0.5 text-[11px] font-semibold text-white">PaletteLive</span>
           </div>
           <div className="text-center">
             <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-500">Others</span>
@@ -2455,14 +2455,13 @@ function ComparisonTable({ cwsUrl, onEdgeClick }: { cwsUrl: string; onEdgeClick:
         {comparisonFeatures.map((f, i) => (
           <div
             key={f.name}
-            className={`grid grid-cols-[1fr_130px_130px] items-center px-6 py-3.5 border-t border-slate-100 transition-colors ${
-              hovered === i ? "bg-indigo-50/60" : i % 2 === 0 ? "bg-white" : "bg-slate-50/40"
-            }`}
+            className={`grid grid-cols-[1fr_130px_130px] items-center px-6 py-3.5 border-t border-slate-200/60 transition-colors ${hovered === i ? "bg-slate-50" : i % 2 === 0 ? "bg-white" : "bg-slate-50/40"
+              }`}
           >
             {/* Feature name + tooltip */}
             <div className="relative">
               <span
-                className="text-sm font-medium text-slate-800 border-b border-dashed border-indigo-200 pb-px cursor-default"
+                className="text-sm font-medium text-slate-800 border-b border-dashed border-slate-300 pb-px cursor-default"
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -2492,9 +2491,9 @@ function ComparisonTable({ cwsUrl, onEdgeClick }: { cwsUrl: string; onEdgeClick:
         ))}
 
         {/* Footer CTA */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-indigo-50/60 px-6 py-4">
-          <p className="text-sm font-semibold text-indigo-600">17 features. One extension.</p>
-          <AddExtensionButton className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-500 transition-colors">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50 px-6 py-4">
+          <p className="text-sm font-semibold text-slate-900">17 features. One extension.</p>
+          <AddExtensionButton className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors">
             Add to Browser — it's free
             <Icon name="bolt" className="h-3.5 w-3.5" />
           </AddExtensionButton>
@@ -2578,7 +2577,7 @@ export function App() {
       resizeBrush("/brush-light.png"),
     ]).then(([darkUrl, lightUrl]) => {
       if (cancelled) return;
-      darkCursor  = `url('${darkUrl}') ${HOTSPOT_X} ${HOTSPOT_Y}, crosshair`;
+      darkCursor = `url('${darkUrl}') ${HOTSPOT_X} ${HOTSPOT_Y}, crosshair`;
       lightCursor = `url('${lightUrl}') ${HOTSPOT_X} ${HOTSPOT_Y}, crosshair`;
       document.body.style.cursor = darkCursor;
       lastCursor = darkCursor;
@@ -2628,7 +2627,7 @@ export function App() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/70 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
           <a href="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="PaletteLive - Live website color palette engine" className="h-10 w-10 rounded-2xl shadow-lg shadow-indigo-500/20" width="40" height="40" />
+            <img src="/logo.png" alt="PaletteLive - Live website color palette engine" className="h-10 w-10 rounded-2xl shadow-lg shadow-black/10" width="40" height="40" />
             <div>
               <div className="text-sm font-semibold tracking-tight">PaletteLive</div>
               <div className="text-xs text-white/60">Live website palette engine</div>
@@ -2642,7 +2641,7 @@ export function App() {
             <a className="hover:text-white" href="/privacypolicy">Privacy</a>
             <a className="hover:text-white" href="#faq">FAQ</a>
             <a className="hover:text-white" href="#contact">Contact</a>
-            <a className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500 transition-colors" href="/supportdev">☕ Support</a>
+            <a className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 transition-colors" href="/supportdev">☕ Support</a>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -2657,9 +2656,9 @@ export function App() {
       {/* Hero */}
       <section className="relative overflow-hidden" aria-label="Hero">
         <div className="absolute inset-0">
-          <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-violet-500/20 blur-3xl" />
-          <div className="absolute -right-40 top-20 h-[520px] w-[520px] rounded-full bg-indigo-500/20 blur-3xl" />
-          <div className="absolute bottom-[-260px] left-1/2 h-[520px] w-[980px] -translate-x-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
+          <div className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-slate-200/40 blur-3xl" />
+          <div className="absolute -right-40 top-20 h-[520px] w-[520px] rounded-full bg-slate-300/30 blur-3xl" />
+          <div className="absolute bottom-[-260px] left-1/2 h-[520px] w-[980px] -translate-x-1/2 rounded-full bg-slate-200/20 blur-3xl" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-5 pb-12 pt-12 sm:pt-16">
@@ -2748,534 +2747,542 @@ export function App() {
       </section>
 
       {/* Main */}
-      <main className="bg-white text-slate-900">
-        {/* Live demo clips (simulated) */}
-        <section className="relative overflow-hidden px-5 py-16" aria-label="Live demo">
-          {/* Left canvas decoration */}
-          <CanvasImage side="left" />
+      <main className="bg-[#F8FAFC] text-slate-900 relative overflow-hidden">
+        {/* Soft background aura mesh for landing page */}
+        <div className="absolute inset-0 pointer-events-none flex justify-center z-0">
+          <div className="w-[800px] h-[600px] bg-blue-400/5 rounded-full blur-[100px] absolute -top-20 -left-40"></div>
+          <div className="w-[600px] h-[500px] bg-cyan-400/5 rounded-full blur-[100px] absolute top-[25%] -right-20"></div>
+          <div className="w-[900px] h-[600px] bg-blue-300/5 rounded-full blur-[120px] absolute bottom-[10%] left-[10%]"></div>
+        </div>
+        <div className="relative z-10">
+          {/* Live demo clips (simulated) */}
+          <section className="relative overflow-hidden px-5 py-16" aria-label="Live demo">
+            {/* Left canvas decoration */}
+            <CanvasImage side="left" />
 
-          <div className="relative z-10 mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="VISUAL PROOF"
-            title="See PaletteLive in action"
-            desc="Short, loopable moments that show what makes PaletteLive different: deep extraction, real-time overrides, and persistence that doesn’t break on modern SPAs."
-          />
+            <div className="relative z-10 mx-auto max-w-6xl">
+              <SectionTitle
+                eyebrow="VISUAL PROOF"
+                title="See PaletteLive in action"
+                desc="Short, loopable moments that show what makes PaletteLive different: deep extraction, real-time overrides, and persistence that doesn’t break on modern SPAs."
+              />
 
-          <div className="mt-10 grid gap-4 lg:grid-cols-3">
-            {[
-              {
-                t: "Heatmap overlay",
-                d: "Visualize every colored element with hex tooltips.",
-                chips: ["Overlay", "Tooltips", "Counts"],
-              },
-              {
-                t: "Color dropper",
-                d: "Click any element and jump straight into inline editing.",
-                chips: ["Crosshair", "Inspect", "Edit"],
-              },
-              {
-                t: "SPA persistence",
-                d: "Overrides survive route changes, reloads, and BFCache restores.",
-                chips: ["Watchdog", "Observer", "Per-domain"],
-              },
-            ].map((x) => (
-              <div key={x.t} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
+              <div className="mt-10 grid gap-4 lg:grid-cols-3">
+                {[
+                  {
+                    t: "Heatmap overlay",
+                    d: "Visualize every colored element with hex tooltips.",
+                    chips: ["Overlay", "Tooltips", "Counts"],
+                  },
+                  {
+                    t: "Color dropper",
+                    d: "Click any element and jump straight into inline editing.",
+                    chips: ["Crosshair", "Inspect", "Edit"],
+                  },
+                  {
+                    t: "SPA persistence",
+                    d: "Overrides survive route changes, reloads, and BFCache restores.",
+                    chips: ["Watchdog", "Observer", "Per-domain"],
+                  },
+                ].map((x) => (
+                  <div key={x.t} className="rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold">{x.t}</div>
+                        <div className="mt-2 text-sm text-slate-600">{x.d}</div>
+                      </div>
+                      <div className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-white/60">
+                        <Icon name="eye" className="h-5 w-5 text-slate-700" />
+                      </div>
+                    </div>
+                    <div className="mt-5 grid h-36 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-transparent via-white/40 to-blue-50/50">
+                      <div className="text-xs font-semibold text-slate-600">Looping clip placeholder</div>
+                      <div className="text-[11px] text-slate-500">(Drop in GIF/MP4 later)</div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {x.chips.map((c) => (
+                        <SoftBadge key={c}>{c}</SoftBadge>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Power pillars */}
+          <section id="features" className="relative overflow-hidden border-t border-slate-200 bg-transparent" aria-label="Core features">
+            <CanvasImage side="right" />
+
+            <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+              <SectionTitle
+                eyebrow="CORE FEATURES"
+                title="The four power pillars"
+                desc="PaletteLive is built like a professional dev tool: extraction depth, override durability, palette intelligence, and accessibility as a first-class feature."
+              />
+
+              <div className="mt-10 grid gap-4 lg:grid-cols-2">
+                <Pill title="Deep color extraction" icon={<Icon name="eye" className="h-5 w-5 text-slate-800" />}>
+                  <ul className="mt-1 list-inside list-disc space-y-1">
+                    <li>Full DOM scan (including Shadow DOM)</li>
+                    <li>CSS variables + stylesheets parsing</li>
+                    <li>Pseudo-state colors (:hover, :focus)</li>
+                    <li>Heatmap overlay with hex tooltips</li>
+                    <li>Perceptual clustering (CIEDE2000) + threshold control</li>
+                  </ul>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <SoftBadge>CSS Variables</SoftBadge>
+                    <SoftBadge>Shadow DOM</SoftBadge>
+                    <SoftBadge>Pseudo-States</SoftBadge>
+                  </div>
+                </Pill>
+
+                <Pill title="Non-destructive real-time override engine" icon={<Icon name="bolt" className="h-5 w-5 text-slate-800" />}>
+                  <ul className="mt-1 list-inside list-disc space-y-1">
+                    <li>Live inline CSS patching (no source edits)</li>
+                    <li>Mutation observer watchdog for sticky overrides</li>
+                    <li>SPA route resilience + BFCache resilience</li>
+                    <li>Per-domain persistence across tabs</li>
+                    <li>Undo/redo history (per-color + batch)</li>
+                  </ul>
+                  <div className="mt-4 rounded-2xl border border-white/80 bg-white/70 backdrop-blur-xl shadow-sm p-4 text-sm text-slate-700">
+                    <span className="font-semibold">Key differentiator:</span> overrides keep applying even when the page tries to repaint.
+                  </div>
+                </Pill>
+
+                <Pill title="Smart palette intelligence" icon={<Icon name="sparkles" className="h-5 w-5 text-slate-800" />}>
+                  <ul className="mt-1 list-inside list-disc space-y-1">
+                    <li>6 harmony generators (mono, 60-30-10, analogous, complementary, split, triadic)</li>
+                    <li>Harmony scoring against the current page</li>
+                    <li>Import & auto-apply with contrast-relationship preservation</li>
+                    <li>Export to tokens: JSON, CSS vars, Tailwind config, OKLCH/LAB/CMYK</li>
+                    <li>Export history so work is never lost</li>
+                  </ul>
+                </Pill>
+
+                <Pill title="Accessibility-first" icon={<Icon name="shield" className="h-5 w-5 text-slate-800" />}>
+                  <ul className="mt-1 list-inside list-disc space-y-1">
+                    <li>WCAG contrast checker with AA/AAA indicators</li>
+                    <li>Auto text contrast enforcement after overrides</li>
+                    <li>Vision simulation overlays (color blindness modes)</li>
+                    <li>Force light/dark mode override on any page</li>
+                    <li>Accessibility diagnostics to spot regressions fast</li>
+                  </ul>
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    <ContrastBadge level="AA" pass={true} />
+                    <ContrastBadge level="AAA" pass={true} />
+                  </div>
+                </Pill>
+              </div>
+            </div>
+          </section>
+
+          {/* Before/After */}
+          <section id="showcase" className="relative overflow-hidden px-5 py-16" aria-label="Before and after showcase">
+            <CanvasImage side="left" />
+            <div className="relative z-10 mx-auto max-w-6xl">
+              <SectionTitle
+                eyebrow="SHOWCASE"
+                title="Before / After transformation"
+                desc="Drag the slider to see what PaletteLive enables: full-theme remaps, contrast enforcement, and a production-ready token output — all on a live website."
+              />
+
+              <div className="mt-10">
+                <BeforeAfter />
+              </div>
+            </div>
+          </section>
+
+          {/* Heatmap showcase */}
+          <HeatmapShowcase />
+
+          {/* Use cases */}
+          <section className="relative overflow-hidden border-t border-slate-200 bg-transparent" aria-label="Use cases">
+            <CanvasImage side="left" />
+
+            <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+              <SectionTitle
+                eyebrow="WHO IT’S FOR"
+                title="Use cases that convert"
+                desc="PaletteLive is positioned as a dev tool, a designer playground, and an accessibility engine — in one workflow."
+              />
+
+              <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {[
+                  { t: "UI/UX Designers", d: "Rapid brand exploration on live sites." },
+                  { t: "Frontend Developers", d: "Inspect and refactor real-world color systems." },
+                  { t: "Accessibility Auditors", d: "Test contrast compliance instantly." },
+                  { t: "Design System Teams", d: "Extract and export structured tokens." },
+                  { t: "Brand Designers", d: "Re-skin competitor layouts for pitch decks." },
+                  { t: "QA Teams", d: "Validate dark mode and theme consistency." },
+                ].map((x) => (
+                  <div key={x.t} className="rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <div className="text-sm font-semibold text-slate-900">{x.t}</div>
+                    <div className="mt-2 text-sm text-slate-600">{x.d}</div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <SoftBadge>Scan</SoftBadge>
+                      <SoftBadge>Edit</SoftBadge>
+                      <SoftBadge>Persist</SoftBadge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Export workflow */}
+          <section className="relative overflow-hidden px-5 py-16" id="docs" aria-label="Export workflow">
+            <CanvasImage side="right" />
+            <div className="relative z-10 mx-auto max-w-6xl">
+              <SectionTitle
+                eyebrow="WORKFLOW"
+                title="Import → Map → Apply → Export"
+                desc="From exploration to production: generate or import a palette, map it onto the site’s colors while preserving contrast relationships, then export in the format your pipeline expects."
+              />
+
+              <div className="mt-10 grid gap-4 lg:grid-cols-2">
+                <div className="rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                  <div className="text-sm font-semibold">Pro export formats</div>
+                  <p className="mt-2 text-sm text-slate-600">
+                    Export-ready for design systems and production pipelines.
+                  </p>
+                  <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {[
+                      "CSS Variables",
+                      "JSON Tokens",
+                      "Tailwind Config",
+                      "OKLCH",
+                      "CIE LAB",
+                      "CMYK",
+                    ].map((x) => (
+                      <div key={x} className="rounded-2xl border border-slate-200 bg-white/60 px-3 py-2 text-xs font-semibold text-slate-700">
+                        {x}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-5 rounded-2xl border border-white/80 bg-white/70 backdrop-blur-xl shadow-sm p-4">
+                    <div className="text-xs font-semibold text-slate-700">Export history</div>
+                    <div className="mt-2 text-sm text-slate-600">
+                      Every export is tracked so you can backtrack and reproduce outputs.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                  <div className="text-sm font-semibold">3-step “How it works”</div>
+                  <div className="mt-5 space-y-3">
+                    {[
+                      { n: "01", t: "Scan", d: "Extract every color from DOM + Shadow DOM + CSS variables." },
+                      { n: "02", t: "Edit", d: "Override any color live with sticky patching + undo/redo." },
+                      { n: "03", t: "Persist", d: "Auto-resume per domain across reloads, routes, BFCache, and tabs." },
+                    ].map((x) => (
+                      <div key={x.n} className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-white/60 p-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-sm font-semibold text-white">
+                          {x.n}
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900">{x.t}</div>
+                          <div className="mt-1 text-sm text-slate-600">{x.d}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Built for modern web / trust */}
+          <section className="relative overflow-hidden border-t border-slate-200 bg-transparent" aria-label="Trust and technology">
+            <CanvasImage side="left" />
+            <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+              <SectionTitle
+                eyebrow="TRUST & TECH"
+                title="Built for designers. Engineered for developers."
+                desc="PaletteLive is designed for modern web architecture, and it’s explicit about security and permissions."
+              />
+
+              <div className="mt-10 grid gap-4 lg:grid-cols-3">
+                {[
+                  { t: "Manifest V3 compliant", d: "Works with Chrome’s modern extension architecture." },
+                  { t: "Typed infrastructure", d: "Message constants + utilities designed for scale." },
+                  { t: "185+ unit tests", d: "Confidence in complex DOM + color edge cases." },
+                ].map((x) => (
+                  <div key={x.t} className="rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                     <div className="text-sm font-semibold">{x.t}</div>
                     <div className="mt-2 text-sm text-slate-600">{x.d}</div>
                   </div>
-                  <div className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
-                    <Icon name="eye" className="h-5 w-5 text-slate-700" />
-                  </div>
-                </div>
-                <div className="mt-5 grid h-36 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-                  <div className="text-xs font-semibold text-slate-600">Looping clip placeholder</div>
-                  <div className="text-[11px] text-slate-500">(Drop in GIF/MP4 later)</div>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {x.chips.map((c) => (
-                    <SoftBadge key={c}>{c}</SoftBadge>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          </div>
-        </section>
-
-        {/* Power pillars */}
-        <section id="features" className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Core features">
-          <CanvasImage side="right" />
-
-          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
-            <SectionTitle
-              eyebrow="CORE FEATURES"
-              title="The four power pillars"
-              desc="PaletteLive is built like a professional dev tool: extraction depth, override durability, palette intelligence, and accessibility as a first-class feature."
-            />
-
-            <div className="mt-10 grid gap-4 lg:grid-cols-2">
-              <Pill title="Deep color extraction" icon={<Icon name="eye" className="h-5 w-5 text-slate-800" />}>
-                <ul className="mt-1 list-inside list-disc space-y-1">
-                  <li>Full DOM scan (including Shadow DOM)</li>
-                  <li>CSS variables + stylesheets parsing</li>
-                  <li>Pseudo-state colors (:hover, :focus)</li>
-                  <li>Heatmap overlay with hex tooltips</li>
-                  <li>Perceptual clustering (CIEDE2000) + threshold control</li>
-                </ul>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <SoftBadge>CSS Variables</SoftBadge>
-                  <SoftBadge>Shadow DOM</SoftBadge>
-                  <SoftBadge>Pseudo-States</SoftBadge>
-                </div>
-              </Pill>
-
-              <Pill title="Non-destructive real-time override engine" icon={<Icon name="bolt" className="h-5 w-5 text-slate-800" />}>
-                <ul className="mt-1 list-inside list-disc space-y-1">
-                  <li>Live inline CSS patching (no source edits)</li>
-                  <li>Mutation observer watchdog for sticky overrides</li>
-                  <li>SPA route resilience + BFCache resilience</li>
-                  <li>Per-domain persistence across tabs</li>
-                  <li>Undo/redo history (per-color + batch)</li>
-                </ul>
-                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
-                  <span className="font-semibold">Key differentiator:</span> overrides keep applying even when the page tries to repaint.
-                </div>
-              </Pill>
-
-              <Pill title="Smart palette intelligence" icon={<Icon name="sparkles" className="h-5 w-5 text-slate-800" />}>
-                <ul className="mt-1 list-inside list-disc space-y-1">
-                  <li>6 harmony generators (mono, 60-30-10, analogous, complementary, split, triadic)</li>
-                  <li>Harmony scoring against the current page</li>
-                  <li>Import & auto-apply with contrast-relationship preservation</li>
-                  <li>Export to tokens: JSON, CSS vars, Tailwind config, OKLCH/LAB/CMYK</li>
-                  <li>Export history so work is never lost</li>
-                </ul>
-              </Pill>
-
-              <Pill title="Accessibility-first" icon={<Icon name="shield" className="h-5 w-5 text-slate-800" />}>
-                <ul className="mt-1 list-inside list-disc space-y-1">
-                  <li>WCAG contrast checker with AA/AAA indicators</li>
-                  <li>Auto text contrast enforcement after overrides</li>
-                  <li>Vision simulation overlays (color blindness modes)</li>
-                  <li>Force light/dark mode override on any page</li>
-                  <li>Accessibility diagnostics to spot regressions fast</li>
-                </ul>
-                <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <ContrastBadge level="AA" pass={true} />
-                  <ContrastBadge level="AAA" pass={true} />
-                </div>
-              </Pill>
-            </div>
-          </div>
-        </section>
-
-        {/* Before/After */}
-        <section id="showcase" className="relative overflow-hidden px-5 py-16" aria-label="Before and after showcase">
-          <CanvasImage side="left" />
-          <div className="relative z-10 mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="SHOWCASE"
-            title="Before / After transformation"
-            desc="Drag the slider to see what PaletteLive enables: full-theme remaps, contrast enforcement, and a production-ready token output — all on a live website."
-          />
-
-          <div className="mt-10">
-            <BeforeAfter />
-          </div>
-          </div>
-        </section>
-
-        {/* Heatmap showcase */}
-        <HeatmapShowcase />
-
-        {/* Use cases */}
-        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Use cases">
-          <CanvasImage side="left" />
-
-          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
-            <SectionTitle
-              eyebrow="WHO IT’S FOR"
-              title="Use cases that convert"
-              desc="PaletteLive is positioned as a dev tool, a designer playground, and an accessibility engine — in one workflow."
-            />
-
-            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {[
-                { t: "UI/UX Designers", d: "Rapid brand exploration on live sites." },
-                { t: "Frontend Developers", d: "Inspect and refactor real-world color systems." },
-                { t: "Accessibility Auditors", d: "Test contrast compliance instantly." },
-                { t: "Design System Teams", d: "Extract and export structured tokens." },
-                { t: "Brand Designers", d: "Re-skin competitor layouts for pitch decks." },
-                { t: "QA Teams", d: "Validate dark mode and theme consistency." },
-              ].map((x) => (
-                <div key={x.t} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <div className="text-sm font-semibold text-slate-900">{x.t}</div>
-                  <div className="mt-2 text-sm text-slate-600">{x.d}</div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <SoftBadge>Scan</SoftBadge>
-                    <SoftBadge>Edit</SoftBadge>
-                    <SoftBadge>Persist</SoftBadge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Export workflow */}
-        <section className="relative overflow-hidden px-5 py-16" id="docs" aria-label="Export workflow">
-          <CanvasImage side="right" />
-          <div className="relative z-10 mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="WORKFLOW"
-            title="Import → Map → Apply → Export"
-            desc="From exploration to production: generate or import a palette, map it onto the site’s colors while preserving contrast relationships, then export in the format your pipeline expects."
-          />
-
-          <div className="mt-10 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="text-sm font-semibold">Pro export formats</div>
-              <p className="mt-2 text-sm text-slate-600">
-                Export-ready for design systems and production pipelines.
-              </p>
-              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {[
-                  "CSS Variables",
-                  "JSON Tokens",
-                  "Tailwind Config",
-                  "OKLCH",
-                  "CIE LAB",
-                  "CMYK",
-                ].map((x) => (
-                  <div key={x} className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700">
-                    {x}
-                  </div>
                 ))}
               </div>
-              <div className="mt-5 rounded-2xl border border-slate-200 bg-white p-4">
-                <div className="text-xs font-semibold text-slate-700">Export history</div>
-                <div className="mt-2 text-sm text-slate-600">
-                  Every export is tracked so you can backtrack and reproduce outputs.
-                </div>
-              </div>
-            </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="text-sm font-semibold">3-step “How it works”</div>
-              <div className="mt-5 space-y-3">
-                {[
-                  { n: "01", t: "Scan", d: "Extract every color from DOM + Shadow DOM + CSS variables." },
-                  { n: "02", t: "Edit", d: "Override any color live with sticky patching + undo/redo." },
-                  { n: "03", t: "Persist", d: "Auto-resume per domain across reloads, routes, BFCache, and tabs." },
-                ].map((x) => (
-                  <div key={x.n} className="flex items-start gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-sm font-semibold text-white">
-                      {x.n}
-                    </div>
-                    <div>
-                      <div className="text-sm font-semibold text-slate-900">{x.t}</div>
-                      <div className="mt-1 text-sm text-slate-600">{x.d}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          </div>
-        </section>
-
-        {/* Built for modern web / trust */}
-        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Trust and technology">
-          <CanvasImage side="left" />
-          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
-            <SectionTitle
-              eyebrow="TRUST & TECH"
-              title="Built for designers. Engineered for developers."
-              desc="PaletteLive is designed for modern web architecture, and it’s explicit about security and permissions."
-            />
-
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
-              {[
-                { t: "Manifest V3 compliant", d: "Works with Chrome’s modern extension architecture." },
-                { t: "Typed infrastructure", d: "Message constants + utilities designed for scale." },
-                { t: "185+ unit tests", d: "Confidence in complex DOM + color edge cases." },
-              ].map((x) => (
-                <div key={x.t} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <div className="text-sm font-semibold">{x.t}</div>
-                  <div className="mt-2 text-sm text-slate-600">{x.d}</div>
-                </div>
-              ))}
-            </div>
-
-            <div id="security" className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-start justify-between gap-6">
-                <div>
-                  <div className="text-sm font-semibold">Privacy & security</div>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                    PaletteLive requests “Access data on all websites” only to scan DOM/CSS and apply your overrides.
-                    All processing is fully client-side. No analytics on visited pages. No data leaves your browser.
-                    The extension does not modify website source code.
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <SoftBadge>No tracking</SoftBadge>
-                    <SoftBadge>Client-side only</SoftBadge>
-                    <SoftBadge>No source edits</SoftBadge>
-                    <SoftBadge>Per-domain storage</SoftBadge>
-                  </div>
-                </div>
-                <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 lg:flex">
-                  <Icon name="shield" className="h-6 w-6 text-slate-700" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Comparison */}
-        <section id="compare" className="relative overflow-hidden border-t border-slate-200" aria-label="Feature comparison">
-          <CanvasImage side="right" />
-          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
-            <SectionTitle
-              eyebrow="POSITIONING"
-              title="Everything the others are missing"
-              desc="Most color tools stop at a basic picker. PaletteLive goes deeper — persistence, accessibility, exports, and live-site intelligence that no other extension offers."
-            />
-            <ComparisonTable cwsUrl={cwsUrl} onEdgeClick={openEdgeLink} />
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="relative overflow-hidden border-t border-slate-200 bg-slate-50/60" aria-label="Testimonials">
-          <CanvasImage side="left" />
-          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
-            <SectionTitle
-              eyebrow="EARLY FEEDBACK"
-              title="Feels like a dev tool — and a designer playground"
-              desc="Swap these with real quotes anytime. The layout is ready for Chrome Web Store screenshots and social proof."
-            />
-
-            <div className="mt-10 grid gap-4 lg:grid-cols-3">
-              {[
-                {
-                  q: "The persistence is the killer feature. It survives every navigation I throw at it.",
-                  r: "Frontend Engineer",
-                },
-                {
-                  q: "Heatmap + clustering turned a chaotic site into an editable token system in minutes.",
-                  r: "Design Systems Lead",
-                },
-                {
-                  q: "WCAG checks while I edit colors live is huge for audit workflows.",
-                  r: "Accessibility Specialist",
-                },
-              ].map((x, i) => (
-                <div key={i} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <div className="text-sm leading-relaxed text-slate-700">“{x.q}”</div>
-                  <div className="mt-4 text-xs font-semibold text-slate-900">{x.r}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ */}
-        <section id="faq" className="relative overflow-hidden px-5 py-16" aria-label="Frequently asked questions">
-          <CanvasImage side="right" />
-          <div className="relative z-10 mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="FAQ"
-            title="Answers to common objections"
-            desc={`Security, performance, modern frameworks, and why this isn't "just DevTools."`}
-          />
-
-          <div className="mt-10 grid gap-4 lg:grid-cols-2">
-            <FAQItem
-              q="Does PaletteLive modify the website’s source code?"
-              a="No. Overrides are applied at runtime (non-destructive) via inline CSS patching—your changes live in the browser and can be persisted per domain without editing the site’s codebase."
-            />
-            <FAQItem
-              q="Will it slow down pages?"
-              a="PaletteLive is designed to scan efficiently and re-apply overrides only when needed. The watchdog/mutation observer focuses on staying sticky without constant heavy reprocessing."
-            />
-            <FAQItem
-              q="Does it work with React / Vue / Next.js / SPAs?"
-              a="Yes—persistence across SPA route changes is a core feature. Overrides can survive re-renders and route transitions."
-            />
-            <FAQItem
-              q="Is it safe? Does data leave my browser?"
-              a="All processing is client-side. No tracking and no analytics on visited pages. Permissions are used solely for scanning and applying your own overrides."
-            />
-            <FAQItem
-              q="Why not just use DevTools?"
-              a="DevTools is great for debugging, but it doesn’t give you a persistent per-domain override engine, palette clustering, harmony generation/scoring, WCAG auto-fix, or multi-format export workflow."
-            />
-            <FAQItem
-              q="Can I export to Tailwind and tokens?"
-              a="Yes—export formats are designed for real workflows: CSS variables, JSON tokens, Tailwind config, plus OKLCH/LAB/CMYK and export history."
-            />
-          </div>
-          </div>
-        </section>
-
-        {/* Bottom CTA */}
-        <section className="border-t border-slate-200 bg-slate-950 text-white" aria-label="Call to action">
-          <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
-            <div className="grid gap-8 lg:grid-cols-[1.3fr_.7fr] lg:items-center">
-              <div>
-                <div className="text-xs font-semibold tracking-[0.25em] text-indigo-300">READY WHEN YOU ARE</div>
-                <h3 className="mt-3 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-                  Extract. Edit. Persist. Export.
-                </h3>
-                <p className="mt-3 text-pretty text-base text-white/75">
-                  PaletteLive brings production-grade palette control to live websites — with accessibility intelligence and persistence you can trust.
-                </p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <AddExtensionButton className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white/90">
-                    Add to Browser
-                    <Icon name="bolt" className="h-4 w-4" />
-                  </AddExtensionButton>
-                  <a
-                    href="#features"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
-                  >
-                    Explore features
-                    <Icon name="sparkles" className="h-4 w-4" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                <div className="text-sm font-semibold">Trust snapshot</div>
-                <div className="mt-4 space-y-3 text-sm text-white/75">
-                  <div className="flex items-center gap-2">
-                    <Icon name="check" className="h-4 w-4 text-emerald-300" />
-                    Manifest V3 compliant
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Icon name="check" className="h-4 w-4 text-emerald-300" />
-                    Client-side only processing
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Icon name="check" className="h-4 w-4 text-emerald-300" />
-                    No tracking / no page analytics
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Icon name="check" className="h-4 w-4 text-emerald-300" />
-                    Per-domain persistence
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="bg-gradient-to-br from-slate-900 to-slate-950 text-white py-16">
-          <div className="mx-auto max-w-3xl px-5">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-3">Get in Touch</h2>
-              <p className="text-lg text-white/70 max-w-2xl mx-auto">
-                Have questions about PaletteLive? Need assistance or want to report an issue? We're here to help.
-              </p>
-            </div>
-            
-            <div className="max-w-xl mx-auto">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-                <h3 className="text-xl font-semibold mb-3">Support & Inquiries</h3>
-                <p className="text-sm text-white/70 mb-6">
-                  For technical support, bug reports, feature requests, or general questions about PaletteLive, please don't hesitate to reach out.
-                </p>
-                <div className="flex flex-col items-center gap-4">
-                  <a 
-                    href="mailto:mckesavdev+support@gmail.com" 
-                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
-                  >
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    mckesavdev+support@gmail.com
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/in/mckesav"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
-                  >
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                    linkedin.com/in/mckesav
-                  </a>
-                  <a
-                    href="tel:+919490251635"
-                    className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium"
-                  >
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/>
-                    </svg>
-                    +91 94902 51635
-                  </a>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-8 text-center">
-              <p className="text-sm text-white/60">
-                Response time: Typically within 24-48 hours during business days
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="bg-slate-950 text-white" role="contentinfo">
-          <div className="mx-auto max-w-6xl px-5 py-10">
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <div className="flex items-center gap-3">
-                  <img src="/logo.png" alt="PaletteLive - Professional palette tooling for live websites" className="h-10 w-10 rounded-2xl shadow-lg" width="40" height="40" />
+              <div id="security" className="mt-10 rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                <div className="flex items-start justify-between gap-6">
                   <div>
-                    <div className="text-sm font-semibold">PaletteLive</div>
-                    <div className="text-xs text-white/60">Professional palette tooling for live websites</div>
+                    <div className="text-sm font-semibold">Privacy & security</div>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                      PaletteLive requests “Access data on all websites” only to scan DOM/CSS and apply your overrides.
+                      All processing is fully client-side. No analytics on visited pages. No data leaves your browser.
+                      The extension does not modify website source code.
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <SoftBadge>No tracking</SoftBadge>
+                      <SoftBadge>Client-side only</SoftBadge>
+                      <SoftBadge>No source edits</SoftBadge>
+                      <SoftBadge>Per-domain storage</SoftBadge>
+                    </div>
+                  </div>
+                  <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white/60 lg:flex">
+                    <Icon name="shield" className="h-6 w-6 text-slate-700" />
                   </div>
                 </div>
-                <div className="mt-4 text-xs text-white/55">Version 0.1 • Manifest V3</div>
               </div>
+            </div>
+          </section>
 
-              <div className="grid gap-6 sm:grid-cols-3">
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-white/80">Product</div>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#features">Features</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#showcase">Before/After</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#compare">Comparison</a>
+          {/* Comparison */}
+          <section id="compare" className="relative overflow-hidden border-t border-slate-200" aria-label="Feature comparison">
+            <CanvasImage side="right" />
+            <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+              <SectionTitle
+                eyebrow="POSITIONING"
+                title="Everything the others are missing"
+                desc="Most color tools stop at a basic picker. PaletteLive goes deeper — persistence, accessibility, exports, and live-site intelligence that no other extension offers."
+              />
+              <ComparisonTable cwsUrl={cwsUrl} onEdgeClick={openEdgeLink} />
+            </div>
+          </section>
+
+          {/* Testimonials */}
+          <section className="relative overflow-hidden border-t border-slate-200 bg-transparent" aria-label="Testimonials">
+            <CanvasImage side="left" />
+            <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+              <SectionTitle
+                eyebrow="EARLY FEEDBACK"
+                title="Feels like a dev tool — and a designer playground"
+                desc="Swap these with real quotes anytime. The layout is ready for Chrome Web Store screenshots and social proof."
+              />
+
+              <div className="mt-10 grid gap-4 lg:grid-cols-3">
+                {[
+                  {
+                    q: "The persistence is the killer feature. It survives every navigation I throw at it.",
+                    r: "Frontend Engineer",
+                  },
+                  {
+                    q: "Heatmap + clustering turned a chaotic site into an editable token system in minutes.",
+                    r: "Design Systems Lead",
+                  },
+                  {
+                    q: "WCAG checks while I edit colors live is huge for audit workflows.",
+                    r: "Accessibility Specialist",
+                  },
+                ].map((x, i) => (
+                  <div key={i} className="rounded-3xl border border-white/80 bg-white/70 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <div className="text-sm leading-relaxed text-slate-700">“{x.q}”</div>
+                    <div className="mt-4 text-xs font-semibold text-slate-900">{x.r}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FAQ */}
+          <section id="faq" className="relative overflow-hidden px-5 py-16" aria-label="Frequently asked questions">
+            <CanvasImage side="right" />
+            <div className="relative z-10 mx-auto max-w-6xl">
+              <SectionTitle
+                eyebrow="FAQ"
+                title="Answers to common objections"
+                desc={`Security, performance, modern frameworks, and why this isn't "just DevTools."`}
+              />
+
+              <div className="mt-10 grid gap-4 lg:grid-cols-2">
+                <FAQItem
+                  q="Does PaletteLive modify the website’s source code?"
+                  a="No. Overrides are applied at runtime (non-destructive) via inline CSS patching—your changes live in the browser and can be persisted per domain without editing the site’s codebase."
+                />
+                <FAQItem
+                  q="Will it slow down pages?"
+                  a="PaletteLive is designed to scan efficiently and re-apply overrides only when needed. The watchdog/mutation observer focuses on staying sticky without constant heavy reprocessing."
+                />
+                <FAQItem
+                  q="Does it work with React / Vue / Next.js / SPAs?"
+                  a="Yes—persistence across SPA route changes is a core feature. Overrides can survive re-renders and route transitions."
+                />
+                <FAQItem
+                  q="Is it safe? Does data leave my browser?"
+                  a="All processing is client-side. No tracking and no analytics on visited pages. Permissions are used solely for scanning and applying your own overrides."
+                />
+                <FAQItem
+                  q="Why not just use DevTools?"
+                  a="DevTools is great for debugging, but it doesn’t give you a persistent per-domain override engine, palette clustering, harmony generation/scoring, WCAG auto-fix, or multi-format export workflow."
+                />
+                <FAQItem
+                  q="Can I export to Tailwind and tokens?"
+                  a="Yes—export formats are designed for real workflows: CSS variables, JSON tokens, Tailwind config, plus OKLCH/LAB/CMYK and export history."
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Bottom CTA */}
+          <section className="border-t border-white/10 bg-slate-950 text-white overflow-hidden relative" aria-label="Call to action">
+            <div className="relative z-10 mx-auto max-w-6xl px-5 py-16">
+              <div className="grid gap-8 lg:grid-cols-[1.3fr_.7fr] lg:items-center">
+                <div>
+                  <div className="text-xs font-semibold tracking-[0.25em] text-white/60">READY WHEN YOU ARE</div>
+                  <h3 className="mt-3 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Extract. Edit. Persist. Export.
+                  </h3>
+                  <p className="mt-3 text-pretty text-base text-white/75">
+                    PaletteLive brings production-grade palette control to live websites — with accessibility intelligence and persistence you can trust.
+                  </p>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <AddExtensionButton className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-white/90">
+                      Add to Browser
+                      <Icon name="bolt" className="h-4 w-4" />
+                    </AddExtensionButton>
+                    <a
+                      href="#features"
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                    >
+                      Explore features
+                      <Icon name="sparkles" className="h-4 w-4" />
+                    </a>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-white/80">Resources</div>
-                  <a className="block text-sm text-white/65 hover:text-white" href={docsUrl}>Documentation</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="/privacypolicy">Privacy Policy</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#faq">FAQ</a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="#contact">Contact</a>
-                  <a className="block text-sm font-semibold text-violet-400 hover:text-violet-300" href="/supportdev">☕ Support Dev</a>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-white/80">Links</div>
-                  <a className="block text-sm text-white/65 hover:text-white" href={cwsUrl} target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}>Edge Add-ons Store</a>
-                  <a className="inline-flex items-center gap-2 text-sm text-white/65 hover:text-white" href="https://github.com/MCKesav/PaletteLive" target="_blank" rel="noopener noreferrer">
-                    <Icon name="github" className="h-4 w-4" />
-                    GitHub
-                  </a>
-                  <a className="block text-sm text-white/65 hover:text-white" href="mailto:mckesavdev+support@gmail.com">Support / Bug report</a>
+
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                  <div className="text-sm font-semibold">Trust snapshot</div>
+                  <div className="mt-4 space-y-3 text-sm text-white/75">
+                    <div className="flex items-center gap-2">
+                      <Icon name="check" className="h-4 w-4 text-emerald-300" />
+                      Manifest V3 compliant
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Icon name="check" className="h-4 w-4 text-emerald-300" />
+                      Client-side only processing
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Icon name="check" className="h-4 w-4 text-emerald-300" />
+                      No tracking / no page analytics
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Icon name="check" className="h-4 w-4 text-emerald-300" />
+                      Per-domain persistence
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </section>
 
-            <div className="mt-10 border-t border-white/10 pt-6 text-xs text-white/55">
-              © {new Date().getFullYear()} PaletteLive. All rights reserved.
+          {/* Contact Section */}
+          <section id="contact" className="bg-gradient-to-br from-slate-900 to-slate-950 text-white py-16">
+            <div className="mx-auto max-w-3xl px-5">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold mb-3">Get in Touch</h2>
+                <p className="text-lg text-white/70 max-w-2xl mx-auto">
+                  Have questions about PaletteLive? Need assistance or want to report an issue? We're here to help.
+                </p>
+              </div>
+
+              <div className="max-w-xl mx-auto">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
+                  <h3 className="text-xl font-semibold mb-3">Support & Inquiries</h3>
+                  <p className="text-sm text-white/70 mb-6">
+                    For technical support, bug reports, feature requests, or general questions about PaletteLive, please don't hesitate to reach out.
+                  </p>
+                  <div className="flex flex-col items-center gap-4">
+                    <a
+                      href="mailto:mckesavdev+support@gmail.com"
+                      className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-lg font-medium"
+                    >
+                      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      mckesavdev+support@gmail.com
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/in/mckesav"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-lg font-medium"
+                    >
+                      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                      </svg>
+                      linkedin.com/in/mckesav
+                    </a>
+                    <a
+                      href="tel:+919490251635"
+                      className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors text-lg font-medium"
+                    >
+                      <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z" />
+                      </svg>
+                      +91 94902 51635
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 text-center">
+                <p className="text-sm text-white/60">
+                  Response time: Typically within 24-48 hours during business days
+                </p>
+              </div>
             </div>
-          </div>
-        </footer>
+          </section>
+
+          {/* Footer */}
+          <footer className="bg-slate-950 text-white" role="contentinfo">
+            <div className="mx-auto max-w-6xl px-5 py-10">
+              <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <img src="/logo.png" alt="PaletteLive - Professional palette tooling for live websites" className="h-10 w-10 rounded-2xl shadow-lg" width="40" height="40" />
+                    <div>
+                      <div className="text-sm font-semibold">PaletteLive</div>
+                      <div className="text-xs text-white/60">Professional palette tooling for live websites</div>
+                    </div>
+                  </div>
+                  <div className="mt-4 text-xs text-white/55">Version 0.1 • Manifest V3</div>
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-3">
+                  <div className="space-y-2">
+                    <div className="text-xs font-semibold text-white/80">Product</div>
+                    <a className="block text-sm text-white/65 hover:text-white" href="#features">Features</a>
+                    <a className="block text-sm text-white/65 hover:text-white" href="#showcase">Before/After</a>
+                    <a className="block text-sm text-white/65 hover:text-white" href="#compare">Comparison</a>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-xs font-semibold text-white/80">Resources</div>
+                    <a className="block text-sm text-white/65 hover:text-white" href={docsUrl}>Documentation</a>
+                    <a className="block text-sm text-white/65 hover:text-white" href="/privacypolicy">Privacy Policy</a>
+                    <a className="block text-sm text-white/65 hover:text-white" href="#faq">FAQ</a>
+                    <a className="block text-sm text-white/65 hover:text-white" href="#contact">Contact</a>
+                    <a className="block text-sm font-semibold text-white hover:text-white/80" href="/supportdev">☕ Support Dev</a>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-xs font-semibold text-white/80">Links</div>
+                    <a className="block text-sm text-white/65 hover:text-white" href={cwsUrl} target="_blank" rel="noopener noreferrer" onClick={openEdgeLink}>Edge Add-ons Store</a>
+                    <a className="inline-flex items-center gap-2 text-sm text-white/65 hover:text-white" href="https://github.com/MCKesav/PaletteLive" target="_blank" rel="noopener noreferrer">
+                      <Icon name="github" className="h-4 w-4" />
+                      GitHub
+                    </a>
+                    <a className="block text-sm text-white/65 hover:text-white" href="mailto:mckesavdev+support@gmail.com">Support / Bug report</a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-10 border-t border-white/10 pt-6 text-xs text-white/55">
+                © {new Date().getFullYear()} PaletteLive. All rights reserved.
+              </div>
+            </div>
+          </footer>
+        </div>
       </main>
 
       {/* ── Demo popup toast ── */}

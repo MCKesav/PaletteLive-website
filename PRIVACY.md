@@ -213,7 +213,7 @@ We may update this privacy policy from time to time. Any material changes will b
 If you have any questions about this privacy policy or our data practices, please contact us directly:
 
 **Movva Chenna Kesav**
-Email: `movva.chenna.kesav@gmail.com`
+Email: `mckesavdev+support@gmail.com`
 
 ## Summary
 

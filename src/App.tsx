@@ -3247,7 +3247,7 @@ export function App() {
                       <div className="text-xs text-white/60">Professional palette tooling for live websites</div>
                     </div>
                   </div>
-                  <div className="mt-4 text-xs text-white/55">Version 0.1 • Manifest V3</div>
+                  <div className="mt-4 text-xs text-white/55">Version 1.0.1 • Manifest V3</div>
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-3">
